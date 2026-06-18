@@ -1,0 +1,21 @@
+/*
+Theme Name: Agency Site
+Theme URI: https://example.com/agency-site
+Author: Antigravity
+Author URI: https://example.com
+Description: A modern, high-performance, polished classic WordPress theme built for digital marketing agencies, creative studios, and growth consultancies. Fully responsive with Tailwind CSS and vanilla JavaScript.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: agency-site
+Tags: agency, digital-marketing, tailwind, portfolio, custom-menu, custom-logo, featured-images, theme-options, translation-ready
+*/
+
+/*
+ * Note: Theme styles are compiled with Tailwind CSS into assets/dist/css/style.css
+ * This file serves as the theme descriptor and core WordPress fallback.
+ */
+

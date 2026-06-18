@@ -1,0 +1,40 @@
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# WordPress Default Themes & Core Fallbacks
+themes/twentytwentythree/
+themes/twentytwentyfour/
+themes/twentytwentyfive/
+themes/index.php
+plugins/index.php
+index.php
+
+# WordPress User Uploads & Media
+uploads/
+
+# Node & Package Managers
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Build Caches & Temp Files
+.cache/
+dist/*.map
+*.log
+debug.log
+
+# IDE & Editor Configurations
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
