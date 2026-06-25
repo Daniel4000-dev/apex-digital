@@ -15,6 +15,8 @@ To guarantee that content, URLs, and data remain intact regardless of theme chan
 
 ```text
 wp-content/
+├── docs/                       # Implementation briefs & architecture specs
+│   └── Agency_Site_Implementation_Brief.md # Complete project brief & code review checklist
 ├── themes/
 │   └── agency-site/            # Presentation Layer (Theme)
 │       ├── front-page.php      # Homepage template
@@ -171,3 +173,4 @@ This project was built following an agentic pair-programming methodology:
 2. **Architecture Decoupling**: Migrated data handling, custom post types, and webhook integration out of the theme and into a dedicated companion plugin (`agency-site-core`) to adhere to WordPress coding standards and prevent data lock-in.
 3. **Automated Verification**: Rather than assuming code works, each milestone was verified using shell commands (PHP linting, Tailwind compilation, WP-CLI database transactions, curl HTTP status checks, Mailpit API inspection, and mock webhook listeners).
 4. **Resilience & Fallbacks**: Integrated defensive fallbacks so the site renders cleanly whether or not custom post types have been seeded, and included a debug mode for analytics tracking when real Google account keys are not yet configured.
+
