@@ -15,8 +15,21 @@ To guarantee that content, URLs, and data remain intact regardless of theme chan
 
 ```text
 wp-content/
-├── docs/                       # Implementation briefs & architecture specs
-│   └── Agency_Site_Implementation_Brief.md # Complete project brief & code review checklist
+├── .github/workflows/ci.yml    # GitHub Actions CI workflow (linting, build, test)
+├── docs/                       # Comprehensive reviewer documentation
+│   ├── Agency_Site_Implementation_Brief.md # Complete project brief & checklist
+│   ├── architecture.md         # System boundaries, data models & lifecycle
+│   ├── security.md             # Threat modeling, nonces, rate limiting, SSRF
+│   ├── verification-report.md  # 21-point test results, curl checks & Mailpit evidence
+│   ├── analytics-guide.md      # GA4 / GTM event map & dataLayer schema
+│   ├── client-handoff.md       # Content editor manual & administration guide
+│   ├── ai-workflow.md          # Account of AI pair-programming & debugging
+│   └── design-evidence.md      # Breakpoint matrix, typography, accessibility & Figma audit
+├── composer.json               # PHPCS and WordPress Coding Standards config
+├── package.json                # Root orchestration scripts
+├── phpcs.xml                   # Ruleset for WordPress-Core & WordPress-Extra
+├── tests/
+│   └── run-all-tests.php       # Automated 21-point security & integration test suite
 ├── themes/
 │   └── agency-site/            # Presentation Layer (Theme)
 │       ├── front-page.php      # Homepage template
@@ -26,19 +39,21 @@ wp-content/
 │       ├── single.php          # Single article template
 │       ├── page-contact.php    # Contact page template
 │       ├── header.php / footer.php # Navigation, drawer & footer
+│       ├── template-parts/     # Reusable service-card, post-card & cta-banner
 │       ├── assets/             # Tailwind CSS & vanilla JS assets
 │       └── screenshot.png      # Theme preview thumbnail (1200x900)
 └── plugins/
     └── agency-site-core/       # Business & Data Layer (Companion Plugin)
         ├── includes/
         │   ├── class-cpt-service.php        # Services CPT & custom meta
-        │   ├── class-enquiry-handler.php    # Enquiries CPT, form & emails
+        │   ├── class-enquiry-handler.php    # Enquiries CPT, honeypot & rate limit
         │   ├── class-webhook-dispatcher.php # HMAC webhook & delivery logger
         │   ├── class-seo-manager.php        # Canonical, JSON-LD & 301 redirects
         │   ├── class-analytics-manager.php  # GA4/GTM script & event tracking
         │   └── class-admin-settings.php     # Webhook logs & settings UI
         └── templates/
-            └── email-confirmation.php       # Branded HTML customer confirmation
+            ├── email-confirmation.php       # Branded HTML customer confirmation
+            └── email-internal-notification.php # Branded HTML admin lead alert
 ```
 
 ---
@@ -77,6 +92,20 @@ wp-content/
     - `agency_enquiry_submitted`: Fires on successful AJAX submission with service and budget tier (privacy-safe, no PII).
     - `agency_faq_opened`: Tracks interactions with service FAQs.
   - Developer console logging mode for testing without real analytics IDs.
+
+---
+
+## 📚 Reviewer Documentation Package
+
+For in-depth review, technical audits, and client handoff details, refer to the following documents in `docs/`:
+
+1. [**Architecture & System Design**](file://docs/architecture.md): Theme vs plugin boundaries, entity lifecycles, and hook extensibility points.
+2. [**Security Architecture & Hardening**](file://docs/security.md): Threat modeling, nonces, honeypot, rate limiting, CRLF injection defense, and SSRF prevention.
+3. [**Verification & QA Report**](file://docs/verification-report.md): Execution outputs, HTTP 200/301 statuses, Mailpit evidence, and webhook logs.
+4. [**Analytics & Tag Management Guide**](file://docs/analytics-guide.md): DataLayer schema, GA4/GTM setup steps, and consent considerations.
+5. [**Client Handoff & Editor Guide**](file://docs/client-handoff.md): Managing services, enquiries, webhooks, and troubleshooting.
+6. [**AI-Assisted Workflow Retrospective**](file://docs/ai-workflow.md): Pair-programming methodology, errors encountered, and productivity impact.
+7. [**Design System & Layout Evidence**](file://docs/design-evidence.md): Responsive breakpoint matrix, typography scale, WCAG 2.1 AA accessibility, and Figma audit note.
 
 ---
 

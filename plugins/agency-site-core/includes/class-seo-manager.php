@@ -241,3 +241,4 @@ class Agency_Core_SEO_Manager {
         }
     }
 }
+

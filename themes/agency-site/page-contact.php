@@ -41,6 +41,12 @@ $selected_service = isset($_GET['service']) ? sanitize_text_field($_GET['service
                         <input type="hidden" name="action" value="agency_submit_contact">
                         <input type="hidden" name="security" value="<?php echo esc_attr(wp_create_nonce('agency_contact_action_nonce')); ?>">
 
+                        <!-- Anti-Spam Honeypot Field -->
+                        <div class="hidden" aria-hidden="true" style="display:none !important;">
+                            <label for="agency_hp_website">Leave this field blank</label>
+                            <input type="text" id="agency_hp_website" name="agency_hp_website" tabindex="-1" autocomplete="off">
+                        </div>
+
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div>
                                 <label for="contact-name" class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">

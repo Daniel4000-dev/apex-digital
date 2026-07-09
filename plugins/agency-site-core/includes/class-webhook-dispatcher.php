@@ -2,6 +2,13 @@
 /**
  * Enquiry Webhook Dispatcher & Delivery Logger
  *
+ * Implements:
+ * - wp_safe_remote_post() for SSRF protection
+ * - Destination URL validation (HTTP/HTTPS only, rejects metadata services)
+ * - HMAC-SHA256 signature calculation (X-Agency-Signature)
+ * - Strict timeout bounding and failure logging
+ * - Safe delivery logs without credentials or sensitive PII
+ *
  * @package Agency_Site_Core
  */
 
@@ -34,21 +41,40 @@ class Agency_Core_Webhook_Dispatcher {
             ];
         }
 
-        // Validate URL
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            $log = self::record_log([
+        // Validate URL format and protocol
+        if (!filter_var($url, FILTER_VALIDATE_URL) || !preg_match('/^https?:\/\//i', $url)) {
+            self::record_log([
                 'enquiry_id'       => $enquiry_id,
                 'url'              => $url,
                 'status'           => 'failed',
                 'http_code'        => 0,
-                'error_message'    => __('Invalid webhook URL format.', 'agency-site-core'),
+                'error_message'    => __('Invalid webhook URL format. Only HTTP/HTTPS protocols are permitted.', 'agency-site-core'),
                 'duration_ms'      => 0,
-                'request_payload'  => $enquiry_data,
+                'request_payload'  => ['enquiry_id' => $enquiry_id],
                 'response_body'    => '',
             ]);
             return [
                 'status'  => 'failed',
                 'message' => __('Invalid webhook URL format.', 'agency-site-core'),
+            ];
+        }
+
+        // SSRF Guard: Reject cloud metadata service (169.254.169.254)
+        $parsed_host = wp_parse_url($url, PHP_URL_HOST);
+        if ($parsed_host === '169.254.169.254' || strpos($parsed_host, 'metadata.google.internal') !== false) {
+            self::record_log([
+                'enquiry_id'       => $enquiry_id,
+                'url'              => $url,
+                'status'           => 'failed',
+                'http_code'        => 0,
+                'error_message'    => __('Unsafe webhook destination: Cloud metadata endpoint blocked.', 'agency-site-core'),
+                'duration_ms'      => 0,
+                'request_payload'  => ['enquiry_id' => $enquiry_id],
+                'response_body'    => '',
+            ]);
+            return [
+                'status'  => 'failed',
+                'message' => __('Unsafe webhook destination blocked.', 'agency-site-core'),
             ];
         }
 
@@ -75,18 +101,29 @@ class Agency_Core_Webhook_Dispatcher {
             $headers['X-Agency-Signature'] = 'sha256=' . $signature;
         }
 
+        // Allow localhost for local test environments
+        $is_local_host = in_array($parsed_host, ['127.0.0.1', 'localhost', '::1'], true);
+        if ($is_local_host) {
+            add_filter('http_request_host_is_external', '__return_true');
+        }
+
         $start_time = microtime(true);
 
-        $response = wp_remote_post($url, [
+        // Safe remote post
+        $response = wp_safe_remote_post($url, [
             'method'      => 'POST',
             'timeout'     => $timeout,
-            'redirection' => 3,
+            'redirection' => 2,
             'httpversion' => '1.1',
             'blocking'    => true,
             'headers'     => $headers,
             'body'        => $json_payload,
-            'sslverify'   => false, // allow local self-signed dev certificates
+            'sslverify'   => !$is_local_host, // Enforce strict TLS in production, permit self-signed in local dev
         ]);
+
+        if ($is_local_host) {
+            remove_filter('http_request_host_is_external', '__return_true');
+        }
 
         $duration_ms = round((microtime(true) - $start_time) * 1000);
 
@@ -99,7 +136,11 @@ class Agency_Core_Webhook_Dispatcher {
                 'http_code'       => 0,
                 'error_message'   => $error_message,
                 'duration_ms'     => $duration_ms,
-                'request_payload' => $payload,
+                'request_payload' => [
+                    'event'      => 'enquiry.created',
+                    'enquiry_id' => $enquiry_id,
+                    'service'    => $enquiry_data['service'] ?? '',
+                ],
                 'response_body'   => '',
             ]);
 
@@ -122,8 +163,12 @@ class Agency_Core_Webhook_Dispatcher {
             'http_code'       => $http_code,
             'error_message'   => $is_success ? '' : sprintf(__('HTTP %d Response', 'agency-site-core'), $http_code),
             'duration_ms'     => $duration_ms,
-            'request_payload' => $payload,
-            'response_body'   => mb_substr($response_body, 0, 1000),
+            'request_payload' => [
+                'event'      => 'enquiry.created',
+                'enquiry_id' => $enquiry_id,
+                'service'    => $enquiry_data['service'] ?? '',
+            ],
+            'response_body'   => mb_substr(wp_strip_all_tags($response_body), 0, 500),
         ];
 
         self::record_log($log_data);
@@ -169,24 +214,15 @@ class Agency_Core_Webhook_Dispatcher {
         return $entry;
     }
 
-    /**
-     * Get all delivery logs
-     */
     public static function get_logs() {
         $logs = get_option(self::LOGS_OPTION, []);
         return is_array($logs) ? $logs : [];
     }
 
-    /**
-     * Clear all delivery logs
-     */
     public static function clear_logs() {
         return update_option(self::LOGS_OPTION, [], false);
     }
 
-    /**
-     * Send test webhook with dummy payload
-     */
     public static function send_test_webhook($url = null, $secret = null) {
         if ($url) {
             update_option('agency_webhook_url', esc_url_raw($url));

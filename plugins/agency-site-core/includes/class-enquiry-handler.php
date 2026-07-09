@@ -2,6 +2,14 @@
 /**
  * Enquiry Submission Handler, HTML Email Sender & Admin CPT
  *
+ * Includes:
+ * - Anti-spam honeypot verification
+ * - Request payload size bounding (10KB limit)
+ * - Transient-based IP rate limiter (5 per 10 mins)
+ * - CRLF header injection mitigation
+ * - Branded HTML confirmation & internal notification emails
+ * - Custom Post Type 'agency_enquiry' with custom columns
+ *
  * @package Agency_Site_Core
  */
 
@@ -10,6 +18,10 @@ if (!defined('ABSPATH')) {
 }
 
 class Agency_Core_Enquiry_Handler {
+
+    const MAX_PAYLOAD_BYTES = 10240; // 10KB
+    const RATE_LIMIT_MAX    = 5;
+    const RATE_LIMIT_WINDOW = 600;   // 10 minutes (seconds)
 
     public function __construct() {
         add_action('init', [$this, 'register_enquiry_cpt']);
@@ -38,7 +50,7 @@ class Agency_Core_Enquiry_Handler {
             'show_ui'            => true,
             'show_in_menu'       => true,
             'capability_type'    => 'post',
-            'capabilities'       => ['create_posts' => false], // only created via form submission
+            'capabilities'       => ['create_posts' => false],
             'map_meta_cap'       => true,
             'hierarchical'       => false,
             'menu_position'      => 6,
@@ -50,7 +62,7 @@ class Agency_Core_Enquiry_Handler {
     }
 
     public function set_custom_columns($columns) {
-        $new_columns = [
+        return [
             'cb'             => $columns['cb'],
             'title'          => __('Lead Name', 'agency-site-core'),
             'enquiry_email'  => __('Email', 'agency-site-core'),
@@ -60,7 +72,6 @@ class Agency_Core_Enquiry_Handler {
             'webhook_status' => __('Webhook Delivery', 'agency-site-core'),
             'date'           => $columns['date'],
         ];
-        return $new_columns;
     }
 
     public function render_custom_columns($column, $post_id) {
@@ -91,25 +102,71 @@ class Agency_Core_Enquiry_Handler {
         }
     }
 
+    /**
+     * Handle public and logged-in AJAX inquiry submission
+     */
     public function handle_submission() {
+        // 1. Nonce Security Check
         check_ajax_referer('agency_contact_action_nonce', 'security');
 
-        $name    = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
-        $email   = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
-        $phone   = isset($_POST['phone']) ? sanitize_text_field(wp_unslash($_POST['phone'])) : '';
-        $company = isset($_POST['company']) ? sanitize_text_field(wp_unslash($_POST['company'])) : '';
-        $service = isset($_POST['service']) ? sanitize_text_field(wp_unslash($_POST['service'])) : '';
-        $budget  = isset($_POST['budget']) ? sanitize_text_field(wp_unslash($_POST['budget'])) : '';
-        $message = isset($_POST['message']) ? sanitize_textarea_field(wp_unslash($_POST['message'])) : '';
-
-        if (empty($name) || empty($email) || !is_email($email) || empty($message)) {
+        // 2. Anti-Spam Honeypot Verification
+        if (!empty($_POST['agency_hp_website'])) {
             wp_send_json_error([
-                'message' => esc_html__('Please fill in all required fields with a valid email address.', 'agency-site-core'),
-            ]);
+                'message' => esc_html__('Automated submission detected.', 'agency-site-core'),
+            ], 400);
             wp_die();
         }
 
-        // 1. Insert Enquiry into agency_enquiry CPT
+        // 3. Payload Size Limitation (Reject > 10KB)
+        $raw_body = file_get_contents('php://input');
+        if (strlen($raw_body) > self::MAX_PAYLOAD_BYTES) {
+            wp_send_json_error([
+                'message' => esc_html__('Request payload exceeds maximum allowed size (10KB).', 'agency-site-core'),
+            ], 413);
+            wp_die();
+        }
+
+        // 4. Rate Limiting (5 requests per 10 minutes per IP)
+        $client_ip = $this->get_client_ip();
+        $rate_key  = 'agency_rate_' . md5($client_ip);
+        $attempts  = (int) get_transient($rate_key);
+
+        if ($attempts >= self::RATE_LIMIT_MAX) {
+            wp_send_json_error([
+                'message' => esc_html__('Too many requests. Please wait a few minutes before submitting another inquiry.', 'agency-site-core'),
+            ], 429);
+            wp_die();
+        }
+        set_transient($rate_key, $attempts + 1, self::RATE_LIMIT_WINDOW);
+
+        // 5. Field Shape & Type Validation (Reject arrays)
+        foreach (['name', 'email', 'phone', 'company', 'service', 'budget', 'message'] as $field) {
+            if (isset($_POST[$field]) && !is_string($_POST[$field])) {
+                wp_send_json_error([
+                    'message' => sprintf(esc_html__('Invalid data format for field %s.', 'agency-site-core'), $field),
+                ], 400);
+                wp_die();
+            }
+        }
+
+        // 6. Sanitization & CRLF Injection Mitigation
+        $name    = $this->strip_crlf(sanitize_text_field(wp_unslash($_POST['name'] ?? '')));
+        $email   = $this->strip_crlf(sanitize_email(wp_unslash($_POST['email'] ?? '')));
+        $phone   = $this->strip_crlf(sanitize_text_field(wp_unslash($_POST['phone'] ?? '')));
+        $company = $this->strip_crlf(sanitize_text_field(wp_unslash($_POST['company'] ?? '')));
+        $service = $this->strip_crlf(sanitize_text_field(wp_unslash($_POST['service'] ?? '')));
+        $budget  = $this->strip_crlf(sanitize_text_field(wp_unslash($_POST['budget'] ?? '')));
+        $message = sanitize_textarea_field(wp_unslash($_POST['message'] ?? ''));
+
+        // Validate required fields
+        if (empty($name) || empty($email) || !is_email($email) || empty($message)) {
+            wp_send_json_error([
+                'message' => esc_html__('Please fill in all required fields with a valid email address.', 'agency-site-core'),
+            ], 400);
+            wp_die();
+        }
+
+        // 7. Insert Enquiry into agency_enquiry CPT
         $enquiry_title = sprintf('%s — %s', $name, $service ?: 'General Inquiry');
         $enquiry_id = wp_insert_post([
             'post_type'    => 'agency_enquiry',
@@ -123,6 +180,7 @@ class Agency_Core_Enquiry_Handler {
                 '_enquiry_company' => $company,
                 '_enquiry_service' => $service,
                 '_enquiry_budget'  => $budget,
+                '_enquiry_ip'      => $client_ip,
             ],
         ]);
 
@@ -138,36 +196,16 @@ class Agency_Core_Enquiry_Handler {
             'source_url'   => wp_get_referer() ?: home_url('/contact/'),
         ];
 
-        // 2. Dispatch Webhook
+        // 8. Dispatch Webhook
         $webhook_result = Agency_Core_Webhook_Dispatcher::dispatch($enquiry_data, $enquiry_id);
         if ($enquiry_id) {
             update_post_meta($enquiry_id, '_webhook_status', $webhook_result['status']);
         }
 
-        // 3. Send Admin Notification Email
-        $admin_email  = get_option('admin_email');
-        $site_name    = get_bloginfo('name');
-        $admin_subject= sprintf('[%s Lead] Consultation Request: %s (%s)', $site_name, $name, $service);
-        $admin_body   = "You received a new growth strategy consultation inquiry:\n\n";
-        $admin_body  .= "Name: {$name}\n";
-        $admin_body  .= "Email: {$email}\n";
-        $admin_body  .= "Phone: {$phone}\n";
-        $admin_body  .= "Company: {$company}\n";
-        $admin_body  .= "Service Needed: {$service}\n";
-        $admin_body  .= "Monthly Budget: {$budget}\n\n";
-        $admin_body  .= "Message:\n{$message}\n\n";
-        $admin_body  .= "Webhook Status: " . $webhook_result['status'] . "\n";
-        $admin_body  .= "Date: " . current_time('mysql') . "\n";
+        // 9. Send Admin Notification Email (HTML & Plain Text)
+        $this->send_admin_notification($name, $email, $phone, $company, $service, $budget, $message, $webhook_result['status']);
 
-        $admin_headers = [
-            'Content-Type: text/plain; charset=UTF-8',
-            'From: ' . $site_name . ' <' . $admin_email . '>',
-            'Reply-To: ' . $name . ' <' . $email . '>',
-        ];
-
-        @wp_mail($admin_email, $admin_subject, $admin_body, $admin_headers);
-
-        // 4. Send Matching HTML Confirmation Email to Customer
+        // 10. Send Branded HTML Confirmation Email to Customer
         $this->send_confirmation_email($email, $name, $service, $budget, $company, $phone, $message);
 
         wp_send_json_success([
@@ -178,7 +216,7 @@ class Agency_Core_Enquiry_Handler {
     }
 
     /**
-     * Send HTML confirmation email to the prospective client
+     * Send HTML Confirmation Email to Client
      */
     public function send_confirmation_email($email, $name, $service, $budget, $company, $phone, $message) {
         $site_name    = get_bloginfo('name');
@@ -186,7 +224,7 @@ class Agency_Core_Enquiry_Handler {
         $agency_phone = get_theme_mod('agency_phone', '+1 (800) 555-0199');
         $agency_email = get_theme_mod('agency_email', 'growth@apexagency.digital');
 
-        $template_path = AGENCY_CORE_DIR . '/templates/email-confirmation.php';
+        $template_path = AGENCY_CORE_DIR . 'templates/email-confirmation.php';
 
         ob_start();
         if (file_exists($template_path)) {
@@ -204,5 +242,48 @@ class Agency_Core_Enquiry_Handler {
         ];
 
         return @wp_mail($email, $subject, $html_content, $headers);
+    }
+
+    /**
+     * Send Internal Admin Notification Email
+     */
+    public function send_admin_notification($name, $email, $phone, $company, $service, $budget, $message, $webhook_status) {
+        $admin_email  = get_option('admin_email');
+        $site_name    = get_bloginfo('name');
+        $template_path= AGENCY_CORE_DIR . 'templates/email-internal-notification.php';
+
+        ob_start();
+        if (file_exists($template_path)) {
+            include $template_path;
+        } else {
+            echo "<p>New lead received from {$name} ({$email})</p>";
+        }
+        $html_content = ob_get_clean();
+
+        $subject = sprintf('[%s Lead] Consultation: %s (%s)', $site_name, $name, $service);
+        $headers = [
+            'Content-Type: text/html; charset=UTF-8',
+            'From: ' . $site_name . ' <' . $admin_email . '>',
+            'Reply-To: ' . $name . ' <' . $email . '>',
+        ];
+
+        return @wp_mail($admin_email, $subject, $html_content, $headers);
+    }
+
+    /**
+     * Prevent CRLF injection attacks
+     */
+    private function strip_crlf($str) {
+        return str_replace(["\r", "\n", "%0a", "%0d"], '', $str);
+    }
+
+    /**
+     * Get safe client IP
+     */
+    private function get_client_ip() {
+        if (!empty($_SERVER['REMOTE_ADDR'])) {
+            return sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']));
+        }
+        return '127.0.0.1';
     }
 }

@@ -143,6 +143,12 @@ class Agency_Core_Analytics_Manager {
                         var observer = new MutationObserver(function(mutations, obs) {
                             var alertBox = document.getElementById('contact-form-alert');
                             if (alertBox && !alertBox.classList.contains('hidden') && alertBox.classList.contains('bg-emerald-50')) {
+                                trackEvent('generate_lead', {
+                                    value: budgetField ? budgetField.value : 'unspecified',
+                                    currency: 'USD',
+                                    service_requested: serviceField ? serviceField.value : 'unspecified',
+                                    page_path: window.location.pathname
+                                });
                                 trackEvent('agency_enquiry_submitted', {
                                     service_requested: serviceField ? serviceField.value : 'unspecified',
                                     budget_tier: budgetField ? budgetField.value : 'unspecified',
@@ -164,3 +170,4 @@ class Agency_Core_Analytics_Manager {
         <?php
     }
 }
+

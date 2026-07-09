@@ -1,0 +1,27 @@
+{
+  "name": "agency/wordpress-agency-site",
+  "description": "Production classic WordPress theme and companion plugin for a fictional digital marketing agency",
+  "type": "project",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Agency Engineering Team",
+      "email": "dev@apexagency.digital"
+    }
+  ],
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.9",
+    "wp-coding-standards/wpcs": "^3.0",
+    "phpcompatibility/php-compatibility": "^9.3"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "scripts": {
+    "lint": "phpcs -s",
+    "lint:fix": "phpcbf",
+    "test:syntax": "find themes/agency-site plugins/agency-site-core -name '*.php' -exec php -l {} +"
+  }
+}

@@ -202,112 +202,14 @@ $hero_sec_link = get_theme_mod('agency_hero_sec_cta_link', home_url('/services/'
 
             if ($services_query->have_posts()) :
                 while ($services_query->have_posts()) : $services_query->the_post();
-                    $tagline      = get_post_meta(get_the_ID(), '_agency_service_tagline', true);
-                    $price        = get_post_meta(get_the_ID(), '_agency_service_price', true);
-                    $deliverables = get_post_meta(get_the_ID(), '_agency_service_deliverables', true);
-                    $icon_type    = get_post_meta(get_the_ID(), '_agency_service_icon', true) ?: 'chart';
-                    $badge        = get_post_meta(get_the_ID(), '_agency_service_badge', true);
-                    $items        = !empty($deliverables) ? array_filter(array_map('trim', explode("\n", $deliverables))) : [];
-            ?>
-                <div class="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-soft card-hover flex flex-col justify-between relative group">
-                    <?php if (!empty($badge)) : ?>
-                        <div class="absolute top-6 right-6">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-agency-50 text-agency-700 border border-agency-200">
-                                <?php echo esc_html($badge); ?>
-                            </span>
-                        </div>
-                    <?php endif; ?>
-
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-agency-50 text-agency-600 flex items-center justify-center mb-6 group-hover:bg-agency-600 group-hover:text-white transition-all duration-300 shadow-sm">
-                            <?php echo agency_site_get_icon($icon_type, 'w-7 h-7'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                        </div>
-
-                        <h3 class="text-xl font-bold text-slate-900 mb-2 font-heading">
-                            <a href="<?php the_permalink(); ?>" class="hover:text-agency-600 transition-colors">
-                                <?php the_title(); ?>
-                            </a>
-                        </h3>
-
-                        <?php if ($tagline) : ?>
-                            <p class="text-xs font-semibold text-agency-600 mb-3"><?php echo esc_html($tagline); ?></p>
-                        <?php endif; ?>
-
-                        <div class="text-slate-600 text-sm leading-relaxed mb-6">
-                            <?php the_excerpt(); ?>
-                        </div>
-
-                        <?php if (!empty($items)) : ?>
-                            <div class="border-t border-slate-100 pt-5 mb-6 space-y-2.5">
-                                <?php foreach (array_slice($items, 0, 3) as $deliverable) : ?>
-                                    <div class="flex items-start gap-2.5 text-xs text-slate-600">
-                                        <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        <span><?php echo esc_html($deliverable); ?></span>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-
-                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-                        <span class="text-xs font-bold text-slate-500"><?php echo esc_html($price ?: __('Custom Strategy', 'agency-site')); ?></span>
-                        <a href="<?php the_permalink(); ?>" class="inline-flex items-center gap-1.5 text-xs font-bold text-agency-600 hover:text-agency-700 transition-colors group-hover:translate-x-1 duration-200">
-                            <span>Learn More</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
-                    </div>
-                </div>
-            <?php
+                    get_template_part('template-parts/service-card');
                 endwhile;
                 wp_reset_postdata();
             else :
-                // Render rich default services
+                // Render rich default services via template part
                 $default_services = agency_site_get_default_services();
                 foreach ($default_services as $srv) :
-            ?>
-                <div class="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-soft card-hover flex flex-col justify-between relative group">
-                    <?php if (!empty($srv['badge'])) : ?>
-                        <div class="absolute top-6 right-6">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-agency-50 text-agency-700 border border-agency-200">
-                                <?php echo esc_html($srv['badge']); ?>
-                            </span>
-                        </div>
-                    <?php endif; ?>
-
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-agency-50 text-agency-600 flex items-center justify-center mb-6 group-hover:bg-agency-600 group-hover:text-white transition-all duration-300 shadow-sm">
-                            <?php echo agency_site_get_icon($srv['icon'], 'w-7 h-7'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-                        </div>
-
-                        <h3 class="text-xl font-bold text-slate-900 mb-2 font-heading">
-                            <?php echo esc_html($srv['title']); ?>
-                        </h3>
-
-                        <p class="text-xs font-semibold text-agency-600 mb-3"><?php echo esc_html($srv['tagline']); ?></p>
-
-                        <p class="text-slate-600 text-sm leading-relaxed mb-6">
-                            <?php echo esc_html($srv['desc']); ?>
-                        </p>
-
-                        <div class="border-t border-slate-100 pt-5 mb-6 space-y-2.5">
-                            <?php foreach ($srv['deliverables'] as $deliverable) : ?>
-                                <div class="flex items-start gap-2.5 text-xs text-slate-600">
-                                    <svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    <span><?php echo esc_html($deliverable); ?></span>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-                        <span class="text-xs font-bold text-slate-500"><?php echo esc_html($srv['price']); ?></span>
-                        <a href="<?php echo esc_url(home_url('/services/')); ?>" class="inline-flex items-center gap-1.5 text-xs font-bold text-agency-600 hover:text-agency-700 transition-colors group-hover:translate-x-1 duration-200">
-                            <span>Service Details</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </a>
-                    </div>
-                </div>
-            <?php
+                    get_template_part('template-parts/service-card', null, $srv);
                 endforeach;
             endif;
             ?>
@@ -497,48 +399,7 @@ $hero_sec_link = get_theme_mod('agency_hero_sec_cta_link', home_url('/services/'
 
             if ($recent_posts->have_posts()) :
                 while ($recent_posts->have_posts()) : $recent_posts->the_post();
-            ?>
-                <article class="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-soft card-hover flex flex-col">
-                    <?php if (has_post_thumbnail()) : ?>
-                        <a href="<?php the_permalink(); ?>" class="block aspect-video overflow-hidden group">
-                            <?php the_post_thumbnail('agency-card', ['class' => 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-300']); ?>
-                        </a>
-                    <?php else : ?>
-                        <a href="<?php the_permalink(); ?>" class="block aspect-video bg-gradient-to-tr from-agency-700 to-agency-900 p-6 flex items-end">
-                            <span class="text-white/80 font-heading font-bold text-lg"><?php the_title(); ?></span>
-                        </a>
-                    <?php endif; ?>
-
-                    <div class="p-6 flex-grow flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center gap-3 text-xs text-slate-500 mb-3">
-                                <?php
-                                $categories = get_the_category();
-                                if (!empty($categories)) {
-                                    echo '<span class="font-semibold text-agency-600 bg-agency-50 px-2.5 py-0.5 rounded-full">' . esc_html($categories[0]->name) . '</span>';
-                                }
-                                ?>
-                                <span><?php echo esc_html(agency_site_reading_time()); ?> min read</span>
-                            </div>
-
-                            <h3 class="text-lg font-bold text-slate-900 mb-2 font-heading leading-snug">
-                                <a href="<?php the_permalink(); ?>" class="hover:text-agency-600 transition-colors">
-                                    <?php the_title(); ?>
-                                </a>
-                            </h3>
-
-                            <div class="text-slate-600 text-xs sm:text-sm line-clamp-2 mb-4">
-                                <?php the_excerpt(); ?>
-                            </div>
-                        </div>
-
-                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                            <span><?php echo esc_html(get_the_date('M j, Y')); ?></span>
-                            <a href="<?php the_permalink(); ?>" class="font-bold text-agency-600 hover:text-agency-700">Read Article →</a>
-                        </div>
-                    </div>
-                </article>
-            <?php
+                    get_template_part('template-parts/post-card');
                 endwhile;
                 wp_reset_postdata();
             else :

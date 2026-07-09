@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<ruleset name="AgencySiteCodingStandard">
+    <description>WordPress Coding Standards for Agency Site Theme and Companion Plugin</description>
+
+    <!-- Scan both theme and companion plugin -->
+    <file>themes/agency-site</file>
+    <file>plugins/agency-site-core</file>
+    <file>tests</file>
+
+    <!-- Exclude third-party and generated assets -->
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/assets/dist/*</exclude-pattern>
+    <exclude-pattern>*/assets/vendor/*</exclude-pattern>
+    <exclude-pattern>*/uploads/*</exclude-pattern>
+
+    <!-- Check PHP files only -->
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <!-- PHP compatibility range -->
+    <config name="testVersion" value="8.0-8.3"/>
+
+    <!-- Rule sets -->
+    <rule ref="WordPress-Core"/>
+    <rule ref="WordPress-Extra"/>
+
+    <!-- Custom adjustments for modern themes -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="agency"/>
+                <element value="agency_site"/>
+                <element value="agency_core"/>
+                <element value="Agency_Core"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Allow short array syntax -->
+    <rule ref="Generic.Arrays.DisallowShortArraySyntax.Found">
+        <severity>0</severity>
+    </rule>
+</ruleset>

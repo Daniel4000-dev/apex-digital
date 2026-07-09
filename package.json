@@ -1,0 +1,19 @@
+{
+  "name": "wordpress-agency-site-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Root workspace orchestration scripts for Agency Site theme & plugin",
+  "scripts": {
+    "build": "npm --prefix themes/agency-site run build",
+    "watch": "npm --prefix themes/agency-site run watch:css",
+    "lint:php": "bash -c 'PHP_EXEC=$(command -v php 2>/dev/null || echo \"/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php\"); find themes/agency-site plugins/agency-site-core tests -name \"*.php\" -exec \"$PHP_EXEC\" -l {} \\;'",
+    "test:cli": "bash -c 'PHP_EXEC=$(command -v php 2>/dev/null || echo \"/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php\"); $PHP_EXEC -d mysqli.default_socket=\"/Users/mac/Library/Application Support/Local/run/Rxl0HKEp-/mysql/mysqld.sock\" /Applications/Local.app/Contents/Resources/extraResources/bin/wp-cli/wp-cli.phar --path=\"/Users/mac/Local Sites/wordpress-agency-site/app/public\" eval-file tests/run-all-tests.php'"
+  },
+  "keywords": [
+    "wordpress",
+    "agency-site",
+    "tailwind"
+  ],
+  "author": "Antigravity",
+  "license": "GPL-2.0-or-later"
+}
