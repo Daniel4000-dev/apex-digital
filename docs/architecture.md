@@ -163,3 +163,4 @@ The companion plugin provides WordPress filters for third-party expansion:
 - `agency_core_confirmation_email_subject`: Customize customer email subject line.
 - `agency_core_admin_email_subject`: Customize internal notification subject line.
 - `agency_core_seo_redirects`: Filter URL rewrite/redirect mapping.
+

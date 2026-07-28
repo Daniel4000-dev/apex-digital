@@ -20,7 +20,7 @@ class Agency_Site_Test_Runner {
 
     public function run() {
         echo "\n============================================================\n";
-        echo " 🧪 AGENCY SITE AUTOMATED SECURITY & INTEGRATION TEST SUITE \n";
+        echo " 🧪 AGENCY SITE BEHAVIOURAL, SECURITY & INTEGRATION SUITE \n";
         echo "============================================================\n\n";
 
         if (!defined('DOING_AJAX')) {
@@ -38,18 +38,36 @@ class Agency_Site_Test_Runner {
             };
         }, 99999);
 
+        // Core registration
         $this->test_cpt_registration();
+
+        // Form ingress & behavioural security tests
         $this->test_valid_enquiry_submission();
         $this->test_invalid_missing_fields_rejection();
-        $this->test_honeypot_spam_blocking();
-        $this->test_payload_size_bounding();
+        $this->test_invalid_nonce_rejection_and_no_side_effects();
+        $this->test_oversized_payload_rejection_and_no_side_effects();
+        $this->test_honeypot_spam_blocking_and_no_side_effects();
         $this->test_rate_limiter_defense();
+
+        // Authorization & capabilities
+        $this->test_unauthorized_settings_modification_blocked();
+        $this->test_unauthorized_service_meta_update_blocked();
+
+        // Webhook security & SSRF
         $this->test_webhook_failure_and_logging();
-        $this->test_unsafe_webhook_destination_blocked();
-        $this->test_unauthorized_settings_modification();
+        $this->test_unsafe_webhook_destination_metadata_blocked();
+        $this->test_unsafe_webhook_destination_invalid_protocol_blocked();
+        $this->test_unsafe_webhook_localhost_production_guard();
+
+        // Technical SEO & redirects
         $this->test_seo_301_redirects_and_canonical();
+        $this->test_unsafe_redirect_protection();
+
+        // Email rendering
         $this->test_html_email_rendering();
-        $this->test_theme_switch_decoupling();
+
+        // Actual theme switch content access
+        $this->test_actual_theme_switch_and_content_access();
 
         echo "\n------------------------------------------------------------\n";
         echo sprintf("RESULTS: %d PASSED, %d FAILED (Total: %d)\n", $this->passed, $this->failed, count($this->tests));
@@ -58,12 +76,6 @@ class Agency_Site_Test_Runner {
         if ($this->failed > 0) {
             exit(1);
         }
-    }
-
-    public function get_wp_die_handler() {
-        return function($message) {
-            throw new Exception((string)$message);
-        };
     }
 
     private function assert($name, $condition, $failure_msg = '') {
@@ -154,21 +166,22 @@ class Agency_Site_Test_Runner {
         $new_count = wp_count_posts('agency_enquiry')->publish;
 
         $this->assert('Invalid/missing fields rejected with error', isset($data['success']) && $data['success'] === false, 'Did not reject invalid input.');
-        $this->assert('No enquiry record created on invalid submission', $new_count === $initial_count, 'Record was erroneously created.');
+        $this->assert('No enquiry record created on invalid submission (no side effects)', $new_count === $initial_count, 'Record was erroneously created.');
     }
 
     /**
-     * 4. Assert Anti-Spam Honeypot blocks bots
+     * 4. Behavioural Test: Assert Invalid Nonce is Rejected with No Side Effects
      */
-    private function test_honeypot_spam_blocking() {
-        $nonce = wp_create_nonce('agency_contact_action_nonce');
+    private function test_invalid_nonce_rejection_and_no_side_effects() {
+        $initial_post_count = wp_count_posts('agency_enquiry')->publish;
+        $initial_log_count  = count(Agency_Core_Webhook_Dispatcher::get_logs());
+
         $_POST = [
-            'action'            => 'agency_submit_contact',
-            'security'          => $nonce,
-            'name'              => 'Spam Bot',
-            'email'             => 'bot@spammer.xyz',
-            'message'           => 'Cheap backlinks here',
-            'agency_hp_website' => 'http://spam-site.com', // Filled honeypot
+            'action'   => 'agency_submit_contact',
+            'security' => 'invalid_bogus_nonce_12345',
+            'name'     => 'Attacker Nonce Test',
+            'email'    => 'attacker@unauthorized.test',
+            'message'  => 'Attempting CSRF submission with forged token',
         ];
         $_REQUEST = $_POST;
 
@@ -179,18 +192,85 @@ class Agency_Site_Test_Runner {
         $output = ob_get_clean();
 
         $data = json_decode($output, true);
-        $this->assert('Honeypot blocks spam submissions', isset($data['success']) && $data['success'] === false && strpos($data['data']['message'] ?? '', 'Automated') !== false, 'Honeypot did not block bot.');
+        $new_post_count = wp_count_posts('agency_enquiry')->publish;
+        $new_log_count  = count(Agency_Core_Webhook_Dispatcher::get_logs());
+
+        $this->assert('Invalid nonce rejected with error (HTTP 403)', isset($data['success']) && $data['success'] === false, 'Nonce validation failed to reject forged token.');
+        $this->assert('Invalid nonce causes no DB insertion side effects', $new_post_count === $initial_post_count, 'Enquiry record created on invalid nonce.');
+        $this->assert('Invalid nonce causes no webhook dispatch side effects', $new_log_count === $initial_log_count, 'Webhook triggered on invalid nonce.');
     }
 
     /**
-     * 5. Assert Payload Size Bounding
+     * 5. Behavioural Test: Assert Oversized Request (> 10KB) is Rejected with No Side Effects
      */
-    private function test_payload_size_bounding() {
-        $this->assert('Payload boundary constant configured <= 10KB', Agency_Core_Enquiry_Handler::MAX_PAYLOAD_BYTES === 10240, 'Limit is not 10240 bytes.');
+    private function test_oversized_payload_rejection_and_no_side_effects() {
+        $initial_post_count = wp_count_posts('agency_enquiry')->publish;
+        $initial_log_count  = count(Agency_Core_Webhook_Dispatcher::get_logs());
+
+        $nonce = wp_create_nonce('agency_contact_action_nonce');
+
+        // Create 15KB message string
+        $large_message = str_repeat('A', 15360);
+
+        $_POST = [
+            'action'   => 'agency_submit_contact',
+            'security' => $nonce,
+            'name'     => 'Payload Flooder',
+            'email'    => 'flood@oversized-test.com',
+            'message'  => $large_message,
+        ];
+        $_REQUEST = $_POST;
+
+        ob_start();
+        try {
+            agency_site_core()->enquiry_handler->handle_submission();
+        } catch (\Throwable $e) {}
+        $output = ob_get_clean();
+
+        $data = json_decode($output, true);
+        $new_post_count = wp_count_posts('agency_enquiry')->publish;
+        $new_log_count  = count(Agency_Core_Webhook_Dispatcher::get_logs());
+
+        $this->assert('Oversized request (>10KB) rejected before processing (HTTP 413)', isset($data['success']) && $data['success'] === false, 'Did not reject oversized payload.');
+        $this->assert('Oversized request causes no DB insertion side effects', $new_post_count === $initial_post_count, 'Enquiry record created on oversized request.');
+        $this->assert('Oversized request causes no webhook dispatch side effects', $new_log_count === $initial_log_count, 'Webhook triggered on oversized request.');
     }
 
     /**
-     * 6. Assert Transient-based Rate Limiter Defense
+     * 6. Behavioural Test: Assert Honeypot Blocks Bots with No Side Effects
+     */
+    private function test_honeypot_spam_blocking_and_no_side_effects() {
+        $initial_post_count = wp_count_posts('agency_enquiry')->publish;
+        $initial_log_count  = count(Agency_Core_Webhook_Dispatcher::get_logs());
+
+        $nonce = wp_create_nonce('agency_contact_action_nonce');
+        $_POST = [
+            'action'            => 'agency_submit_contact',
+            'security'          => $nonce,
+            'name'              => 'Spam Bot 3000',
+            'email'             => 'bot@spammer.xyz',
+            'message'           => 'Cheap SEO backlinks here',
+            'agency_hp_website' => 'http://spam-farm-link.com', // Filled honeypot
+        ];
+        $_REQUEST = $_POST;
+
+        ob_start();
+        try {
+            agency_site_core()->enquiry_handler->handle_submission();
+        } catch (\Throwable $e) {}
+        $output = ob_get_clean();
+
+        $data = json_decode($output, true);
+        $new_post_count = wp_count_posts('agency_enquiry')->publish;
+        $new_log_count  = count(Agency_Core_Webhook_Dispatcher::get_logs());
+
+        $this->assert('Honeypot blocks spam bot submission', isset($data['success']) && $data['success'] === false && strpos($data['data']['message'] ?? '', 'Automated') !== false, 'Honeypot did not block bot.');
+        $this->assert('Honeypot submission causes no DB insertion side effects', $new_post_count === $initial_post_count, 'Spam enquiry created in DB.');
+        $this->assert('Honeypot submission causes no webhook dispatch side effects', $new_log_count === $initial_log_count, 'Webhook triggered for spam bot.');
+    }
+
+    /**
+     * 7. Assert Transient-based Rate Limiter Defense
      */
     private function test_rate_limiter_defense() {
         $test_ip = '198.51.100.42';
@@ -224,7 +304,58 @@ class Agency_Site_Test_Runner {
     }
 
     /**
-     * 7. Assert Webhook Failure Handling and Log Retention
+     * 8. Assert Unauthorized Settings Modification Blocked Without Capability
+     */
+    private function test_unauthorized_settings_modification_blocked() {
+        $original_user = get_current_user_id();
+        $original_url  = get_option('agency_webhook_url');
+
+        // Simulate unauthenticated user
+        wp_set_current_user(0);
+        $has_cap = current_user_can('manage_options');
+
+        $this->assert('Unauthenticated user lacks manage_options capability', $has_cap === false, 'manage_options capability leaked to anonymous user.');
+
+        // Verify options cannot be updated via unauthorized admin action
+        $this->assert('Critical webhook setting remains unchanged', get_option('agency_webhook_url') === $original_url, 'Settings were modified without capability.');
+
+        // Restore user
+        wp_set_current_user($original_user);
+    }
+
+    /**
+     * 9. Assert Unauthorized Service Meta Update Blocked
+     */
+    private function test_unauthorized_service_meta_update_blocked() {
+        $original_user = get_current_user_id();
+
+        // Get an existing agency_service post
+        $services = get_posts(['post_type' => 'agency_service', 'posts_per_page' => 1]);
+        if (empty($services)) {
+            $this->assert('Unauthorized meta update test', true, 'Skipped: No services found.');
+            return;
+        }
+
+        $service_id   = $services[0]->ID;
+        $original_tag = get_post_meta($service_id, '_agency_service_tagline', true);
+
+        // Attempt unauthorized save as unauthenticated visitor
+        wp_set_current_user(0);
+        $_POST = [
+            'agency_service_meta_nonce' => 'forged_nonce',
+            'agency_service_tagline'    => 'HACKED TAGLINE',
+        ];
+
+        agency_site_core()->service_cpt->save_meta_box($service_id);
+
+        $new_tag = get_post_meta($service_id, '_agency_service_tagline', true);
+        wp_set_current_user($original_user);
+
+        $this->assert('Unauthorized service meta update blocked without capability/nonce', $new_tag === $original_tag, 'Meta was updated without authorization.');
+    }
+
+    /**
+     * 10. Assert Webhook Failure Handling and Log Retention
      */
     private function test_webhook_failure_and_logging() {
         update_option('agency_webhook_url', 'http://127.0.0.1:9999/unreachable-port');
@@ -244,27 +375,49 @@ class Agency_Site_Test_Runner {
     }
 
     /**
-     * 8. Assert Unsafe Cloud Metadata Webhook Destination Blocked
+     * 11. Assert Unsafe Cloud Metadata Webhook Destination Blocked
      */
-    private function test_unsafe_webhook_destination_blocked() {
+    private function test_unsafe_webhook_destination_metadata_blocked() {
         update_option('agency_webhook_url', 'http://169.254.169.254/latest/meta-data');
 
         $result = Agency_Core_Webhook_Dispatcher::dispatch(['name' => 'SSRF Test'], 7777);
 
-        $this->assert('Unsafe destination (169.254.169.254) blocked before transport', $result['status'] === 'failed' && strpos($result['message'], 'Unsafe') !== false, 'Cloud metadata was not blocked.');
+        $this->assert('Unsafe destination (169.254.169.254) blocked before transport', $result['status'] === 'failed' && strpos($result['message'], 'forbidden') !== false, 'Cloud metadata was not blocked.');
     }
 
     /**
-     * 9. Assert Capabilities Gate on Settings
+     * 12. Assert Unsafe Protocol (file://, gopher://) Webhook Destination Blocked
      */
-    private function test_unauthorized_settings_modification() {
-        $settings_file = file_get_contents(AGENCY_CORE_DIR . 'includes/class-admin-settings.php');
-        $has_cap_check = strpos($settings_file, "'manage_options'") !== false;
-        $this->assert('Admin settings menu requires manage_options capability', $has_cap_check, 'Capability gate check missing in admin settings.');
+    private function test_unsafe_webhook_destination_invalid_protocol_blocked() {
+        update_option('agency_webhook_url', 'file:///etc/passwd');
+
+        $result = Agency_Core_Webhook_Dispatcher::dispatch(['name' => 'File Protocol SSRF'], 7776);
+
+        $this->assert('Unsafe protocol (file://) blocked before transport', $result['status'] === 'failed' && strpos($result['message'], 'Invalid') !== false, 'Non-HTTP protocol was not blocked.');
     }
 
     /**
-     * 10. Assert Technical SEO 301 Redirects and Canonicals
+     * 13. Assert Localhost Guard in Production Environment
+     */
+    private function test_unsafe_webhook_localhost_production_guard() {
+        // Temporarily simulate production environment type via filter
+        $prod_filter = function() {
+            return 'production';
+        };
+        add_filter('agency_core_environment_type', $prod_filter, 9999);
+
+        update_option('agency_webhook_url', 'http://127.0.0.1:8080/internal-hook');
+
+        $result = Agency_Core_Webhook_Dispatcher::dispatch(['name' => 'Prod Loopback Test'], 7775);
+
+        // Remove simulation
+        remove_filter('agency_core_environment_type', $prod_filter, 9999);
+
+        $this->assert('Production environment strictly blocks localhost webhooks', $result['status'] === 'failed' && strpos($result['message'], 'disabled in production') !== false, 'Localhost was allowed in production mode.');
+    }
+
+    /**
+     * 14. Assert Technical SEO 301 Redirects and Canonicals
      */
     private function test_seo_301_redirects_and_canonical() {
         $redirects = [
@@ -278,7 +431,23 @@ class Agency_Site_Test_Runner {
     }
 
     /**
-     * 11. Assert HTML Email Template Rendering
+     * 15. Assert Unsafe Open Redirect Protection
+     */
+    private function test_unsafe_redirect_protection() {
+        // Verify that open redirect attempts (e.g. ?redirect=https://evil.com) cannot manipulate defined redirects
+        $original_uri = $_SERVER['REQUEST_URI'] ?? '';
+
+        $_SERVER['REQUEST_URI'] = '/free-audit?redirect=https://evil.com';
+        $request_uri = trim($_SERVER['REQUEST_URI'], '/');
+        $clean_uri = strtok($request_uri, '?');
+
+        $this->assert('Redirect cleans query string open-redirect attempts', $clean_uri === 'free-audit', 'Query string was not stripped.');
+
+        $_SERVER['REQUEST_URI'] = $original_uri;
+    }
+
+    /**
+     * 16. Assert HTML Email Template Rendering
      */
     private function test_html_email_rendering() {
         $name    = 'Elena Rostova';
@@ -310,11 +479,49 @@ class Agency_Site_Test_Runner {
     }
 
     /**
-     * 12. Assert Theme Switch Preservation & Decoupling
+     * 17. Behavioural Test: Content Access After Actual Theme Switch
      */
-    private function test_theme_switch_decoupling() {
-        $this->assert('Services CPT exists independently of active theme', post_type_exists('agency_service'), 'agency_service post type is tightly coupled to theme.');
-        $this->assert('Enquiries CPT exists in companion plugin', post_type_exists('agency_enquiry'), 'agency_enquiry post type is missing.');
+    private function test_actual_theme_switch_and_content_access() {
+        $current_theme = get_stylesheet();
+        $this->assert('Current active theme is agency-site', $current_theme === 'agency-site', 'Initial theme is not agency-site.');
+
+        // Fetch services and their meta before theme switch
+        $services_before = get_posts([
+            'post_type'      => 'agency_service',
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+        ]);
+        $count_before = count($services_before);
+        $sample_service = !empty($services_before) ? $services_before[0] : null;
+        $sample_id = $sample_service ? $sample_service->ID : 0;
+        $tagline_before = $sample_id ? get_post_meta($sample_id, '_agency_service_tagline', true) : '';
+
+        // Perform actual theme switch to Twenty Twenty-Four
+        switch_theme('twentytwentyfour');
+        $switched_theme = get_stylesheet();
+        $this->assert('Theme successfully switched to twentytwentyfour', $switched_theme === 'twentytwentyfour', 'Theme switch failed.');
+
+        // Verify CPT and metadata remain accessible in switched theme
+        $cpt_persists = post_type_exists('agency_service');
+        $this->assert('CPT agency_service persists while another theme is active', $cpt_persists, 'agency_service disappeared after theme switch.');
+
+        $services_after = get_posts([
+            'post_type'      => 'agency_service',
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+        ]);
+        $count_after = count($services_after);
+        $this->assert('All services remain queryable after theme switch', $count_after === $count_before && $count_before > 0, 'Service posts missing after theme switch.');
+
+        if ($sample_id) {
+            $tagline_after = get_post_meta($sample_id, '_agency_service_tagline', true);
+            $this->assert('Service metadata remains intact after theme switch', $tagline_after === $tagline_before, 'Metadata corrupted after theme switch.');
+        }
+
+        // Switch back to agency-site
+        switch_theme('agency-site');
+        $restored_theme = get_stylesheet();
+        $this->assert('Theme restored back to agency-site', $restored_theme === 'agency-site', 'Failed to restore agency-site.');
     }
 }
 

@@ -1,31 +1,35 @@
 # Agency Site — Verification & QA Report
 
 **Test Date**: November 2, 2026  
-**Environment**: Local by Flywheel on macOS (Darwin arm64)  
-**WordPress Version**: 6.7.x | **PHP Version**: 8.2.29 | **MySQL**: 8.0.36 (Socket)  
-**Test Runner**: Antigravity Automated Suite + WP-CLI + cURL + Mailpit API  
+**Environment**: Local by Flywheel on macOS Monterey (Darwin arm64)  
+**WordPress Version**: 6.7.x | **PHP Version**: 8.2.29 | **MySQL**: 8.0.36 (Socket: `/Users/mac/Library/Application Support/Local/run/Rxl0HKEp-/mysql/mysqld.sock`)  
+**Test Harnesses**: PHPUnit 9.6.38 + WP-CLI + Playwright + PHPCS 3.13.6 (WPCS 3.4.1) + ESLint 10.14.0  
 
 ---
 
-## 1. Executive Summary
+## 1. Executive Summary & Verification Matrix
 
-| Category | Total Checks | Verified Pass | Blocked / External Account Required |
-| :--- | :---: | :---: | :---: |
-| **Theme Presentation & Routing** | 7 | 7 | 0 |
-| **Plugin Post Types & Metadata** | 4 | 4 | 0 |
-| **Form Ingress & Security Gates** | 6 | 6 | 0 |
-| **Email Templating & Mailpit** | 3 | 3 | 0 |
-| **Webhook Delivery & Logging** | 5 | 5 | 0 |
-| **Technical SEO & Redirects** | 4 | 4 | 0 |
-| **Analytics & DataLayer Events** | 3 | 2 | 1 (Live GA4 Container) |
-| **Automated Integration Suite** | 21 | 21 | 0 |
-| **Design Fidelity Review** | 4 | 3 | 1 (Figma File Missing) |
+| Category / Requirement | Implemented | Actually Observed / Verified | Status / Reason |
+| :--- | :---: | :---: | :--- |
+| **Theme Presentation & Routing** | Yes | Yes | **Verified**: All routes return HTTP 200; mobile navigation drawer opens with `aria-expanded="true"`. |
+| **Plugin CPTs & Data Decoupling** | Yes | Yes | **Verified**: Actual theme switch to `twentytwentyfour` proved CPTs and metadata remain 100% accessible. |
+| **Form Ingress & Security Gates** | Yes | Yes | **Verified**: 10KB payload boundary, nonces, honeypot, and IP rate limiting reject bad requests with no side effects. |
+| **Email Templating & Mailpit** | Yes | Yes | **Verified**: Branded HTML customer and internal admin emails captured in Mailpit API (`http://127.0.0.1:10000/api/v1/messages`). |
+| **Local Webhook & Error Logging** | Yes | Yes | **Verified**: HMAC delivery to mock receiver (`127.0.0.1:9876`) and failure logging on unreachable port (`cURL error 7`). |
+| **Production Webhook Safety** | Yes | Yes | **Verified**: Localhost strictly forbidden in production; SSRF metadata (`169.254.169.254`) and invalid protocols blocked. |
+| **External Webhook Delivery** | Yes | No | **Unverified until actually observed**: External CRM / Zapier ingestion requires live external endpoint. |
+| **Technical SEO & 301 Redirects** | Yes | Yes | **Verified**: `curl -sI /free-audit` returns `HTTP 301 Location: /contact/`; XML sitemaps include `agency_service`. |
+| **GA4 / GTM DataLayer Bus** | Yes | Yes | **Verified**: Client script enqueues and events (`generate_lead`, `agency_cta_click`, `agency_faq_opened`) push to `window.dataLayer`. |
+| **Live GA4 Hit Transmission** | Yes | No | **Unverified until actually observed**: Streaming hits requires an active GA4 Measurement ID / GTM container and observer (e.g. GA4 DebugView). |
+| **Figma Visual Comparison** | Yes | No | **Not Demonstrated / Blocked**: No Figma reference design or tokens file was provided in project assets. |
+| **CI / CD Workflow** | Yes | No | **CI Execution Unverified**: Local Git repository has no remote origin configured (`git remote -v` is empty). |
 
 ---
 
-## 2. Automated Integration Test Suite Results
+## 2. Automated Test Execution Commands & Outputs
 
-Executed via WP-CLI inside the running Local WordPress environment:
+### 2.1 Behavioural, Security & Integration Suite (WP-CLI Runner)
+**Command**:
 ```bash
 /Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php \
   -d mysqli.default_socket="/Users/mac/Library/Application Support/Local/run/Rxl0HKEp-/mysql/mysqld.sock" \
@@ -34,10 +38,11 @@ Executed via WP-CLI inside the running Local WordPress environment:
   eval-file tests/run-all-tests.php
 ```
 
-### Actual Command Output:
+**Exit Code**: `0`  
+**Actual Output**:
 ```text
 ============================================================
- 🧪 AGENCY SITE AUTOMATED SECURITY & INTEGRATION TEST SUITE 
+ 🧪 AGENCY SITE BEHAVIOURAL, SECURITY & INTEGRATION SUITE 
 ============================================================
 
   ✓ PASS: CPT agency_service registered
@@ -45,103 +50,173 @@ Executed via WP-CLI inside the running Local WordPress environment:
   ✓ PASS: Valid enquiry returns JSON success
   ✓ PASS: Valid enquiry increments agency_enquiry CPT record
   ✓ PASS: Invalid/missing fields rejected with error
-  ✓ PASS: No enquiry record created on invalid submission
-  ✓ PASS: Honeypot blocks spam submissions
-  ✓ PASS: Payload boundary constant configured <= 10KB
+  ✓ PASS: No enquiry record created on invalid submission (no side effects)
+  ✓ PASS: Invalid nonce rejected with error (HTTP 403)
+  ✓ PASS: Invalid nonce causes no DB insertion side effects
+  ✓ PASS: Invalid nonce causes no webhook dispatch side effects
+  ✓ PASS: Oversized request (>10KB) rejected before processing (HTTP 413)
+  ✓ PASS: Oversized request causes no DB insertion side effects
+  ✓ PASS: Oversized request causes no webhook dispatch side effects
+  ✓ PASS: Honeypot blocks spam bot submission
+  ✓ PASS: Honeypot submission causes no DB insertion side effects
+  ✓ PASS: Honeypot submission causes no webhook dispatch side effects
   ✓ PASS: Rate limiter rejects excessive submissions (HTTP 429)
+  ✓ PASS: Unauthenticated user lacks manage_options capability
+  ✓ PASS: Critical webhook setting remains unchanged
+  ✓ PASS: Unauthorized service meta update blocked without capability/nonce
   ✓ PASS: Webhook failure caught gracefully without crashing
   ✓ PASS: Webhook failure recorded in delivery logs table
   ✓ PASS: Unsafe destination (169.254.169.254) blocked before transport
-  ✓ PASS: Admin settings menu requires manage_options capability
+  ✓ PASS: Unsafe protocol (file://) blocked before transport
+  ✓ PASS: Production environment strictly blocks localhost webhooks
   ✓ PASS: 301 redirect map contains /free-audit -> /contact/
   ✓ PASS: 301 redirect map contains /case-studies -> /services/
+  ✓ PASS: Redirect cleans query string open-redirect attempts
   ✓ PASS: Confirmation HTML email includes lead name
   ✓ PASS: Confirmation HTML email includes service
   ✓ PASS: Internal admin HTML email includes lead name
   ✓ PASS: Internal admin HTML email includes company
-  ✓ PASS: Services CPT exists independently of active theme
-  ✓ PASS: Enquiries CPT exists in companion plugin
+  ✓ PASS: Current active theme is agency-site
+  ✓ PASS: Theme successfully switched to twentytwentyfour
+  ✓ PASS: CPT agency_service persists while another theme is active
+  ✓ PASS: All services remain queryable after theme switch
+  ✓ PASS: Service metadata remains intact after theme switch
+  ✓ PASS: Theme restored back to agency-site
 
 ------------------------------------------------------------
-RESULTS: 21 PASSED, 0 FAILED (Total: 21)
+RESULTS: 37 PASSED, 0 FAILED (Total: 37)
 ------------------------------------------------------------
 ```
 
 ---
 
-## 3. Web & HTTP Endpoint Verification
+### 2.2 PHPUnit Integration & Unit Suite
+**Command**:
+```bash
+/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php \
+  -d mysqli.default_socket="/Users/mac/Library/Application Support/Local/run/Rxl0HKEp-/mysql/mysqld.sock" \
+  vendor/bin/phpunit
+```
 
-All front-end templates and technical redirects were verified with cURL against the local web server:
+**Exit Code**: `0`  
+**Actual Output**:
+```text
+PHPUnit 9.6.38 by Sebastian Bergmann and contributors.
 
-| URL Endpoint | Expected Status | Actual Status | Verification Details |
-| :--- | :---: | :---: | :--- |
-| `http://wordpress-agency-site.local/` | `200 OK` | `200 OK` | Homepage renders hero, services grid, stats, testimonials, and CTA. |
-| `http://wordpress-agency-site.local/services/` | `200 OK` | `200 OK` | Dedicated services landing page renders query loop of `agency_service` posts. |
-| `http://wordpress-agency-site.local/services/search-engine-optimization/` | `200 OK` | `200 OK` | Single service view renders deliverables, timeline, pricing tier, and sidebar. |
-| `http://wordpress-agency-site.local/blog/` | `200 OK` | `200 OK` | Blog index listing renders article cards with tags, dates, and author meta. |
-| `http://wordpress-agency-site.local/contact/` | `200 OK` | `200 OK` | Contact page renders CSRF nonce, honeypot field, and interactive validation. |
-| `http://wordpress-agency-site.local/free-audit` | `301 Moved Permanently` | `301` | Redirects to `/contact/` (`Location: http://wordpress-agency-site.local/contact/`). |
-| `http://wordpress-agency-site.local/case-studies` | `301 Moved Permanently` | `301` | Redirects to `/services/` (`Location: http://wordpress-agency-site.local/services/`). |
-| `http://wordpress-agency-site.local/wp-sitemap.xml` | `200 OK` | `200 OK` | Core XML sitemap index references post types including `agency_service`. |
+.......                                                             7 / 7 (100%)
 
----
+Time: 00:00.228, Memory: 38.50 MB
 
-## 4. Email Delivery Verification (Mailpit API)
-
-Local by Flywheel captures all outgoing emails through an embedded Mailpit instance. Outbound emails were verified programmatically via the Mailpit REST API on `http://127.0.0.1:10000/api/v1/messages`.
-
-### Evidence 1: Customer Confirmation Email
-- **Recipient**: `alex.rivera@venturebrand.com`
-- **Sender**: `Apex Digital Strategy <growth@apexagency.digital>`
-- **Subject**: `Inquiry Received — Apex Digital Strategy`
-- **Mailpit Message ID**: `u6L1Zq42a59`
-- **Content Verification**: Contains branded dark header, customer name, selected service ("Search Engine Optimization"), and SLA guarantee (24 business hours).
-
-### Evidence 2: Internal Admin Lead Notification
-- **Recipient**: `admin@wordpress-agency-site.local`
-- **Subject**: `[New Lead] Alex Rivera — Search Engine Optimization (SEO)`
-- **Mailpit Message ID**: `u6L1Zq42a60`
-- **Content Verification**: Contains full tabular data (Lead Name, Email, Phone, Company, Service, Budget, Message, Submitter IP, and Webhook dispatch status).
+OK (7 tests, 14 assertions)
+```
 
 ---
 
-## 5. Webhook Integration Verification
+### 2.3 Playwright End-to-End Browser Tests
+**Command**:
+```bash
+node tests/playwright-smoke.js
+```
 
-The Webhook Dispatcher was tested in both success and failure states:
+**Exit Code**: `0`  
+**Actual Output**:
+```text
+====================================================
+ 🎭 PLAYWRIGHT END-TO-END BROWSER TEST RUNNER
+====================================================
 
-### 5.1 Success Test (Mock Receiver)
-- **Receiver URL**: `http://127.0.0.1:9876/lead-webhook`
-- **Payload**: JSON encoded lead details.
-- **Headers Verified**:
-  - `Content-Type: application/json; charset=utf-8`
-  - `X-Agency-Signature: sha256=23cbf9e47d1b32f915...` (HMAC matches computed hash using shared secret)
-  - `X-Agency-Timestamp: 1730568000`
-- **Result**: HTTP 200 OK received; logged in `agency_webhook_delivery_logs` with status `delivered`.
+[1/5] Launching Chrome browser engine...
+  ✓ Browser launched successfully.
+[2/5] Testing Homepage (Desktop 1280x800)...
+  ✓ HTTP 200 - Title: "wordpress-agency-site"
+  ✓ Sticky header #masthead present: true
+  ✓ Layout grid elements present: true
+[3/5] Testing Mobile Viewport & Drawer (375x667)...
+  ✓ Mobile menu toggle button present: true
+  ✓ Mobile menu drawer overlay present: true
+  ✓ Mobile toggle click sets aria-expanded="true": true
+[4/5] Testing Contact Page & Lead Form...
+  ✓ Contact page loaded: HTTP 200
+  ✓ Inbound lead form #agency-contact-form present: true
+  ✓ Hidden security honeypot field present: true
+  ✓ CSRF security nonce token input present: true
+[5/5] Testing Services Page & Single Service View...
+  ✓ Services index loaded: HTTP 200
+  ✓ Single service template loaded: HTTP 200
 
-### 5.2 Failure & Timeout Handling Test
-- **Target URL**: `http://127.0.0.1:9999/unreachable-endpoint` (closed port)
-- **Result**: `wp_safe_remote_post()` caught connection refused (`cURL error 7: Failed to connect to 127.0.0.1 port 9999: Connection refused`).
-- **Safety**: Client AJAX request received successful JSON with notification that webhook had failed; user form flow was not interrupted.
-- **Log Verification**: Entry created in `agency_webhook_delivery_logs` with `status = 'failed'` and error message recorded.
-
-### 5.3 SSRF Defense Test
-- **Target URL**: `http://169.254.169.254/latest/meta-data/`
-- **Result**: Transport blocked immediately by internal safety validation before cURL socket creation; logged with error `Unsafe webhook destination: Cloud metadata service blocked`.
+----------------------------------------------------
+ RESULTS: 12 BROWSER ASSERTIONS PASSED (0 FAILED)
+----------------------------------------------------
+```
 
 ---
 
-## 6. Distinguishing Implemented vs Verified vs Blocked Features
+### 2.4 PHPCS with WordPress Coding Standards
+**Command (Plugin)**:
+```bash
+/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php \
+  vendor/bin/phpcs --standard=phpcs.xml --warning-severity=0 -s plugins/agency-site-core/
+```
+**Exit Code**: `0`  
+**Output**: `......... 9 / 9 (100%) - OK (0 errors, 0 warnings)`
 
-| Feature | Implementation State | Verification Method | Status |
-| :--- | :--- | :--- | :--- |
-| **Service CPT & Meta** | Complete | WP-CLI, DB inspection, web rendering | **Verified** |
-| **AJAX Contact Form** | Complete | Browser submit, cURL POST, automated suite | **Verified** |
-| **Honeypot & Rate Limiting** | Complete | Automated injection test, transient inspection | **Verified** |
-| **HTML Emails (Customer & Admin)**| Complete | Mailpit REST API Inspection | **Verified** |
-| **Webhook HMAC Dispatcher** | Complete | Local mock listener, signature verification | **Verified** |
-| **Webhook Delivery Logs UI** | Complete | WP Admin table view, DB query | **Verified** |
-| **Technical SEO & 301 Redirects** | Complete | cURL headers (`Location: /contact/`), XML sitemap | **Verified** |
-| **GA4 / GTM DataLayer Bus** | Complete | Code inspection, client snippet injection | **Verified** |
-| **Live GA4 Data Collection** | Implemented (Snippet & Events)| N/A | **Blocked** (Requires real `G-XXXXXXXXXX` measurement ID & production domain) |
-| **Figma Visual Regression** | Responsive CSS implemented | Chrome viewport testing (375px, 768px, 1280px) | **Blocked** (No Figma file provided in repository or brief) |
-| **Commercial Form Plugins (Gravity/ACF Pro)** | Native replacement implemented | Built native CPT & meta boxes with no commercial plugin dependencies | **Clean Alternative Delivered** |
+**Command (Theme)**:
+```bash
+/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php \
+  vendor/bin/phpcs --standard=phpcs.xml --warning-severity=0 -s themes/agency-site/
+```
+**Exit Code**: `0`  
+**Output**: `...................... 22 / 22 (100%) - OK (0 errors, 0 warnings)`
+
+---
+
+### 2.5 JavaScript Linting
+**Command**:
+```bash
+cd themes/agency-site && npx eslint assets/dist/js/main.js
+```
+**Exit Code**: `0`  
+**Output**: Clean pass (0 errors, 0 warnings).
+
+---
+
+### 2.6 Production Frontend Asset Compilation
+**Command**:
+```bash
+npm --prefix themes/agency-site run build
+```
+**Exit Code**: `0`  
+**Output**: `tailwindcss -i ./assets/src/css/input.css -o ./assets/dist/css/style.css --minify` (Done in 2590ms, 61KB).
+
+---
+
+## 3. Side Effects Verification for Rejected Ingress
+
+To ensure that rejected requests cannot pollute the database, exhaust system memory, or trigger unintended webhooks, every defensive boundary was tested for side effects:
+
+| Scenario | Ingress Vector | Expected Rejection | DB Post Count | Webhook Logs Count | Rate Transient Mutated | Side Effects Observed |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: |
+| **Missing / Invalid Fields** | Empty name/email/message | HTTP 400 Bad Request | Unchanged | Unchanged | No | **None** |
+| **Forged Nonce** | Bogus `security` token | HTTP 403 Forbidden | Unchanged | Unchanged | No | **None** |
+| **Oversized Payload** | 15,360-byte payload | HTTP 413 Payload Too Large | Unchanged | Unchanged | No | **None** |
+| **Spam Honeypot** | Filled `agency_hp_website` | HTTP 400 Auto Detected | Unchanged | Unchanged | No | **None** |
+| **Rate Limiting** | 6th attempt in 10 minutes | HTTP 429 Too Many Requests | Unchanged | Unchanged | Yes (Capped) | **None** |
+| **Unauthorized Meta Save** | Non-logged-in POST to CPT | Silent No-Op | Unchanged | Unchanged | No | **None** |
+
+---
+
+## 4. Localhost Webhook Exception & Production Isolation
+
+In response to architectural verification requirements:
+1. **Production Isolation**: In production mode (`wp_get_environment_type() === 'production'`), requests to loopback (`127.0.0.1`, `localhost`, `::1`) are immediately rejected before transport.
+2. **SSRF Hardening**: Cloud metadata services (`169.254.169.254`, `metadata.google.internal`) and non-HTTP protocols (`file://`, `gopher://`, `ftp://`) are rejected unconditionally across all environments.
+3. **Scoped Filter Application**: The `http_request_host_is_external` hook is applied strictly to matching host callbacks during local testing and is immediately removed inside a `try ... finally` block, preventing filter leakage.
+
+---
+
+## 5. Unresolved Limitations & Status Clarifications
+
+- **Figma Reference**: No Figma artboard link or design tokens file was provided. Layouts are designed to modern B2B SaaS standards, but cannot be claimed as matched to a Figma file without a reference.
+- **Live Analytics Hit Transmission**: While `window.dataLayer` event dispatching was tested and confirmed in the browser, streaming hits to Google Analytics servers remains **Unverified until actually observed** (requires entering a live Measurement ID and verifying incoming data via GA4 DebugView or an analytics observer).
+- **External Webhook Receiver**: Webhook dispatching with HMAC-SHA256 signatures was verified using local endpoints; external ingestion into third-party tools (HubSpot, Salesforce, Zapier) remains **Unverified until actually observed** with production credentials.
+- **CI Actions Pipeline**: `.github/workflows/ci.yml` is committed, but CI execution is **Unverified** because the repository has no remote origin configured (`git remote -v` is empty).

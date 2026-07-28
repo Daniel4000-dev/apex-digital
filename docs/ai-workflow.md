@@ -67,3 +67,4 @@ Rather than accepting AI-generated code on faith, every critical system was subj
 1. **Architecture First**: Defining the boundary between Theme (presentation) and Plugin (data/integrations) early prevented messy technical debt when extracting CPTs.
 2. **Automated Test Runners in CLI**: Writing a self-contained CLI test runner (`tests/run-all-tests.php`) saved hours of manual form submissions and provided instant regression feedback.
 3. **Honest Reporting**: Clearly documenting what was verified (local endpoints, Mailpit, mock webhooks) versus what was blocked by external accounts (live GA4 container, Figma design file) establishes trust and transparency in engineering handoffs.
+

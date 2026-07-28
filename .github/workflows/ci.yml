@@ -110,3 +110,4 @@ jobs:
         run: |
           cd /tmp/wordpress
           wp eval-file wp-content/tests/run-all-tests.php --allow-root
+

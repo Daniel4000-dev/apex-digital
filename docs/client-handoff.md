@@ -83,3 +83,4 @@ To forward leads into your CRM (HubSpot, Salesforce, Zapier, Make, n8n):
    ```
 3. **Decoupled Architecture Safety**:
    If the theme is ever switched, all service data, inquiry submissions, and webhook history remain intact in the database.
+

@@ -6,4 +6,3 @@
  */
 
 require_once get_template_directory() . '/template-services.php';
-

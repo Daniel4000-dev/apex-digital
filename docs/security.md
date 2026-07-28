@@ -76,26 +76,31 @@ $headers = [
 ];
 ```
 
-### 3.4 Webhook Transport & SSRF Defense
+### 3.4 Webhook Transport, SSRF Defense & Production Isolation
 The Webhook Dispatcher enforces strict safeguards:
 1. **Destination Verification**:
-   - Must be a valid URL via `wp_http_validate_url()`.
-   - Explicitly rejects cloud metadata endpoints (`169.254.169.254`) and AWS instance identity documents.
-   - Restricts ports to standard HTTP/HTTPS (`80`, `443`, or designated testing port).
-2. **Payload Cryptographic Signature**:
-   - The outbound JSON payload is serialized with `wp_json_encode()`.
+   - Must be a valid URL via `filter_var(FILTER_VALIDATE_URL)` and `wp_http_validate_url()`.
+   - Explicitly rejects non-HTTP protocols (`file://`, `gopher://`, `ftp://`).
+   - Explicitly rejects cloud metadata endpoints (`169.254.169.254` and `metadata.google.internal`).
+2. **Production vs Localhost Boundary Isolation**:
+   - In production mode (`wp_get_environment_type() === 'production'`), requests to loopback addresses (`127.0.0.1`, `localhost`, `::1`) are immediately rejected before socket initialization.
+   - For local/development environments, loopback is permitted exclusively via a narrowly scoped filter applied to the exact matching host and immediately cleaned up in a `finally` block.
+3. **Payload Cryptographic Signature**:
+   - Outbound JSON payloads are serialized with `wp_json_encode()`.
    - A keyed-hash message authentication code (`HMAC-SHA256`) is computed with the configured shared secret:
      ```php
      $signature = hash_hmac('sha256', $json_payload, $secret);
      $headers['X-Agency-Signature'] = 'sha256=' . $signature;
      $headers['X-Agency-Timestamp'] = time();
      ```
-3. **Transport Resilience**:
+4. **Transport Resilience & Side-Effect Safety**:
    - Executed via `wp_safe_remote_post()` with an 8-second connection timeout.
-   - Failures (network timeouts, 4xx/5xx responses) are caught gracefully in a `try/catch` block without crashing the user's form submission or interrupting email delivery.
-   - All outcomes (headers, request body, response code, response body, latency, error messages) are persisted to `{$wpdb->prefix}agency_webhook_delivery_logs`.
+   - Failures (network timeouts, 4xx/5xx responses) are caught gracefully in a `try/catch` block without crashing form submissions or interrupting email dispatch.
+   - Rejected or failed submissions cause no side effects in post counts or external queue states.
+   - All outcomes are persisted to `{$wpdb->prefix}agency_webhook_delivery_logs`.
 
 ### 3.5 Administrative Capabilities & Access Control
 - All settings forms verify nonces (`check_admin_referer('agency_settings_verify', 'agency_settings_nonce')`).
 - Access to the Settings and Webhook Delivery Logs screens is gated with `current_user_can('manage_options')`.
 - Non-administrators cannot read enquiry records or inspect webhook logs.
+

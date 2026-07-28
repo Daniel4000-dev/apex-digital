@@ -103,3 +103,4 @@ Before launching to European Union or UK audiences:
 - Implement a Consent Management Platform (CMP) such as Complianz, Cookiebot, or OneTrust.
 - Enqueue Google tags in **Consent Mode v2** (`analytics_storage: 'denied'`, `ad_storage: 'denied'`) until explicit visitor opt-in is registered.
 - Notice that IP addresses stored in `agency_enquiry` CPT are accessible only to authenticated site administrators and can be anonymized in `includes/class-enquiry-handler.php` if required by legal counsel.
+

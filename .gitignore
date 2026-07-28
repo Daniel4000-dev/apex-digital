@@ -30,6 +30,8 @@ package-lock.json
 dist/*.map
 *.log
 debug.log
+.phpunit.result.cache
+vendor/
 
 # IDE & Editor Configurations
 .idea/

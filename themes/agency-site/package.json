@@ -6,7 +6,8 @@
   "scripts": {
     "build:css": "tailwindcss -i ./assets/src/css/input.css -o ./assets/dist/css/style.css --minify",
     "watch:css": "tailwindcss -i ./assets/src/css/input.css -o ./assets/dist/css/style.css --watch",
-    "build": "npm run build:css"
+    "build": "npm run build:css",
+    "lint:js": "npx eslint assets/dist/js/main.js"
   },
   "keywords": [
     "wordpress",

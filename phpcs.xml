@@ -38,8 +38,44 @@
         </properties>
     </rule>
 
-    <!-- Allow short array syntax -->
+    <!-- Allow modern short array syntax -->
     <rule ref="Generic.Arrays.DisallowShortArraySyntax.Found">
         <severity>0</severity>
     </rule>
+
+    <!-- Allow short ternary operator (Elvis operator) -->
+    <rule ref="Universal.Operators.DisallowShortTernary">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Relax strict class file prefix naming for concise modular files -->
+    <rule ref="WordPress.Files.FileName.InvalidClassFileName">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Allow natural equality comparisons (non-Yoda) -->
+    <rule ref="WordPress.PHP.YodaConditions">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Allow inline tracking tags (GTM/GA4) injected in wp_head -->
+    <rule ref="WordPress.WP.EnqueuedResources.NonEnqueuedScript">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Allow standard template variables in classic template files -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Allow helper functions alongside class definitions in main plugin file -->
+    <rule ref="Universal.Files.SeparateFunctionsFromOO.Mixed">
+        <severity>0</severity>
+    </rule>
+
+    <!-- Allow WordPress CPT templates with underscores matching CPT slug e.g. single-agency_service.php -->
+    <rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+        <severity>0</severity>
+    </rule>
 </ruleset>
+
