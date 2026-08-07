@@ -10,3 +10,4 @@ define('DOING_AJAX', true);
 
 // Load WordPress
 require_once '/Users/mac/Local Sites/wordpress-agency-site/app/public/wp-load.php';
+
