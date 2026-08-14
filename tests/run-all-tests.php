@@ -492,14 +492,41 @@ class Agency_Site_Test_Runner {
             'post_status'    => 'publish',
         ]);
         $count_before = count($services_before);
-        $sample_service = !empty($services_before) ? $services_before[0] : null;
-        $sample_id = $sample_service ? $sample_service->ID : 0;
-        $tagline_before = $sample_id ? get_post_meta($sample_id, '_agency_service_tagline', true) : '';
 
-        // Perform actual theme switch to Twenty Twenty-Four
-        switch_theme('twentytwentyfour');
+        // Ensure at least one service exists for the decoupling assertion
+        if ($count_before === 0) {
+            $sample_id = wp_insert_post([
+                'post_type'   => 'agency_service',
+                'post_status' => 'publish',
+                'post_title'  => 'Decoupling Test Service',
+                'meta_input'  => [
+                    '_agency_service_tagline' => 'Decoupled tagline for theme switch testing',
+                ],
+            ]);
+            $count_before   = 1;
+            $tagline_before = 'Decoupled tagline for theme switch testing';
+        } else {
+            $sample_service = $services_before[0];
+            $sample_id      = $sample_service->ID;
+            $tagline_before = get_post_meta($sample_id, '_agency_service_tagline', true);
+        }
+
+        // Dynamically locate an alternate default theme installed in core
+        $installed_themes = wp_get_themes();
+        $fallback_theme   = 'twentytwentyfour';
+        if (!isset($installed_themes[$fallback_theme])) {
+            foreach (['twentytwentyfive', 'twentytwentythree', 'twentytwentytwo'] as $alt) {
+                if (isset($installed_themes[$alt])) {
+                    $fallback_theme = $alt;
+                    break;
+                }
+            }
+        }
+
+        // Perform actual theme switch to fallback default theme
+        switch_theme($fallback_theme);
         $switched_theme = get_stylesheet();
-        $this->assert('Theme successfully switched to twentytwentyfour', $switched_theme === 'twentytwentyfour', 'Theme switch failed.');
+        $this->assert("Theme successfully switched to {$fallback_theme}", $switched_theme === $fallback_theme, 'Theme switch failed.');
 
         // Verify CPT and metadata remain accessible in switched theme
         $cpt_persists = post_type_exists('agency_service');
