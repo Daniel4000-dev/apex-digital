@@ -32,6 +32,14 @@ jobs:
           echo "===> Linting PHP files..."
           find themes/agency-site plugins/agency-site-core tests -name "*.php" -exec php -l {} +
 
+      - name: Install Composer Dependencies
+        run: |
+          composer install --no-interaction --prefer-dist
+
+      - name: Run PHP CodeSniffer (WPCS)
+        run: |
+          vendor/bin/phpcs --standard=phpcs.xml --warning-severity=0
+
       - name: Install Frontend Dependencies
         working-directory: themes/agency-site
         run: |
@@ -47,14 +55,6 @@ jobs:
           test -s themes/agency-site/assets/dist/css/style.css || { echo "Missing or empty style.css"; exit 1; }
           test -s themes/agency-site/assets/dist/js/main.js || { echo "Missing or empty main.js"; exit 1; }
           echo "Verified frontend build artifacts are present and non-empty."
-
-      - name: Run PHP CodeSniffer (WPCS)
-        run: |
-          if [ -f vendor/bin/phpcs ]; then
-            ./vendor/bin/phpcs
-          else
-            echo "Skipping strict PHPCS enforcement in runner without global WPCS ruleset; local phpcs.xml configured."
-          fi
 
   wp-integration-tests:
     name: WordPress Integration & Security Tests
