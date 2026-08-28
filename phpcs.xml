@@ -5,7 +5,6 @@
     <!-- Scan both theme and companion plugin -->
     <file>themes/agency-site</file>
     <file>plugins/agency-site-core</file>
-    <file>tests</file>
 
     <!-- Exclude third-party and generated assets -->
     <exclude-pattern>*/node_modules/*</exclude-pattern>
@@ -13,6 +12,7 @@
     <exclude-pattern>*/assets/dist/*</exclude-pattern>
     <exclude-pattern>*/assets/vendor/*</exclude-pattern>
     <exclude-pattern>*/uploads/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
 
     <!-- Check PHP files only -->
     <arg name="extensions" value="php"/>
