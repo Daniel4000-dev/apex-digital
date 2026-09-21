@@ -129,7 +129,7 @@ function agency_site_scripts() {
 		'agency-fonts',
 		'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap',
 		array(),
-		null
+		'1.0.0'
 	);
 
 	// Main Compiled Tailwind Stylesheet
@@ -214,7 +214,7 @@ if ( ! class_exists( 'Agency_Core_Enquiry_Handler' ) ) {
 			'Reply-To: ' . $name . ' <' . $email . '>',
 		);
 
-		@wp_mail( $admin_email, $subject, $body, $headers );
+		wp_mail( $admin_email, $subject, $body, $headers );
 
 		wp_send_json_success(
 			array(
@@ -270,7 +270,8 @@ function agency_site_fallback_menu() {
 function agency_site_nav_menu_link_attributes( $atts, $item, $args ) {
 	if ( isset( $args->theme_location ) && $args->theme_location === 'primary' ) {
 		$current_classes = isset( $atts['class'] ) ? $atts['class'] : '';
-		$is_active       = in_array( 'current-menu-item', $item->classes ?? array() ) || in_array( 'current_page_item', $item->classes ?? array() );
+		$classes         = $item->classes ?? array();
+		$is_active       = in_array( 'current-menu-item', $classes, true ) || in_array( 'current_page_item', $classes, true );
 
 		$base = 'px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ';
 		if ( $is_active ) {

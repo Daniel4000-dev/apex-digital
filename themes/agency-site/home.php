@@ -11,12 +11,12 @@ get_header();
 <!-- Blog Hero -->
 <section class="py-16 md:py-20 bg-gradient-to-b from-white via-agency-50/40 to-slate-50 border-b border-slate-200/60">
 	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-		<span class="badge-tag mb-4">Growth Intelligence</span>
+		<span class="badge-tag mb-4"><?php esc_html_e( 'Educational Guides', 'agency-site' ); ?></span>
 		<h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight font-heading mb-4">
-			Insights, Playbooks & Acquisition Strategies
+			<?php esc_html_e( 'Insights, Guides & Search Strategies', 'agency-site' ); ?>
 		</h1>
 		<p class="text-lg text-slate-600 max-w-2xl mx-auto">
-			Practical teardowns, SEO data experiments, and performance marketing lessons learned from managing 8-figure growth budgets.
+			<?php esc_html_e( 'Practical guides, technical SEO teardowns, and actionable advice to help your business get found and turn visitors into enquiries.', 'agency-site' ); ?>
 		</p>
 
 		<!-- Category Pills -->

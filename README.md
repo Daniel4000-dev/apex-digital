@@ -1,11 +1,12 @@
-# wordpress-agency-site
+# Apex Digital
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.7%2B-blue.svg)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-8.2-777bb4.svg)](https://php.net/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8.svg)](https://tailwindcss.com/)
 [![License: GPL-2.0-or-later](https://img.shields.io/badge/License-GPL--2.0--or--later-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-apex--digital-181717.svg?logo=github)](https://github.com/Daniel4000-dev/apex-digital.git)
 
-A custom classic WordPress solution engineered for a high-growth digital marketing agency, growth consultancy, or creative performance studio. Built with **PHP 8.2**, **Tailwind CSS v3**, and **vanilla JavaScript**, adhering strictly to modern WordPress architecture standards.
+A polished classic WordPress solution engineered for **Apex Digital**, a modern performance marketing and web design agency. Built with **PHP 8.2**, **Tailwind CSS v3**, and **vanilla JavaScript**, adhering strictly to modern WordPress architecture standards.
 
 ---
 
@@ -61,10 +62,10 @@ wp-content/
 ## 🚀 Key Features
 
 ### 1. Presentation & Responsive Layouts (`themes/agency-site`)
-- **Homepage (`front-page.php`)**: Hero with conversion badges & dual CTAs, live acquisition dashboard graphic, client trust logos, Customizer-editable stats counter, core services grid, agency comparison matrix, CMO testimonials with 5-star ratings, and recent blog posts grid.
+- **Homepage (`front-page.php`)**: Hero with headline *"Turn more visits into enquiries."*, supporting copy, dual CTAs (*"Discuss your project"* & *"Explore our services"*), clearly labelled *"Sample campaign report"* with *"Illustrative data"*, clear 3-step project delivery process (*Audit & Discovery*, *Focused Execution Sprints*, *Review & Ongoing Support*), uniform service cards with distinct deliverables, and educational marketing articles.
 - **Service Landing Page (`template-services.php`)**: In-depth capability breakdown with deliverables checklists, pricing indicators, 4-stage growth framework, and an accessible FAQ accordion.
-- **Blog & Single Articles (`home.php` & `single.php`)**: Category filter pills, featured article hero, 2-column post card grid, reading time calculation, pagination, sidebar widgets, tags, social share buttons with a **copy-link toast notification**, and author bio box.
-- **Accessible Navigation (`header.php`)**: Sticky glassmorphic header on scroll, accessible mobile drawer with ARIA controls, Escape-key dismiss, and click-outside close.
+- **Blog & Single Articles (`home.php` & `single.php`)**: Category filter pills (SEO, Paid Advertising, Conversion Optimization), featured article hero, 2-column post card grid with restrained editorial banners, reading time calculation, pagination, sidebar widgets, tags, social share buttons with a **copy-link toast notification**, and author bio box.
+- **Accessible Navigation (`header.php`)**: Compact header with brand logo and text fitting neatly on mobile, primary CTA *"Discuss your project"*, accessible mobile drawer with ARIA controls, Escape-key dismiss, and focus management.
 
 ### 2. Companion Plugin Business Logic (`plugins/agency-site-core`)
 - **Services CPT (`agency_service`)**: Custom post type with rewrite slug `services`, REST API support, and custom meta boxes (Tagline, Pricing Indicator, Highlight Badge, Icon style, and Key Deliverables).
@@ -170,28 +171,30 @@ wp theme activate agency-site
 
 | Requirement / Feature | Status | Verification Method |
 | :--- | :---: | :--- |
-| **PHP 8.2 Linting** | **Verified** | Tested all 19 theme & plugin PHP files with `php -l`. 0 errors. |
-| **Tailwind CSS Compilation** | **Verified** | Compiled minified CSS (61KB) into `assets/dist/css/style.css`. |
-| **Theme & Plugin Activation** | **Verified** | Activated via WP-CLI on `wordpress-agency-site.local`. |
+| **PHP 8.2 Linting** | **Verified** | Tested all theme & plugin PHP files with `php -l`. 0 syntax errors. |
+| **Tailwind CSS Compilation** | **Verified** | Compiled minified CSS (61KB) into `assets/dist/css/style.css` via `npm run build`. |
+| **PHPCS Coding Standards** | **Verified** | Strict WPCS check (`vendor/bin/phpcs --standard=phpcs.xml`): 31/31 files, 0 errors, 0 warnings. |
+| **JavaScript Linting** | **Verified** | ESLint check (`npm run lint:js`): 0 errors, 0 warnings. |
+| **PHPUnit Integration Suite** | **Verified** | Ran `vendor/bin/phpunit`: 7/7 tests passed (14 assertions, 100%). |
+| **Behavioural & Security Suite** | **Verified** | Ran `tests/run-all-tests.php` via WP-CLI: 37/37 assertions passed (0 failures). |
+| **Browser & Responsive Suite** | **Verified** | Playwright verified 320px, 375px, 390px, 768px, 1024px, 1440px viewports (0 horizontal overflow), mobile drawer ARIA states, and AJAX contact form submission. |
 | **Live HTTP 200 Endpoints** | **Verified** | Verified `/`, `/services/`, `/blog/`, `/contact/`, `/services/search-engine-optimization/`. |
-| **AJAX Enquiry Submission** | **Verified** | Form submission tested via curl against `admin-ajax.php`. Returns JSON success. |
-| **HMAC Webhook Dispatch** | **Verified** | Dispatched test payload to local receiver; verified `X-Agency-Signature` and `signature_valid: true`. |
-| **Webhook Failure Handling** | **Verified** | Tested unreachable port; verified error catch (`cURL error 7`) and delivery log entry. |
-| **HTML Confirmation Email** | **Verified** | Inspected live email delivery in Local Mailpit API (`http://127.0.0.1:10000/api/v1/messages`). |
-| **301 Example Redirects** | **Verified** | Tested `curl -sI /free-audit` returning `HTTP 301 Location: /contact/`. |
-| **XML Sitemap** | **Verified** | Checked `/wp-sitemap.xml` and verified `agency_service` inclusion. |
-| **JSON-LD Structured Data** | **Verified** | Checked `<script type="application/ld+json">` for `ProfessionalService`, `Service`, `Article`, `FAQPage`. |
-| **GA4 / GTM DataLayer** | **Verified** | Verified GTM `<head>` / `<body>` injection and dataLayer tracking script in HTML footer. |
-
-### ⚠️ External Verification Notice
-- **GA4 / GTM Production Data Collection**: Injected snippets and dataLayer events are fully functional. Streaming real event data to Google servers requires entering a live GA4 Measurement ID (`G-XXXXXXXXXX`) or GTM Container ID created in your Google Analytics account.
-- **Production Webhook Endpoints**: The webhook dispatcher was verified with a local endpoint. To route leads to external tools (HubSpot, Salesforce, Zapier, Make, Slack), enter the production webhook endpoint in **Enquiries > Settings & Webhooks**.
+| **HTML Confirmation & Admin Emails** | **Verified** | Inspected live customer & internal email delivery in Local Mailpit API (`http://127.0.0.1:10000/api/v1/messages`). |
+| **HMAC Webhook Dispatch & Logs** | **Verified** | Dispatched test payload to local receiver; verified `X-Agency-Signature` and error logging on unreachable endpoints. |
+| **Technical SEO & 301 Redirects** | **Verified** | Tested `curl -sI /free-audit` returning `HTTP 301 Location: /contact/`; XML sitemaps include `agency_service`. |
+| **GA4 / GTM DataLayer Bus** | **Verified** | Verified GTM `<head>` / `<body>` injection and dataLayer tracking script firing custom events (`agency_cta_click`, `agency_enquiry_submitted`, `agency_faq_opened`). |
+| **External Webhook Delivery** | **Unverified** | Unverified until actually observed: routing leads to an external CRM/Zapier endpoint requires a live external receiver URL. |
+| **Live GA4 Hit Transmission** | **Unverified** | Unverified until actually observed: streaming hits to Google servers requires entering a real GA4 Measurement ID / GTM Container ID. |
+| **Figma Visual Comparison** | **Not Demonstrated** | No Figma reference design or tokens file was provided. Layouts are designed to modern B2B SaaS standards. |
 
 ---
 
-## 📢 Demonstration Content Notice
+## 📢 Demonstration Content & Portfolio Disclaimer
 
-> **IMPORTANT**: All agency metrics (such as *"$45M+ Client Revenue Driven"*, *"340% Average ROI Increase"*, *"98% Client Retention"*, *"150+ Successful Campaigns"*) and client testimonials (*Elena Rostova*, *Marcus Vance*, *Sarah Jenkins*) are **fictional demonstration content** designed exclusively for portfolio illustration. All numbers, copy, and reviews can be customized in **Appearance > Customize > Agency Site Settings**.
+> **IMPORTANT**: **Apex Digital** is a fictional agency portfolio project.
+> All unsupported claims regarding client revenues, ROI percentages, partner badges, and invented client testimonials have been completely removed.
+> The dark campaign graphic is explicitly designated as a **"Sample campaign report"** with **"Illustrative data"**.
+> A discreet footer note identifies this website as a fictional agency portfolio project.
 
 ---
 

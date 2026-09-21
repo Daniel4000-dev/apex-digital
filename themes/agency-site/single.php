@@ -136,7 +136,7 @@ while ( have_posts() ) :
 				<p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
 					<?php
 					$author_desc = get_the_author_meta( 'description' );
-					echo esc_html( $author_desc ?: 'Senior Growth Strategist at ' . get_bloginfo( 'name' ) . ', specializing in full-funnel organic search, performance ads, and conversion optimization.' );
+					echo esc_html( $author_desc ?: 'Digital Strategist at ' . get_bloginfo( 'name' ) . ', writing about website development, technical search visibility, and conversion improvements.' );
 					?>
 				</p>
 				<div class="pt-2">

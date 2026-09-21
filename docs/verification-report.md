@@ -22,7 +22,7 @@
 | **GA4 / GTM DataLayer Bus** | Yes | Yes | **Verified**: Client script enqueues and events (`generate_lead`, `agency_cta_click`, `agency_faq_opened`) push to `window.dataLayer`. |
 | **Live GA4 Hit Transmission** | Yes | No | **Unverified until actually observed**: Streaming hits requires an active GA4 Measurement ID / GTM container and observer (e.g. GA4 DebugView). |
 | **Figma Visual Comparison** | Yes | No | **Not Demonstrated / Blocked**: No Figma reference design or tokens file was provided in project assets. |
-| **CI / CD Workflow** | Yes | Pushed to GitHub | **Pushed to GitHub**: Remote repository configured at `https://github.com/Daniel4000-dev/wordpress-agency-site.git`. Workflow URL: `https://github.com/Daniel4000-dev/wordpress-agency-site/actions`. |
+| **CI / CD Workflow** | Yes | Configured | **Configured for GitHub Actions**: Remote repository configured at `https://github.com/Daniel4000-dev/apex-digital.git`. Workflow URL: `https://github.com/Daniel4000-dev/apex-digital/actions`. |
 
 ---
 
@@ -128,7 +128,7 @@ node tests/playwright-smoke.js
 [1/5] Launching Chrome browser engine...
   ✓ Browser launched successfully.
 [2/5] Testing Homepage (Desktop 1280x800)...
-  ✓ HTTP 200 - Title: "wordpress-agency-site"
+  ✓ HTTP 200 - Title: "Apex Digital – Digital Marketing & Web Design"
   ✓ Sticky header #masthead present: true
   ✓ Layout grid elements present: true
 [3/5] Testing Mobile Viewport & Drawer (375x667)...
@@ -219,4 +219,4 @@ In response to architectural verification requirements:
 - **Figma Reference**: No Figma artboard link or design tokens file was provided. Layouts are designed to modern B2B SaaS standards, but cannot be claimed as matched to a Figma file without a reference.
 - **Live Analytics Hit Transmission**: While `window.dataLayer` event dispatching was tested and confirmed in the browser, streaming hits to Google Analytics servers remains **Unverified until actually observed** (requires entering a live Measurement ID and verifying incoming data via GA4 DebugView or an analytics observer).
 - **External Webhook Receiver**: Webhook dispatching with HMAC-SHA256 signatures was verified using local endpoints; external ingestion into third-party tools (HubSpot, Salesforce, Zapier) remains **Unverified until actually observed** with production credentials.
-- **CI Actions Pipeline**: Remote repository configured and pushed to `https://github.com/Daniel4000-dev/wordpress-agency-site.git`. Workflow executions can be viewed at: `https://github.com/Daniel4000-dev/wordpress-agency-site/actions`.
+- **CI Actions Pipeline**: Remote repository configured for `https://github.com/Daniel4000-dev/apex-digital.git`. Workflow executions can be viewed at: `https://github.com/Daniel4000-dev/apex-digital/actions`.

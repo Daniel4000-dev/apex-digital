@@ -34,7 +34,7 @@ function agency_site_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'agency_hero_badge',
 		array(
-			'default'           => __( 'Top-Rated Digital Growth Agency', 'agency-site' ),
+			'default'           => __( 'Digital Marketing & Web Design', 'agency-site' ),
 			'sanitize_callback' => 'sanitize_text_field',
 			'transport'         => 'refresh',
 		)
@@ -52,7 +52,7 @@ function agency_site_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'agency_hero_headline',
 		array(
-			'default'           => __( 'We Scale High-Growth Brands With Data-Driven Marketing', 'agency-site' ),
+			'default'           => __( 'Turn more visits into enquiries.', 'agency-site' ),
 			'sanitize_callback' => 'sanitize_text_field',
 			'transport'         => 'refresh',
 		)
@@ -70,7 +70,7 @@ function agency_site_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'agency_hero_subhead',
 		array(
-			'default'           => __( 'From organic search dominance to multi-million dollar paid acquisition pipelines, we help modern companies achieve predictable, profitable revenue.', 'agency-site' ),
+			'default'           => __( 'We help growing businesses improve their websites, get found in search and turn advertising clicks into enquiries.', 'agency-site' ),
 			'sanitize_callback' => 'sanitize_textarea_field',
 			'transport'         => 'refresh',
 		)
@@ -88,7 +88,7 @@ function agency_site_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'agency_hero_cta_text',
 		array(
-			'default'           => __( 'Get Free Growth Audit', 'agency-site' ),
+			'default'           => __( 'Discuss your project', 'agency-site' ),
 			'sanitize_callback' => 'sanitize_text_field',
 		)
 	);
@@ -105,7 +105,7 @@ function agency_site_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'agency_hero_cta_link',
 		array(
-			'default'           => '#contact',
+			'default'           => home_url( '/contact/' ),
 			'sanitize_callback' => 'esc_url_raw',
 		)
 	);
@@ -122,7 +122,7 @@ function agency_site_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'agency_hero_sec_cta_text',
 		array(
-			'default'           => __( 'Explore Services', 'agency-site' ),
+			'default'           => __( 'Explore our services', 'agency-site' ),
 			'sanitize_callback' => 'sanitize_text_field',
 		)
 	);
@@ -139,7 +139,7 @@ function agency_site_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'agency_hero_sec_cta_link',
 		array(
-			'default'           => '#services',
+			'default'           => home_url( '/services/' ),
 			'sanitize_callback' => 'esc_url_raw',
 		)
 	);
@@ -230,7 +230,7 @@ function agency_site_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'agency_header_cta_text',
 		array(
-			'default'           => __( 'Book a Call', 'agency-site' ),
+			'default'           => __( 'Discuss your project', 'agency-site' ),
 			'sanitize_callback' => 'sanitize_text_field',
 		)
 	);
@@ -246,7 +246,7 @@ function agency_site_customize_register( $wp_customize ) {
 	$wp_customize->add_setting(
 		'agency_header_cta_link',
 		array(
-			'default'           => '#contact',
+			'default'           => home_url( '/contact/' ),
 			'sanitize_callback' => 'esc_url_raw',
 		)
 	);

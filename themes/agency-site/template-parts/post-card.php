@@ -9,15 +9,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<article id="post-<?php the_ID(); ?>" <?php post_class( 'bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-soft card-hover flex flex-col justify-between' ); ?>>
+<article id="post-<?php the_ID(); ?>" <?php post_class( 'h-full bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-soft card-hover flex flex-col justify-between' ); ?>>
 	<div>
 		<?php if ( has_post_thumbnail() ) : ?>
 			<a href="<?php the_permalink(); ?>" class="block aspect-video overflow-hidden group">
 				<?php the_post_thumbnail( 'agency-card', array( 'class' => 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-300' ) ); ?>
 			</a>
 		<?php else : ?>
-			<a href="<?php the_permalink(); ?>" class="block aspect-video bg-gradient-to-tr from-agency-700 to-agency-950 p-6 flex items-end">
-				<span class="text-white/80 font-bold text-sm line-clamp-2"><?php the_title(); ?></span>
+			<a href="<?php the_permalink(); ?>" class="block aspect-video bg-gradient-to-tr from-slate-900 via-agency-950 to-slate-800 p-6 flex flex-col justify-between relative overflow-hidden group">
+				<div class="absolute -right-8 -top-8 w-32 h-32 bg-agency-500/10 rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
+				<div class="flex items-center justify-between text-xs text-agency-300 font-semibold uppercase tracking-wider relative z-10">
+					<span>Editorial Guide</span>
+					<svg class="w-5 h-5 text-agency-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+				</div>
+				<div class="flex items-center gap-2 relative z-10">
+					<span class="w-2 h-2 rounded-full bg-agency-400"></span>
+					<span class="text-slate-300 text-xs font-medium tracking-wide">Apex Digital Strategy Note</span>
+				</div>
 			</a>
 		<?php endif; ?>
 

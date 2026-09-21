@@ -159,14 +159,23 @@ class Agency_Core_Admin_Settings {
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Agency Core — Webhooks & Tracking Settings', 'agency-site-core' ); ?></h1>
 
-			<?php if ( isset( $_GET['test_status'] ) ) : ?>
-				<?php if ( $_GET['test_status'] === 'test_success' ) : ?>
+			<?php
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( isset( $_GET['test_status'] ) ) :
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$test_status = sanitize_text_field( wp_unslash( $_GET['test_status'] ) );
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$test_code = isset( $_GET['test_code'] ) ? sanitize_text_field( wp_unslash( $_GET['test_code'] ) ) : '';
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$test_time = isset( $_GET['test_time'] ) ? sanitize_text_field( wp_unslash( $_GET['test_time'] ) ) : '';
+				if ( 'test_success' === $test_status ) :
+					?>
 					<div class="notice notice-success is-dismissible">
-						<p><strong><?php esc_html_e( 'Test Webhook Delivered Successfully!', 'agency-site-core' ); ?></strong> HTTP <?php echo esc_html( $_GET['test_code'] ); ?> in <?php echo esc_html( $_GET['test_time'] ); ?>ms. Check the <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=agency_enquiry&page=agency-core-webhook-logs' ) ); ?>">Delivery Logs</a> for full payload breakdown.</p>
+						<p><strong><?php esc_html_e( 'Test Webhook Delivered Successfully!', 'agency-site-core' ); ?></strong> HTTP <?php echo esc_html( $test_code ); ?> in <?php echo esc_html( $test_time ); ?>ms. Check the <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=agency_enquiry&page=agency-core-webhook-logs' ) ); ?>">Delivery Logs</a> for full payload breakdown.</p>
 					</div>
 				<?php else : ?>
 					<div class="notice notice-error is-dismissible">
-						<p><strong><?php esc_html_e( 'Test Webhook Delivery Failed.', 'agency-site-core' ); ?></strong> HTTP <?php echo esc_html( $_GET['test_code'] ); ?>. Check that the endpoint is reachable or view details in the <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=agency_enquiry&page=agency-core-webhook-logs' ) ); ?>">Delivery Logs</a>.</p>
+						<p><strong><?php esc_html_e( 'Test Webhook Delivery Failed.', 'agency-site-core' ); ?></strong> HTTP <?php echo esc_html( $test_code ); ?>. Check that the endpoint is reachable or view details in the <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=agency_enquiry&page=agency-core-webhook-logs' ) ); ?>">Delivery Logs</a>.</p>
 					</div>
 				<?php endif; ?>
 			<?php endif; ?>

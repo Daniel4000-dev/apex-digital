@@ -16,7 +16,7 @@ function agency_site_reading_time( $content = null ) {
 	if ( ! $content ) {
 		$content = get_post_field( 'post_content', get_the_ID() );
 	}
-	$word_count   = str_word_count( strip_tags( $content ) );
+	$word_count   = str_word_count( wp_strip_all_tags( $content ) );
 	$reading_time = ceil( $word_count / 200 );
 	return max( 1, $reading_time );
 }
@@ -44,14 +44,14 @@ function agency_site_posted_on() {
 /**
  * SVG icons helper
  */
-function agency_site_get_icon( $icon, $class = 'w-6 h-6' ) {
+function agency_site_get_icon( $icon, $css_class = 'w-6 h-6' ) {
 	switch ( $icon ) {
 		case 'chart':
-			return '<svg class="' . esc_attr( $class ) . '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>';
+			return '<svg class="' . esc_attr( $css_class ) . '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>';
 		case 'bullhorn':
-			return '<svg class="' . esc_attr( $class ) . '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>';
+			return '<svg class="' . esc_attr( $css_class ) . '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>';
 		case 'cursor':
-			return '<svg class="' . esc_attr( $class ) . '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>';
+			return '<svg class="' . esc_attr( $css_class ) . '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>';
 		case 'lightning':
 			return '<svg class="' . esc_attr( $class ) . '" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>';
 		case 'content':
@@ -76,86 +76,72 @@ function agency_site_get_default_services() {
 	return array(
 		array(
 			'title'        => 'Search Engine Optimization (SEO)',
-			'tagline'      => 'Rank #1 for high-value buyer search queries',
-			'desc'         => 'We combine deep technical audits, semantic keyword mapping, and white-hat digital PR to capture authoritative search real estate that converts into revenue.',
+			'tagline'      => 'Technical SEO & Organic Visibility',
+			'desc'         => 'We combine technical audits, site architecture improvements, and topical content mapping to help high-intent buyers discover your services in organic search.',
 			'icon'         => 'chart',
-			'price'        => 'From $2,800 / mo',
-			'badge'        => 'High ROI',
+			'price'        => 'Tailored Scope',
+			'badge'        => 'Organic Search',
 			'deliverables' => array(
-				'Full Technical Architecture & Core Web Vitals Audit',
-				'Competitor Keyword Gap Analysis & Topical Clusters',
-				'High-Authority Backlink Acquisition & Digital PR',
-				'Real-Time Rank Tracking & Revenue Attribution Dashboards',
+				'Technical architecture & Core Web Vitals audit',
+				'Topical cluster mapping & keyword intent research',
+				'Internal linking & structured data schema',
+				'Search Console monitoring & performance reporting',
 			),
 		),
 		array(
 			'title'        => 'Paid Media & Performance Ads',
-			'tagline'      => 'Predictable, profitable customer acquisition',
-			'desc'         => 'Data-backed campaign scaling across Google Ads, Meta, LinkedIn, and TikTok. We engineer custom ad creative, landing pages, and funnel logic that maximizes ROAS.',
+			'tagline'      => 'Search & Social Campaign Management',
+			'desc'         => 'Strategic ad campaign management across Google Search and paid social channels designed to generate qualified business enquiries with controlled acquisition costs.',
 			'icon'         => 'bullhorn',
-			'price'        => 'From $3,500 / mo',
-			'badge'        => 'Most Popular',
+			'price'        => 'Tailored Scope',
+			'badge'        => 'Targeted Media',
 			'deliverables' => array(
-				'Multi-Channel Media Strategy (Google, Meta, LinkedIn)',
-				'High-Converting Ad Creative & Copy Variations',
-				'Advanced Retargeting & First-Party Audience Segmentation',
-				'Weekly Bid Optimization & Conversion Tracking Hardening',
+				'Search intent keyword structuring & negative targeting',
+				'Ad creative & conversion-focused copywriting',
+				'Landing page message alignment & friction audit',
+				'Weekly bid management & conversion tracking audit',
 			),
 		),
 		array(
 			'title'        => 'Conversion Rate Optimization (CRO)',
-			'tagline'      => 'Turn existing traffic into paying clients',
-			'desc'         => 'Stop leaking qualified visitors. Using heatmap analytics, session replay insights, and rigorous multivariate A/B testing, we remove friction and double conversion efficiency.',
+			'tagline'      => 'User Experience & Conversion Refinement',
+			'desc'         => 'Identifying user experience friction and optimizing layout structure, enquiry forms, and key calls-to-action to convert existing website traffic into business enquiries.',
 			'icon'         => 'cursor',
-			'price'        => 'From $2,200 / mo',
-			'badge'        => 'Fast Impact',
+			'price'        => 'Tailored Scope',
+			'badge'        => 'High Impact',
 			'deliverables' => array(
-				'Heuristic UX & Funnel Drop-off Evaluation',
-				'User Session Recording & Heatmap Behavior Analysis',
-				'Continuous Multivariate & Split A/B Experimentation',
-				'Tailored Form & Checkout Friction Elimination',
+				'Visitor journey evaluation & drop-off analysis',
+				'Enquiry form usability & field reduction review',
+				'Split testing of headlines and call-to-action placement',
+				'Monthly user experience and conversion recommendations',
 			),
 		),
 		array(
-			'title'        => 'Content Marketing & Authority PR',
-			'tagline'      => 'Build brand loyalty with compelling storytelling',
-			'desc'         => 'Editorial excellence designed for lead generation. We craft thought leadership articles, case studies, downloadable assets, and email sequences that nurture prospects.',
+			'title'        => 'Content Marketing & Search Authority',
+			'tagline'      => 'Educational Editorial & Topic Authority',
+			'desc'         => 'Clear, educational content creation designed to explain complex services, answer prospective client questions, and build lasting organic credibility.',
 			'icon'         => 'content',
-			'price'        => 'From $2,400 / mo',
+			'price'        => 'Tailored Scope',
 			'badge'        => 'Long-Term Asset',
 			'deliverables' => array(
-				'Executive Thought Leadership & Ghostwriting',
-				'Data-Driven Case Studies & Whitepapers',
-				'High-Impact Email Nurture & Newsletter Workflows',
-				'Syndication Across Tier-1 Industry Publications',
+				'Topical content planning & audience intent mapping',
+				'In-depth service guides & technical teardowns',
+				'Editorial review & on-page SEO optimization',
+				'Distribution & internal cross-linking workflows',
 			),
 		),
 		array(
-			'title'        => 'Growth Web Development & Speed',
-			'tagline'      => 'Blazing-fast, conversion-focused websites',
-			'desc'         => 'Modern web engineering engineered for performance. We build custom WordPress and modern digital platforms with sub-second load times and flawless mobile experiences.',
+			'title'        => 'Website Performance & Development',
+			'tagline'      => 'Fast, Accessible WordPress Web Engineering',
+			'desc'         => 'Modern WordPress development with semantic HTML, clean responsive layouts, fast load times, and accessible interfaces that make enquiry submission seamless.',
 			'icon'         => 'code',
-			'price'        => 'From $4,500 project',
+			'price'        => 'Tailored Scope',
 			'badge'        => 'Foundational',
 			'deliverables' => array(
-				'Custom Tailwind CSS & Headless / Classic Architecture',
-				'Sub-second Server Response & Core Web Vitals 95+',
-				'Seamless CRM, Analytics, & MarTech Integrations',
-				'Enterprise-grade Security & WCAG Accessibility Compliance',
-			),
-		),
-		array(
-			'title'        => 'Brand Strategy & Visual Identity',
-			'tagline'      => 'Stand out in crowded competitive markets',
-			'desc'         => 'Transform your brand into an unmistakable market leader with cohesive visual design systems, brand guidelines, messaging frameworks, and distinctive design assets.',
-			'icon'         => 'lightning',
-			'price'        => 'From $3,800 project',
-			'badge'        => 'Creative',
-			'deliverables' => array(
-				'Comprehensive Brand Architecture & Positioning Guide',
-				'Logo Suite, Color Palettes, & Modern Typography Systems',
-				'Multi-Format Social Media & Digital Collateral Kits',
-				'Tone of Voice & Messaging Strategy Playbook',
+				'Custom theme development & clean PHP templates',
+				'Mobile-first responsive layout & WCAG accessibility',
+				'Core Web Vitals & asset optimization',
+				'Secure enquiry workflows & dashboard administration',
 			),
 		),
 	);

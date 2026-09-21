@@ -7,7 +7,8 @@
 
 get_header();
 
-$selected_service = isset( $_GET['service'] ) ? sanitize_text_field( $_GET['service'] ) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$selected_service = isset( $_GET['service'] ) ? sanitize_text_field( wp_unslash( $_GET['service'] ) ) : '';
 ?>
 
 <!-- Header Section -->
@@ -179,7 +180,7 @@ $selected_service = isset( $_GET['service'] ) ? sanitize_text_field( $_GET['serv
 				
 				<!-- Direct Contact Details Card -->
 				<div class="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-soft space-y-6">
-					<h3 class="text-xl font-bold text-slate-900 font-heading">Direct Channels</h3>
+					<h3 class="text-xl font-bold text-slate-900 font-heading"><?php esc_html_e( 'Direct Communication', 'agency-site' ); ?></h3>
 					
 					<div class="space-y-5 text-sm">
 						<div class="flex items-start gap-4">
@@ -196,36 +197,24 @@ $selected_service = isset( $_GET['service'] ) ? sanitize_text_field( $_GET['serv
 
 						<div class="flex items-start gap-4">
 							<div class="w-10 h-10 rounded-xl bg-agency-50 text-agency-600 flex items-center justify-center shrink-0">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
 							</div>
 							<div>
-								<span class="text-xs text-slate-400 block font-semibold uppercase">Phone Consultation</span>
-								<a href="tel:<?php echo esc_attr( get_theme_mod( 'agency_phone', '+1 (800) 555-0199' ) ); ?>" class="font-bold text-slate-800 hover:text-agency-600 transition-colors">
-									<?php echo esc_html( get_theme_mod( 'agency_phone', '+1 (800) 555-0199' ) ); ?>
-								</a>
-							</div>
-						</div>
-
-						<div class="flex items-start gap-4">
-							<div class="w-10 h-10 rounded-xl bg-agency-50 text-agency-600 flex items-center justify-center shrink-0">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-							</div>
-							<div>
-								<span class="text-xs text-slate-400 block font-semibold uppercase">Global Headquarters</span>
-								<p class="font-medium text-slate-700 leading-snug">
-									<?php echo nl2br( esc_html( get_theme_mod( 'agency_address', "100 Innovation Blvd, Suite 400\nSan Francisco, CA 94105" ) ) ); ?>
+								<span class="text-xs text-slate-400 block font-semibold uppercase"><?php esc_html_e( 'Response Timeframe', 'agency-site' ); ?></span>
+								<p class="font-medium text-slate-700">
+									<?php esc_html_e( 'We review incoming project enquiries Monday through Friday and respond with an initial assessment within one business day.', 'agency-site' ); ?>
 								</p>
 							</div>
 						</div>
 
 						<div class="flex items-start gap-4">
 							<div class="w-10 h-10 rounded-xl bg-agency-50 text-agency-600 flex items-center justify-center shrink-0">
-								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
 							</div>
 							<div>
-								<span class="text-xs text-slate-400 block font-semibold uppercase">Office Hours</span>
+								<span class="text-xs text-slate-400 block font-semibold uppercase"><?php esc_html_e( 'Project Confidentiality', 'agency-site' ); ?></span>
 								<p class="font-medium text-slate-700">
-									<?php echo esc_html( get_theme_mod( 'agency_hours', 'Mon – Fri: 9:00 AM – 6:00 PM PST' ) ); ?>
+									<?php esc_html_e( 'All project details, current metrics and discussions remain strictly confidential between our team and yours.', 'agency-site' ); ?>
 								</p>
 							</div>
 						</div>

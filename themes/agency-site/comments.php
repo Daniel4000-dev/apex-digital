@@ -43,8 +43,9 @@ if ( post_password_required() ) {
 					<li id="comment-<?php comment_ID(); ?>" <?php comment_class( 'p-6 rounded-2xl bg-slate-50 border border-slate-200' ); ?>>
 						<div class="flex items-start gap-4">
 							<?php
-							if ( $args['avatar_size'] != 0 ) {
-								echo get_avatar( $comment, $args['avatar_size'], '', '', array( 'class' => 'rounded-full border border-slate-200' ) );}
+							if ( 0 !== (int) $args['avatar_size'] ) {
+								echo get_avatar( $comment, $args['avatar_size'], '', '', array( 'class' => 'rounded-full border border-slate-200' ) );
+							}
 							?>
 							<div class="flex-grow">
 								<div class="flex items-center justify-between mb-2">
@@ -56,7 +57,7 @@ if ( post_password_required() ) {
 										?>
 									</time>
 								</div>
-								<?php if ( $comment->comment_approved == '0' ) : ?>
+								<?php if ( '0' === (string) $comment->comment_approved ) : ?>
 									<p class="text-xs text-amber-600 italic mb-2">Your comment is awaiting moderation.</p>
 								<?php endif; ?>
 								<div class="text-slate-700 text-sm leading-relaxed mb-3">

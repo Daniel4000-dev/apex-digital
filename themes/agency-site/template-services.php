@@ -11,25 +11,25 @@ get_header();
 <!-- Hero Section -->
 <section class="py-16 md:py-24 bg-gradient-to-b from-white via-agency-50/40 to-slate-50 border-b border-slate-200/60">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-3xl">
-		<span class="badge-tag mb-4">Enterprise Capabilities</span>
+		<span class="badge-tag mb-4"><?php esc_html_e( 'Our Capabilities', 'agency-site' ); ?></span>
 		<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight font-heading mb-6">
-			Services Built To Turn Growth Bottlenecks Into Compounding Revenue
+			<?php esc_html_e( 'Services Designed to Turn Visits Into Enquiries', 'agency-site' ); ?>
 		</h1>
 		<p class="text-lg sm:text-xl text-slate-600 mb-8 leading-relaxed">
-			We don’t offer generic cookie-cutter retainers. We deploy battle-tested growth playbooks tailored to your exact market positioning and business model.
+			<?php esc_html_e( 'We help growing businesses improve their websites, get found in search and turn advertising clicks into enquiries.', 'agency-site' ); ?>
 		</p>
 		<div class="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-semibold text-slate-700">
 			<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-xs">
 				<svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-				No Long-Term Lock-ins
+				<?php esc_html_e( 'Defined Scope & Milestones', 'agency-site' ); ?>
 			</span>
 			<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-xs">
 				<svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-				Weekly Execution Sprints
+				<?php esc_html_e( 'Transparent Execution', 'agency-site' ); ?>
 			</span>
 			<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-xs">
 				<svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-				Revenue-Attributed Reporting
+				<?php esc_html_e( 'Enquiry Attribution', 'agency-site' ); ?>
 			</span>
 		</div>
 	</div>

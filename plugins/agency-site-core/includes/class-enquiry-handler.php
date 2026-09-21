@@ -247,7 +247,10 @@ class Agency_Core_Enquiry_Handler {
 
 	/**
 	 * Send HTML Confirmation Email to Client
+	 *
+	 * Parameters are made available in scope for email-confirmation.php template.
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function send_confirmation_email( $email, $name, $service, $budget, $company, $phone, $message ) {
 		$site_name    = get_bloginfo( 'name' );
 		$site_url     = home_url( '/' );
@@ -271,12 +274,15 @@ class Agency_Core_Enquiry_Handler {
 			'Reply-To: ' . $agency_email,
 		);
 
-		return @wp_mail( $email, $subject, $html_content, $headers );
+		return wp_mail( $email, $subject, $html_content, $headers );
 	}
 
 	/**
 	 * Send Internal Admin Notification Email
+	 *
+	 * Parameters are made available in scope for email-internal-notification.php template.
 	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	public function send_admin_notification( $name, $email, $phone, $company, $service, $budget, $message, $webhook_status ) {
 		$admin_email   = get_option( 'admin_email' );
 		$site_name     = get_bloginfo( 'name' );
@@ -297,7 +303,7 @@ class Agency_Core_Enquiry_Handler {
 			'Reply-To: ' . $name . ' <' . $email . '>',
 		);
 
-		return @wp_mail( $admin_email, $subject, $html_content, $headers );
+		return wp_mail( $admin_email, $subject, $html_content, $headers );
 	}
 
 	/**

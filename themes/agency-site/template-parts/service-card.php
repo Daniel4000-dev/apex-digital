@@ -24,8 +24,14 @@ if ( empty( $deliverables ) && get_the_ID() ) {
 		$deliverables = array_filter( array_map( 'trim', explode( "\n", $raw_deliv ) ) );
 	}
 }
+
+// Guard against duplicate tagline and description display
+if ( trim( (string) $desc ) === trim( (string) $tagline ) ) {
+	$content = get_the_content();
+	$desc    = ! empty( $content ) ? wp_trim_words( wp_strip_all_tags( $content ), 26 ) : '';
+}
 ?>
-<div class="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-soft card-hover flex flex-col justify-between relative group">
+<div class="h-full bg-white rounded-3xl p-8 border border-slate-200/80 shadow-soft card-hover flex flex-col justify-between relative group">
 	<?php if ( ! empty( $badge ) ) : ?>
 		<div class="absolute top-6 right-6">
 			<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-agency-50 text-agency-700 border border-agency-200">

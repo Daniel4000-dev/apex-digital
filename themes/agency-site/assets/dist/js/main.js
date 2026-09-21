@@ -41,6 +41,12 @@ function initMobileMenu() {
         if (iconOpen) iconOpen.classList.add('hidden');
         if (iconClose) iconClose.classList.remove('hidden');
         document.body.classList.add('overflow-hidden', 'lg:overflow-auto');
+
+        // Focus first navigation link for accessibility
+        const firstLink = drawer.querySelector('a, button');
+        if (firstLink) {
+            setTimeout(() => firstLink.focus(), 50);
+        }
     }
 
     function closeMenu() {
@@ -234,3 +240,4 @@ function initContactForm() {
         });
     });
 }
+
