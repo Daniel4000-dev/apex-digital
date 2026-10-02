@@ -5,8 +5,29 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8.svg)](https://tailwindcss.com/)
 [![License: GPL-2.0-or-later](https://img.shields.io/badge/License-GPL--2.0--or--later-green.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-apex--digital-181717.svg?logo=github)](https://github.com/Daniel4000-dev/apex-digital.git)
+[![Review Branch](https://img.shields.io/badge/Branch-review%2Ftechnical--hiring--readiness-blueviolet.svg)](https://github.com/Daniel4000-dev/apex-digital/tree/review/technical-hiring-readiness)
 
-A polished classic WordPress solution engineered for **Apex Digital**, a modern performance marketing and web design agency. Built with **PHP 8.2**, **Tailwind CSS v3**, and **vanilla JavaScript**, adhering strictly to modern WordPress architecture standards.
+A polished, production-grade classic WordPress solution engineered for **Apex Digital**, a modern performance marketing and web design agency. Demonstrates full-stack craftsmanship across custom classic theme architecture, companion plugin development, security boundaries, transactional & promotional HTML emails, ACF Pro / Gravity Forms integration bridges, and legacy stack maintenance (Sass, Gulp, Twig, Foundation).
+
+---
+
+## 🧭 Technical Hiring Review Package
+
+This repository is staged on the dedicated review branch **`review/technical-hiring-readiness`**.
+
+### 📋 Requirement-to-Evidence Matrix
+
+| Requirement Domain | Key Architectural Deliverable | Verification Evidence & Test Target | Status |
+| :--- | :--- | :--- | :---: |
+| **1. Maintainable Architecture** | Decoupled presentation (`themes/agency-site`) and business logic (`plugins/agency-site-core`). | Switch to `twentytwentyfour` proved CPTs and metadata remain 100% accessible; `agency_enquiry` CPT is private. | **Verified** |
+| **2. ACF Pro Integration** | Programmatic field group & `acf-json/group_agency_service_meta.json` with native fallback. | Verified via `Agency_Core_ACF_Integration`; documented in `docs/acf-gravityforms-integration.md`. | **Bridge Verified** *(Live UI blocked without license)* |
+| **3. Gravity Forms Integration** | Post-submission bridge `gform_after_submission` with transient deduplication & sanitized export. | Verified via `Agency_Core_Gravity_Forms_Integration`; form export in `docs/gravityforms-export-sanitized.json`. | **Bridge Verified** *(Live UI blocked without license)* |
+| **4. Security & Business Behaviour** | 10KB payload limit, nonces, honeypot, rate-limit, CRLF defense, length bounds, persistence rollback. | 52 automated tests in `tests/run-all-tests.php`; failed save halts webhook/email with zero side effects. | **Verified** |
+| **5. Webhook Safety & Redaction** | Loopback blocked in production; cloud metadata blocked; URLs & log payloads redacted of tokens/PII. | Verified in `Agency_Core_Webhook_Dispatcher::redact_sensitive_url` and automated suite. | **Verified** |
+| **6. SEO, Performance & Analytics** | JSON-LD schema, canonical tags, 301 redirects, minified assets, privacy-safe `dataLayer` bus. | `curl -sI /free-audit` -> 301 `/contact/`; sitemap includes CPT; zero PII sent to dataLayer. | **Verified** |
+| **7. Transactional & Marketing Emails** | Table-based HTML + inline CSS + MSO tags + plain-text alternatives (`$phpmailer->AltBody`). | Live captured via `tests/send-test-emails.php` in Local Mailpit REST API (`http://127.0.0.1:10000/api/v1/messages`). | **Verified** |
+| **8. Legacy Maintenance Example** | Self-contained component fixture utilizing modern Dart Sass (`sass:math`), Gulp, Twig, Foundation. | Compiles via `npm run build:legacy` in `legacy-maintenance-example/` (~250ms); zero Tailwind leakage. | **Verified** |
+| **9. Automated Testing & Enforced CI** | Portable runner script (`scripts/run-with-env.sh`); PHPUnit, 52 behavioral tests, Playwright browser test. | Strict WPCS (34 files, 0 errors, 0 warnings); GitHub Actions workflow configured in `.github/workflows/ci.yml`. | **Verified** |
 
 ---
 
@@ -103,10 +124,12 @@ For in-depth review, technical audits, and client handoff details, refer to the 
 1. [**Architecture & System Design**](file://docs/architecture.md): Theme vs plugin boundaries, entity lifecycles, and hook extensibility points.
 2. [**Security Architecture & Hardening**](file://docs/security.md): Threat modeling, nonces, honeypot, rate limiting, CRLF injection defense, and SSRF prevention.
 3. [**Verification & QA Report**](file://docs/verification-report.md): Execution outputs, HTTP 200/301 statuses, Mailpit evidence, and webhook logs.
-4. [**Analytics & Tag Management Guide**](file://docs/analytics-guide.md): DataLayer schema, GA4/GTM setup steps, and consent considerations.
-5. [**Client Handoff & Editor Guide**](file://docs/client-handoff.md): Managing services, enquiries, webhooks, and troubleshooting.
-6. [**AI-Assisted Workflow Retrospective**](file://docs/ai-workflow.md): Pair-programming methodology, errors encountered, and productivity impact.
-7. [**Design System & Layout Evidence**](file://docs/design-evidence.md): Responsive breakpoint matrix, typography scale, WCAG 2.1 AA accessibility, and Figma audit note.
+4. [**ACF Pro & Gravity Forms Integration**](file://docs/acf-gravityforms-integration.md): Field group JSON definitions, programmatic bridge, and sanitized form export.
+5. [**Legacy Maintenance Retrospective**](file://docs/legacy-maintenance-retrospective.md): Runnable Sass/Gulp/Twig/Foundation component modernization note.
+6. [**Analytics & Tag Management Guide**](file://docs/analytics-guide.md): DataLayer schema, GA4/GTM setup steps, and consent considerations.
+7. [**Client Handoff & Editor Guide**](file://docs/client-handoff.md): Managing services, enquiries, webhooks, and troubleshooting.
+8. [**AI-Assisted Workflow Retrospective**](file://docs/ai-workflow.md): Pair-programming methodology, errors encountered, and productivity impact.
+9. [**Design System & Layout Evidence**](file://docs/design-evidence.md): Responsive breakpoint matrix, typography scale, WCAG 2.1 AA accessibility, and Figma audit note.
 
 ---
 

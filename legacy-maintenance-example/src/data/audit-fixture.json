@@ -1,0 +1,20 @@
+{
+  "title": "Enterprise Performance & Conversion Audit",
+  "badge": "Legacy Component Fixture v2.4",
+  "client_industry": "B2B SaaS & Professional Services",
+  "target_url": "https://apexagency.digital",
+  "score": 94,
+  "metrics": [
+    { "label": "Search Velocity", "value": "Top 3%", "status": "optimal" },
+    { "label": "LCP Core Web Vital", "value": "1.2s", "status": "optimal" },
+    { "label": "Conversion Pathway", "value": "3 Leaks Identified", "status": "warning" }
+  ],
+  "deliverables": [
+    "Comprehensive keyword gap map against primary search competitors",
+    "Technical crawl diagnostics & indexation health assessment",
+    "Mobile form friction analysis with exact CRO remediation recommendations",
+    "Sprint roadmap prioritized by conversion impact"
+  ],
+  "cta_text": "Request Full Enterprise Diagnostic",
+  "cta_link": "/contact/?package=enterprise-audit"
+}

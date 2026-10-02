@@ -28,6 +28,8 @@ require_once AGENCY_CORE_DIR . 'includes/class-enquiry-handler.php';
 require_once AGENCY_CORE_DIR . 'includes/class-seo-manager.php';
 require_once AGENCY_CORE_DIR . 'includes/class-analytics-manager.php';
 require_once AGENCY_CORE_DIR . 'includes/class-admin-settings.php';
+require_once AGENCY_CORE_DIR . 'includes/class-acf-integration.php';
+require_once AGENCY_CORE_DIR . 'includes/class-gravity-forms-integration.php';
 
 final class Agency_Site_Core {
 
@@ -38,6 +40,8 @@ final class Agency_Site_Core {
 	public $seo_manager;
 	public $analytics_manager;
 	public $admin_settings;
+	public $acf_integration;
+	public $gravity_forms_integration;
 
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
@@ -47,10 +51,12 @@ final class Agency_Site_Core {
 	}
 
 	private function __construct() {
-		$this->service_cpt       = new Agency_Core_CPT_Service();
-		$this->enquiry_handler   = new Agency_Core_Enquiry_Handler();
-		$this->seo_manager       = new Agency_Core_SEO_Manager();
-		$this->analytics_manager = new Agency_Core_Analytics_Manager();
+		$this->service_cpt               = new Agency_Core_CPT_Service();
+		$this->enquiry_handler           = new Agency_Core_Enquiry_Handler();
+		$this->seo_manager               = new Agency_Core_SEO_Manager();
+		$this->analytics_manager         = new Agency_Core_Analytics_Manager();
+		$this->acf_integration           = new Agency_Core_ACF_Integration();
+		$this->gravity_forms_integration = new Agency_Core_Gravity_Forms_Integration();
 
 		if ( is_admin() ) {
 			$this->admin_settings = new Agency_Core_Admin_Settings();

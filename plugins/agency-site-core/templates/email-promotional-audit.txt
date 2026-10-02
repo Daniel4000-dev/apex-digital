@@ -1,0 +1,36 @@
+============================================================
+APEX DIGITAL — PERFORMANCE GROWTH ADVISORY
+Turn More Visits Into Enquiries
+============================================================
+
+Hi {{recipient_name}},
+
+Most growing businesses invest heavily in traffic, only to lose high-intent buyers to slow pages, fragmented search intent, or confusing mobile enquiry paths.
+
+For a limited window this quarter, the strategy team at Apex Digital is conducting complimentary, human-reviewed Growth & Conversion Audits for selected businesses.
+
+WHAT YOUR AUDIT EVALUATES:
+------------------------------------------------------------
+1. High-Intent Search Mapping:
+   Uncover keyword clusters where your competitors capture leads you should be winning.
+
+2. Mobile Conversion Leaks:
+   Pinpoint awkward tap targets, slow LCP bottlenecks, and friction points in your contact form.
+
+3. Clear 90-Day Execution Plan:
+   3 concrete sprint priorities you can execute immediately with your internal team or agency.
+
+CLAIM YOUR STRATEGY AUDIT:
+{{audit_url}}
+
+* No automated scan reports. Every audit is prepared by a human growth strategist.
+
+------------------------------------------------------------
+Apex Digital
+Email: growth@apexagency.digital
+Website: {{site_url}}
+
+Preferences & Unsubscribe:
+{{site_url}}/contact/
+
+Apex Digital is a fictional agency portfolio project created for demonstration and technical assessment.

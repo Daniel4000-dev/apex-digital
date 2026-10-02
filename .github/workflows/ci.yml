@@ -1,14 +1,14 @@
-name: CI - Agency Site
+name: CI - Apex Digital
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, 'review/*' ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, 'review/*' ]
 
 jobs:
   lint-and-build:
-    name: Lint, Build Assets & Validate
+    name: Code Quality & Build Verification
     runs-on: ubuntu-latest
 
     steps:
@@ -27,37 +27,48 @@ jobs:
         with:
           node-version: 22
 
-      - name: PHP Syntax Linting
+      - name: PHP Syntax Check
         run: |
-          echo "===> Linting PHP files..."
-          find themes/agency-site plugins/agency-site-core tests -name "*.php" -exec php -l {} +
+          find themes/agency-site plugins/agency-site-core tests -name node_modules -prune -o -name vendor -prune -o -name "*.php" -exec php -l {} +
 
       - name: Install Composer Dependencies
         run: |
           composer install --no-interaction --prefer-dist
 
-      - name: Run PHP CodeSniffer (WPCS)
+      - name: PHP CodeSniffer (WordPress Coding Standards - Strict)
         run: |
-          vendor/bin/phpcs --standard=phpcs.xml --warning-severity=0
+          vendor/bin/phpcs --standard=phpcs.xml
 
       - name: Install Frontend Dependencies
         working-directory: themes/agency-site
         run: |
-          npm ci || npm install
+          npm ci
+
+      - name: JavaScript Source Lint
+        working-directory: themes/agency-site
+        run: |
+          npm run lint:js
 
       - name: Build Production Tailwind CSS
         working-directory: themes/agency-site
         run: |
           npm run build
 
-      - name: Assert Built CSS Artifact Exists
+      - name: Assert Built Production Assets
         run: |
-          test -s themes/agency-site/assets/dist/css/style.css || { echo "Missing or empty style.css"; exit 1; }
-          test -s themes/agency-site/assets/dist/js/main.js || { echo "Missing or empty main.js"; exit 1; }
-          echo "Verified frontend build artifacts are present and non-empty."
+          test -s themes/agency-site/assets/dist/css/style.css || { echo "Missing style.css"; exit 1; }
+          test -s themes/agency-site/assets/dist/js/main.js || { echo "Missing main.js"; exit 1; }
+
+      - name: Install & Build Legacy Maintenance Fixture
+        working-directory: legacy-maintenance-example
+        run: |
+          npm ci
+          npm run build
+          test -s dist/css/main.css || { echo "Missing legacy main.css"; exit 1; }
+          test -s dist/audit-component.html || { echo "Missing legacy audit-component.html"; exit 1; }
 
   wp-integration-tests:
-    name: WordPress Integration & Security Tests
+    name: WordPress Integration, Security & Behavioural Suite
     runs-on: ubuntu-latest
     needs: lint-and-build
 
@@ -82,13 +93,21 @@ jobs:
           extensions: mbstring, xml, curl, json, mysqli
           tools: wp-cli
 
-      - name: Install WordPress Core and WP-CLI Test Harness
+      - name: Install Composer Dependencies
+        run: |
+          composer install --no-interaction --prefer-dist
+
+      - name: Run PHPUnit Unit & Integration Suite
+        run: |
+          vendor/bin/phpunit
+
+      - name: Install WordPress Core and Test Harness
         run: |
           mkdir -p /tmp/wordpress
           cd /tmp/wordpress
           wp core download --allow-root
           wp config create --dbname=wordpress_test --dbuser=root --dbpass=root --dbhost=127.0.0.1 --allow-root
-          wp core install --url=http://localhost:8080 --title="Agency Site CI" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --allow-root
+          wp core install --url=http://127.0.0.1:8080 --title="Apex Digital CI" --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email --allow-root
 
       - name: Mount Agency Theme and Plugin into Test WP
         run: |
@@ -97,15 +116,14 @@ jobs:
           mkdir -p /tmp/wordpress/wp-content/tests
           cp tests/run-all-tests.php /tmp/wordpress/wp-content/tests/
 
-      - name: Activate Theme & Plugin
+      - name: Activate Theme & Companion Plugin
         run: |
           cd /tmp/wordpress
           wp theme activate agency-site --allow-root
           wp plugin activate agency-site-core --allow-root
           wp rewrite structure '/%postname%/' --allow-root
 
-      - name: Run Automated Security & Integration Suite
+      - name: Run Behavioural, Security & Ingress Suite (52 Assertions)
         run: |
           cd /tmp/wordpress
           wp eval-file wp-content/tests/run-all-tests.php --allow-root
-

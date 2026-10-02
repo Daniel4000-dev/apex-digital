@@ -1,24 +1,28 @@
 {
-  "name": "wordpress-agency-site-root",
+  "name": "apex-digital-workspace",
   "version": "1.0.0",
   "private": true,
-  "description": "Root workspace orchestration scripts for Agency Site theme & plugin",
+  "description": "Root workspace orchestration scripts for Apex Digital theme, companion plugin, and tests",
   "scripts": {
     "build": "npm --prefix themes/agency-site run build",
+    "build:legacy": "npm --prefix legacy-maintenance-example run build",
     "watch": "npm --prefix themes/agency-site run watch:css",
-    "lint:php": "bash -c 'PHP_EXEC=$(command -v php 2>/dev/null || echo \"/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php\"); find themes/agency-site plugins/agency-site-core tests -name node_modules -prune -o -name vendor -prune -o -name \"*.php\" -exec \"$PHP_EXEC\" -l {} \\;'",
-    "lint:phpcs": "bash -c 'PHP_EXEC=$(command -v php 2>/dev/null || echo \"/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php\"); $PHP_EXEC vendor/bin/phpcs --standard=phpcs.xml --warning-severity=0'",
-    "lint:phpcs:strict": "bash -c 'PHP_EXEC=$(command -v php 2>/dev/null || echo \"/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php\"); $PHP_EXEC vendor/bin/phpcs --standard=phpcs.xml'",
+    "lint:php": "bash scripts/run-with-env.sh lint-php",
+    "lint:phpcs": "bash scripts/run-with-env.sh phpcs",
+    "lint:phpcs:strict": "bash scripts/run-with-env.sh phpcs-strict",
     "lint:js": "npm --prefix themes/agency-site run lint:js",
-    "test:phpunit": "bash -c 'PHP_EXEC=$(command -v php 2>/dev/null || echo \"/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php\"); $PHP_EXEC -d mysqli.default_socket=\"/Users/mac/Library/Application Support/Local/run/Rxl0HKEp-/mysql/mysqld.sock\" vendor/bin/phpunit'",
-    "test:behavioural": "bash -c 'PHP_EXEC=$(command -v php 2>/dev/null || echo \"/Applications/Local.app/Contents/Resources/extraResources/lightning-services/php-8.2.29+0/bin/darwin/bin/php\"); $PHP_EXEC -d mysqli.default_socket=\"/Users/mac/Library/Application Support/Local/run/Rxl0HKEp-/mysql/mysqld.sock\" /Applications/Local.app/Contents/Resources/extraResources/bin/wp-cli/wp-cli.phar --path=\"/Users/mac/Local Sites/wordpress-agency-site/app/public\" eval-file tests/run-all-tests.php'",
+    "test:phpunit": "bash scripts/run-with-env.sh phpunit",
+    "test:behavioural": "bash scripts/run-with-env.sh behavioural",
     "test:browser": "node tests/verify-apex-digital.js",
+    "test:emails": "bash scripts/run-with-env.sh emails",
     "test": "npm run test:phpunit && npm run test:behavioural && npm run test:browser"
   },
   "keywords": [
     "wordpress",
-    "agency-site",
-    "tailwind"
+    "apex-digital",
+    "tailwind",
+    "sass",
+    "foundation"
   ],
   "author": "Antigravity",
   "license": "GPL-2.0-or-later",

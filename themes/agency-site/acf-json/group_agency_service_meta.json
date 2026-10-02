@@ -1,0 +1,76 @@
+{
+  "key": "group_agency_service_meta",
+  "title": "Service Specifications & Deliverables",
+  "fields": [
+    {
+      "key": "field_agency_service_tagline",
+      "label": "Service Tagline",
+      "name": "_service_tagline",
+      "type": "text",
+      "instructions": "One punchy strategic summary sentence.",
+      "required": 0
+    },
+    {
+      "key": "field_agency_service_pricing",
+      "label": "Pricing / Retainer Indicator",
+      "name": "_service_pricing",
+      "type": "text",
+      "instructions": "e.g. \"From $4,500/mo\" or \"Custom Engagement\".",
+      "required": 0
+    },
+    {
+      "key": "field_agency_service_badge",
+      "label": "Highlight Badge",
+      "name": "_service_badge",
+      "type": "text",
+      "instructions": "e.g. \"Most Popular\" or \"Enterprise Ready\".",
+      "required": 0
+    },
+    {
+      "key": "field_agency_service_deliverables",
+      "label": "Key Deliverables (1 per line)",
+      "name": "_service_deliverables",
+      "type": "textarea",
+      "instructions": "Enter each concrete deliverable on a new line.",
+      "required": 0
+    },
+    {
+      "key": "field_agency_service_faqs",
+      "label": "Service FAQs",
+      "name": "_service_faqs",
+      "type": "repeater",
+      "instructions": "Add questions and detailed answers for the FAQ accordion.",
+      "required": 0,
+      "sub_fields": [
+        {
+          "key": "field_agency_faq_question",
+          "label": "Question",
+          "name": "question",
+          "type": "text"
+        },
+        {
+          "key": "field_agency_faq_answer",
+          "label": "Answer",
+          "name": "answer",
+          "type": "textarea"
+        }
+      ]
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "agency_service"
+      }
+    ]
+  ],
+  "menu_order": 0,
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "active": true,
+  "description": "Reproducible ACF Pro definitions for Apex Digital service capabilities."
+}

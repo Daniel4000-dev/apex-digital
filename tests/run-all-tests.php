@@ -69,6 +69,14 @@ class Agency_Site_Test_Runner {
         // Actual theme switch content access
         $this->test_actual_theme_switch_and_content_access();
 
+        // Advanced failure handling & persistence guarantees
+        $this->test_persistence_failure_halts_webhook_and_emails();
+        $this->test_field_length_limit_rejection();
+        $this->test_webhook_log_credential_and_pii_redaction();
+        $this->test_private_enquiry_permissions();
+        $this->test_acf_and_gravity_forms_bridge_classes();
+        $this->test_inactive_companion_plugin_fallback_handler();
+
         echo "\n------------------------------------------------------------\n";
         echo sprintf("RESULTS: %d PASSED, %d FAILED (Total: %d)\n", $this->passed, $this->failed, count($this->tests));
         echo "------------------------------------------------------------\n\n";
@@ -549,6 +557,153 @@ class Agency_Site_Test_Runner {
         switch_theme('agency-site');
         $restored_theme = get_stylesheet();
         $this->assert('Theme restored back to agency-site', $restored_theme === 'agency-site', 'Failed to restore agency-site.');
+    }
+
+    /**
+     * 18. Assert persistence failure halts downstream email & webhook dispatch (no side effects)
+     */
+    private function test_persistence_failure_halts_webhook_and_emails() {
+        $test_ip = '127.0.0.91';
+        $_SERVER['REMOTE_ADDR'] = $test_ip;
+        delete_transient('agency_rate_' . md5($test_ip));
+
+        $nonce = wp_create_nonce('agency_contact_action_nonce');
+        $_POST = [
+            'action'            => 'agency_submit_contact',
+            'security'          => $nonce,
+            'name'              => 'Fail Test Lead',
+            'email'             => 'fail-lead@example.com',
+            'phone'             => '+1 (555) 000-1111',
+            'company'           => 'Simulated DB Failure Corp',
+            'service'           => 'Conversion Optimization',
+            'budget'            => '$5,000 – $10,000 / mo',
+            'message'           => 'This submission tests transactional persistence rollback.',
+            'agency_hp_website' => '',
+        ];
+        $_REQUEST = $_POST;
+
+        $logs_before = count(Agency_Core_Webhook_Dispatcher::get_logs());
+
+        // Intercept insertion filter to force wp_insert_post failure
+        $fail_filter = function($args) {
+            $args['post_type'] = 'non_existent_invalid_post_type_force_fail';
+            return $args;
+        };
+        add_filter('agency_core_insert_enquiry_args', $fail_filter);
+
+        ob_start();
+        try {
+            agency_site_core()->enquiry_handler->handle_submission();
+        } catch (\Throwable $e) {}
+        $output = ob_get_clean();
+        remove_filter('agency_core_insert_enquiry_args', $fail_filter);
+
+        $data = json_decode($output, true);
+        $logs_after = count(Agency_Core_Webhook_Dispatcher::get_logs());
+
+        $this->assert('Persistence failure returns error (HTTP 500)', isset($data['success']) && $data['success'] === false, 'Did not reject failed save: ' . $output);
+        $this->assert('Persistence failure halts webhook delivery (no webhook side effect)', $logs_after === $logs_before, 'Webhook was improperly dispatched after persistence failure.');
+    }
+
+    /**
+     * 19. Assert field length bounds rejection
+     */
+    private function test_field_length_limit_rejection() {
+        $test_ip = '127.0.0.92';
+        $_SERVER['REMOTE_ADDR'] = $test_ip;
+        delete_transient('agency_rate_' . md5($test_ip));
+
+        $nonce = wp_create_nonce('agency_contact_action_nonce');
+
+        // Oversized name (>100 chars)
+        $_POST = [
+            'action'   => 'agency_submit_contact',
+            'security' => $nonce,
+            'name'     => str_repeat('A', 105),
+            'email'    => 'oversized-name@example.com',
+            'message'  => 'Valid length message explaining project requirements.',
+        ];
+        $_REQUEST = $_POST;
+
+        ob_start();
+        try {
+            agency_site_core()->enquiry_handler->handle_submission();
+        } catch (\Throwable $e) {}
+        $output = ob_get_clean();
+        $data = json_decode($output, true);
+        $this->assert('Oversized field name (>100 chars) rejected (HTTP 400)', isset($data['success']) && $data['success'] === false, 'Oversized name was not rejected.');
+
+        // Too-short message (<10 chars)
+        $_POST['name']    = 'Valid Name';
+        $_POST['message'] = 'Short';
+        $_REQUEST = $_POST;
+
+        ob_start();
+        try {
+            agency_site_core()->enquiry_handler->handle_submission();
+        } catch (\Throwable $e) {}
+        $output_short = ob_get_clean();
+        $data_short = json_decode($output_short, true);
+        $this->assert('Under-length field message (<10 chars) rejected (HTTP 400)', isset($data_short['success']) && $data_short['success'] === false, 'Short message was not rejected.');
+    }
+
+    /**
+     * 20. Assert redaction of credentials and PII in webhook logging
+     */
+    private function test_webhook_log_credential_and_pii_redaction() {
+        $sensitive_url = 'https://admin:super_secret_password@webhook.site/v1/endpoint?token=secret_token_123&api_key=priv_key_456&team=growth';
+        $redacted_url = Agency_Core_Webhook_Dispatcher::redact_sensitive_url($sensitive_url);
+
+        $has_password = strpos($redacted_url, 'super_secret_password') !== false;
+        $has_token    = strpos($redacted_url, 'secret_token_123') !== false;
+        $has_api_key  = strpos($redacted_url, 'priv_key_456') !== false;
+
+        $this->assert('Webhook URL basic auth password redacted in logs', !$has_password && strpos($redacted_url, 'admin:***@') !== false, 'Password was not redacted.');
+        $this->assert('Webhook URL sensitive query tokens redacted in logs', !$has_token && !$has_api_key && strpos($redacted_url, 'token=***') !== false, 'Tokens were not redacted.');
+
+        $sensitive_payload = [
+            'name'       => 'Jane Confidential',
+            'email'      => 'jane@secret-domain.com',
+            'phone'      => '+1 555 999 8888',
+            'message'    => 'Confidential corporate strategy details.',
+            'event'      => 'enquiry.created',
+            'enquiry_id' => 999,
+            'service'    => 'Growth Advisory',
+        ];
+        $clean_payload = Agency_Core_Webhook_Dispatcher::sanitize_logged_payload($sensitive_payload);
+
+        $this->assert('PII fields (name, email, phone, message) excluded from log payload', !isset($clean_payload['name']) && !isset($clean_payload['email']) && !isset($clean_payload['message']), 'PII was not stripped from log payload.');
+        $this->assert('Structural metadata preserved in clean log payload', isset($clean_payload['event']) && isset($clean_payload['enquiry_id']), 'Metadata missing from log payload.');
+    }
+
+    /**
+     * 21. Assert private enquiry permissions
+     */
+    private function test_private_enquiry_permissions() {
+        $enquiry_cpt = get_post_type_object('agency_enquiry');
+        $this->assert('Enquiry CPT is strictly private (public = false)', $enquiry_cpt && $enquiry_cpt->public === false, 'agency_enquiry must not be public.');
+        $this->assert('Enquiry CPT prohibits arbitrary public creation', isset($enquiry_cpt->cap->create_posts) && $enquiry_cpt->cap->create_posts === 'do_not_allow', 'Public creation must be restricted.');
+    }
+
+    /**
+     * 22. Assert ACF Pro and Gravity Forms integration bridge classes
+     */
+    private function test_acf_and_gravity_forms_bridge_classes() {
+        $this->assert('ACF integration bridge class exists', class_exists('Agency_Core_ACF_Integration'), 'Agency_Core_ACF_Integration is missing.');
+        $this->assert('Gravity Forms integration bridge class exists', class_exists('Agency_Core_Gravity_Forms_Integration'), 'Agency_Core_Gravity_Forms_Integration is missing.');
+
+        $acf_json_file = get_template_directory() . '/acf-json/group_agency_service_meta.json';
+        $this->assert('ACF JSON field definitions file exists in theme', file_exists($acf_json_file), 'group_agency_service_meta.json is missing.');
+
+        $gf_json_file = dirname(__DIR__) . '/docs/gravityforms-export-sanitized.json';
+        $this->assert('Gravity Forms sanitized form export exists in docs', file_exists($gf_json_file), 'gravityforms-export-sanitized.json is missing.');
+    }
+
+    /**
+     * 23. Assert inactive companion plugin fallback handler
+     */
+    private function test_inactive_companion_plugin_fallback_handler() {
+        $this->assert('Theme fallback AJAX contact handler registered', function_exists('agency_site_fallback_ajax_contact'), 'agency_site_fallback_ajax_contact function is missing.');
     }
 }
 

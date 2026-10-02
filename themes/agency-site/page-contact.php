@@ -35,6 +35,20 @@ $selected_service = isset( $_GET['service'] ) ? sanitize_text_field( wp_unslash(
 					<h2 class="text-2xl font-bold text-slate-900 font-heading mb-2">Book a Strategy Consultation</h2>
 					<p class="text-sm text-slate-600 mb-8">Tell us about your brand, current growth metrics, and where you want to scale.</p>
 
+					<?php if ( ! class_exists( 'Agency_Core_Enquiry_Handler' ) && current_user_can( 'activate_plugins' ) ) : ?>
+						<div class="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm">
+							<p class="font-bold mb-1">⚠️ Administrator Notice:</p>
+							<p>The companion plugin <code>Agency Site Core</code> is currently inactive. Inquiries are being routed via the fallback direct email handler. Activate the plugin in <a href="<?php echo esc_url( admin_url( 'plugins.php' ) ); ?>" class="underline font-semibold">wp-admin</a> for dashboard CPT storage and automated webhook dispatch.</p>
+						</div>
+					<?php endif; ?>
+
+					<?php
+					$gf_form_id = apply_filters( 'agency_contact_gravity_form_id', get_option( 'agency_gravity_form_id', 0 ) );
+					if ( ! empty( $gf_form_id ) && function_exists( 'gravity_form' ) ) :
+						gravity_form( (int) $gf_form_id, false, true, false, null, true );
+					else :
+						?>
+
 					<!-- Alert Box for AJAX responses -->
 					<div id="contact-form-alert" class="hidden mb-6 p-4 rounded-2xl text-sm" role="alert"></div>
 
@@ -172,6 +186,7 @@ $selected_service = isset( $_GET['service'] ) ? sanitize_text_field( wp_unslash(
 							</p>
 						</div>
 					</form>
+					<?php endif; ?>
 				</div>
 			</div>
 

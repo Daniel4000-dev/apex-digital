@@ -50,7 +50,7 @@ class Agency_Core_Enquiry_Handler {
 			'show_ui'         => true,
 			'show_in_menu'    => true,
 			'capability_type' => 'post',
-			'capabilities'    => array( 'create_posts' => false ),
+			'capabilities'    => array( 'create_posts' => 'do_not_allow' ),
 			'map_meta_cap'    => true,
 			'hierarchical'    => false,
 			'menu_position'   => 6,
@@ -192,25 +192,119 @@ class Agency_Core_Enquiry_Handler {
 			wp_die();
 		}
 
+		// Validate field length bounds (prevent DB exhaustion and buffer abuse)
+		if ( mb_strlen( $name ) > 100 ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Name exceeds maximum allowed length (100 characters).', 'agency-site-core' ),
+				),
+				400
+			);
+			wp_die();
+		}
+
+		if ( mb_strlen( $email ) > 100 ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Email address exceeds maximum allowed length (100 characters).', 'agency-site-core' ),
+				),
+				400
+			);
+			wp_die();
+		}
+
+		if ( mb_strlen( $phone ) > 50 ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Phone number exceeds maximum allowed length (50 characters).', 'agency-site-core' ),
+				),
+				400
+			);
+			wp_die();
+		}
+
+		if ( mb_strlen( $company ) > 100 ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Company name exceeds maximum allowed length (100 characters).', 'agency-site-core' ),
+				),
+				400
+			);
+			wp_die();
+		}
+
+		if ( mb_strlen( $service ) > 100 ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Service name exceeds maximum allowed length (100 characters).', 'agency-site-core' ),
+				),
+				400
+			);
+			wp_die();
+		}
+
+		if ( mb_strlen( $budget ) > 50 ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Budget tier exceeds maximum allowed length (50 characters).', 'agency-site-core' ),
+				),
+				400
+			);
+			wp_die();
+		}
+
+		if ( mb_strlen( $message ) > 3000 ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Message exceeds maximum allowed length (3000 characters).', 'agency-site-core' ),
+				),
+				400
+			);
+			wp_die();
+		}
+
+		if ( mb_strlen( $message ) < 10 ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Message is too short (minimum 10 characters required).', 'agency-site-core' ),
+				),
+				400
+			);
+			wp_die();
+		}
+
 		// 7. Insert Enquiry into agency_enquiry CPT
 		$enquiry_title = sprintf( '%s — %s', $name, $service ?: 'General Inquiry' );
-		$enquiry_id    = wp_insert_post(
-			array(
-				'post_type'    => 'agency_enquiry',
-				'post_status'  => 'publish',
-				'post_title'   => $enquiry_title,
-				'post_content' => $message,
-				'meta_input'   => array(
-					'_enquiry_name'    => $name,
-					'_enquiry_email'   => $email,
-					'_enquiry_phone'   => $phone,
-					'_enquiry_company' => $company,
-					'_enquiry_service' => $service,
-					'_enquiry_budget'  => $budget,
-					'_enquiry_ip'      => $client_ip,
-				),
-			)
+		$insert_args   = array(
+			'post_type'    => 'agency_enquiry',
+			'post_status'  => 'publish',
+			'post_title'   => $enquiry_title,
+			'post_content' => $message,
+			'meta_input'   => array(
+				'_enquiry_name'    => $name,
+				'_enquiry_email'   => $email,
+				'_enquiry_phone'   => $phone,
+				'_enquiry_company' => $company,
+				'_enquiry_service' => $service,
+				'_enquiry_budget'  => $budget,
+				'_enquiry_ip'      => $client_ip,
+			),
 		);
+
+		// Allow test harness to simulate database persistence failure
+		$insert_args = apply_filters( 'agency_core_insert_enquiry_args', $insert_args );
+		$enquiry_id  = wp_insert_post( $insert_args, true );
+
+		// Strict persistence check: If save fails, halt immediately without webhook or email dispatch
+		if ( is_wp_error( $enquiry_id ) || empty( $enquiry_id ) ) {
+			wp_send_json_error(
+				array(
+					'message' => esc_html__( 'Unable to process and store your enquiry at this time. Please try again later.', 'agency-site-core' ),
+				),
+				500
+			);
+			wp_die();
+		}
 
 		$enquiry_data = array(
 			'name'         => $name,
@@ -274,7 +368,26 @@ class Agency_Core_Enquiry_Handler {
 			'Reply-To: ' . $agency_email,
 		);
 
-		return wp_mail( $email, $subject, $html_content, $headers );
+		$alt_body = sprintf(
+			"Hello %1\$s,\n\nThank you for reaching out to %2\$s. We have received your consultation request.\n\nSummary of your request:\n- Service: %3\$s\n- Budget: %4\$s\n- Company: %5\$s\n- Phone: %6\$s\n\nOur team will review your project details and follow up within 24 hours.\n\nBest regards,\n%2\$s Team\n%7\$s",
+			$name,
+			$site_name,
+			$service ?: 'General Growth Consultation',
+			$budget ?: 'Not specified',
+			$company ?: 'Not provided',
+			$phone ?: 'Not provided',
+			$agency_email
+		);
+
+		$set_alt_body = function ( $phpmailer ) use ( $alt_body ) {
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$phpmailer->AltBody = $alt_body;
+		};
+		add_action( 'phpmailer_init', $set_alt_body );
+		$sent = wp_mail( $email, $subject, $html_content, $headers );
+		remove_action( 'phpmailer_init', $set_alt_body );
+
+		return $sent;
 	}
 
 	/**
@@ -303,7 +416,27 @@ class Agency_Core_Enquiry_Handler {
 			'Reply-To: ' . $name . ' <' . $email . '>',
 		);
 
-		return wp_mail( $admin_email, $subject, $html_content, $headers );
+		$alt_body = sprintf(
+			"New Lead Consultation Request:\n\n- Name: %1\$s\n- Email: %2\$s\n- Phone: %3\$s\n- Company: %4\$s\n- Service: %5\$s\n- Budget: %6\$s\n- Webhook Delivery: %7\$s\n\nMessage:\n%8\$s",
+			$name,
+			$email,
+			$phone ?: 'Not provided',
+			$company ?: 'Not provided',
+			$service,
+			$budget ?: 'Not specified',
+			$webhook_status,
+			$message
+		);
+
+		$set_alt_body = function ( $phpmailer ) use ( $alt_body ) {
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$phpmailer->AltBody = $alt_body;
+		};
+		add_action( 'phpmailer_init', $set_alt_body );
+		$sent = wp_mail( $admin_email, $subject, $html_content, $headers );
+		remove_action( 'phpmailer_init', $set_alt_body );
+
+		return $sent;
 	}
 
 	/**

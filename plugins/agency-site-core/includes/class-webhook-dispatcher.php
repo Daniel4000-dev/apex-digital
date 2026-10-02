@@ -254,6 +254,10 @@ class Agency_Core_Webhook_Dispatcher {
 			$log
 		);
 
+		// Redact credentials, destination tokens and personal data from logs
+		$entry['url']             = self::redact_sensitive_url( $entry['url'] );
+		$entry['request_payload'] = self::sanitize_logged_payload( $entry['request_payload'] );
+
 		array_unshift( $logs, $entry );
 
 		// Limit log retention
@@ -263,6 +267,52 @@ class Agency_Core_Webhook_Dispatcher {
 
 		update_option( self::LOGS_OPTION, $logs, false );
 		return $entry;
+	}
+
+	/**
+	 * Redact credentials and sensitive tokens from logged URLs
+	 *
+	 * @param string $url Destination URL.
+	 * @return string Sanitized and redacted URL safe for admin logging.
+	 */
+	public static function redact_sensitive_url( $url ) {
+		if ( empty( $url ) || ! is_string( $url ) ) {
+			return '';
+		}
+
+		// Redact HTTP basic auth credentials: https://user:pass@example.com -> https://user:***@example.com
+		$url = preg_replace( '#://([^:@]+):([^@]+)@#', '://$1:***@', $url );
+
+		// Redact query parameter values for sensitive keys like token, secret, and auth.
+		$sensitive_params = array( 'token', 'key', 'secret', 'api_key', 'apikey', 'auth', 'access_token', 'signature', 'sig', 'password' );
+		foreach ( $sensitive_params as $param ) {
+			$url = preg_replace( '/([?&]' . preg_quote( $param, '/' ) . '=)([^&]+)/i', '$1***', $url );
+		}
+
+		return $url;
+	}
+
+	/**
+	 * Sanitize payload for logging, ensuring zero personal identifiable information (PII) is persisted
+	 *
+	 * @param mixed $payload
+	 * @return array Sanitized payload
+	 */
+	public static function sanitize_logged_payload( $payload ) {
+		if ( ! is_array( $payload ) ) {
+			return array();
+		}
+
+		// Only retain structural metadata; strictly strip out PII (name, email, phone, message)
+		$safe_keys = array( 'event', 'timestamp', 'enquiry_id', 'service', 'budget' );
+		$clean     = array();
+		foreach ( $safe_keys as $key ) {
+			if ( isset( $payload[ $key ] ) ) {
+				$clean[ $key ] = sanitize_text_field( (string) $payload[ $key ] );
+			}
+		}
+
+		return $clean;
 	}
 
 	public static function get_logs() {

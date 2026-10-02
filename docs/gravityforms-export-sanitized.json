@@ -1,0 +1,165 @@
+{
+  "version": "2.8.0",
+  "forms": [
+    {
+      "id": 1,
+      "title": "Apex Digital — Strategy Consultation",
+      "description": "Inbound client inquiry form with anti-spam honeypot and CRM field mapping.",
+      "labelPlacement": "top_label",
+      "descriptionPlacement": "below_inputs",
+      "button": {
+        "type": "text",
+        "text": "Request Strategy Consultation",
+        "imageUrl": ""
+      },
+      "fields": [
+        {
+          "id": 1,
+          "type": "name",
+          "label": "Full Name",
+          "adminLabel": "name",
+          "isRequired": true,
+          "size": "large",
+          "inputs": [
+            {
+              "id": "1.3",
+              "label": "First",
+              "name": ""
+            },
+            {
+              "id": "1.6",
+              "label": "Last",
+              "name": ""
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "type": "email",
+          "label": "Work Email",
+          "adminLabel": "email",
+          "isRequired": true,
+          "size": "large",
+          "placeholder": "name@company.com"
+        },
+        {
+          "id": 3,
+          "type": "phone",
+          "label": "Phone Number",
+          "adminLabel": "phone",
+          "isRequired": false,
+          "size": "large",
+          "phoneFormat": "standard"
+        },
+        {
+          "id": 4,
+          "type": "text",
+          "label": "Company / Website URL",
+          "adminLabel": "company",
+          "isRequired": false,
+          "size": "large",
+          "placeholder": "https://yourcompany.com"
+        },
+        {
+          "id": 5,
+          "type": "select",
+          "label": "Service Requested",
+          "adminLabel": "service",
+          "isRequired": true,
+          "choices": [
+            {
+              "text": "Search Engine Optimization",
+              "value": "Search Engine Optimization",
+              "isSelected": true
+            },
+            {
+              "text": "Performance Web Design",
+              "value": "Performance Web Design",
+              "isSelected": false
+            },
+            {
+              "text": "Paid Advertising (PPC)",
+              "value": "Paid Advertising (PPC)",
+              "isSelected": false
+            },
+            {
+              "text": "Conversion Rate Optimization",
+              "value": "Conversion Rate Optimization",
+              "isSelected": false
+            },
+            {
+              "text": "Growth Consulting & Strategy",
+              "value": "Growth Consulting & Strategy",
+              "isSelected": false
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "type": "select",
+          "label": "Estimated Monthly Growth Budget",
+          "adminLabel": "budget",
+          "isRequired": false,
+          "choices": [
+            {
+              "text": "$3,000 – $5,000 / mo",
+              "value": "$3k-$5k",
+              "isSelected": true
+            },
+            {
+              "text": "$5,000 – $10,000 / mo",
+              "value": "$5k-$10k",
+              "isSelected": false
+            },
+            {
+              "text": "$10,000 – $25,000 / mo",
+              "value": "$10k-$25k",
+              "isSelected": false
+            },
+            {
+              "text": "$25,000+ / mo",
+              "value": "$25k+",
+              "isSelected": false
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "type": "textarea",
+          "label": "Project Details & Growth Goals",
+          "adminLabel": "message",
+          "isRequired": true,
+          "size": "large",
+          "placeholder": "Tell us about your target market, primary conversion goals, and timeline."
+        },
+        {
+          "id": 8,
+          "type": "honeypot",
+          "label": "Website",
+          "adminLabel": "agency_hp_website"
+        }
+      ],
+      "notifications": [
+        {
+          "id": "admin_notification",
+          "name": "Internal Lead Alert",
+          "event": "form_submission",
+          "to": "{admin_email}",
+          "subject": "New Consultation Request: {Full Name:1} ({Service Requested:5})",
+          "message": "{all_fields}"
+        }
+      ],
+      "confirmations": [
+        {
+          "id": "default_confirmation",
+          "name": "Default Confirmation",
+          "isDefault": true,
+          "type": "message",
+          "message": "Thank you! Your inquiry has been received. Our team will review your project details and follow up within 24 hours."
+        }
+      ],
+      "is_active": "1",
+      "date_created": "2026-11-02 21:00:00"
+    }
+  ]
+}

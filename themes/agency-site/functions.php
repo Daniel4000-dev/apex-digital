@@ -284,3 +284,57 @@ function agency_site_nav_menu_link_attributes( $atts, $item, $args ) {
 	return $atts;
 }
 add_filter( 'nav_menu_link_attributes', 'agency_site_nav_menu_link_attributes', 10, 3 );
+
+/**
+ * Fallback contact form AJAX handler when companion plugin is inactive.
+ * Ensures inquiries are still reliably dispatched via wp_mail without losing user leads.
+ */
+function agency_site_fallback_ajax_contact() {
+	if ( class_exists( 'Agency_Core_Enquiry_Handler' ) ) {
+		return; // Companion plugin handles this with full CPT storage and webhooks.
+	}
+
+	if ( ! check_ajax_referer( 'agency_contact_action_nonce', 'security', false ) ) {
+		wp_send_json_error(
+			array(
+				'message' => esc_html__( 'Invalid security token. Please refresh the page.', 'agency-site' ),
+			),
+			403
+		);
+		wp_die();
+	}
+
+	$name    = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
+	$email   = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+	$service = isset( $_POST['service'] ) ? sanitize_text_field( wp_unslash( $_POST['service'] ) ) : 'General Inquiry';
+	$message = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
+
+	if ( empty( $name ) || empty( $email ) || ! is_email( $email ) || empty( $message ) ) {
+		wp_send_json_error(
+			array(
+				'message' => esc_html__( 'Please fill in all required fields.', 'agency-site' ),
+			),
+			400
+		);
+		wp_die();
+	}
+
+	$to      = get_theme_mod( 'agency_email', get_option( 'admin_email' ) );
+	$subject = sprintf( '[%s Fallback] Inquiry from %s (%s)', get_bloginfo( 'name' ), $name, $service );
+	$body    = sprintf( "Name: %s\nEmail: %s\nService: %s\n\nMessage:\n%s", $name, $email, $service, $message );
+	$headers = array(
+		'From: ' . get_bloginfo( 'name' ) . ' <' . $to . '>',
+		'Reply-To: ' . $name . ' <' . $email . '>',
+	);
+
+	wp_mail( $to, $subject, $body, $headers );
+
+	wp_send_json_success(
+		array(
+			'message' => esc_html__( 'Thank you! Your inquiry was sent successfully directly to our strategy team.', 'agency-site' ),
+		)
+	);
+	wp_die();
+}
+add_action( 'wp_ajax_agency_submit_contact', 'agency_site_fallback_ajax_contact', 20 );
+add_action( 'wp_ajax_nopriv_agency_submit_contact', 'agency_site_fallback_ajax_contact', 20 );
