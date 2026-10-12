@@ -135,3 +135,4 @@ if ( $http_code === 200 && $response ) {
 echo "\n====================================================\n";
 echo " 🎉 EMAIL DISPATCH VERIFICATION COMPLETE\n";
 echo "====================================================\n";
+

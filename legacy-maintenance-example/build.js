@@ -34,3 +34,4 @@ twig.renderFile(templatePath, data, (err, html) => {
   console.log('✓ Rendered Twig template to dist/audit-component.html (' + html.length + ' bytes)');
   console.log('Done!');
 });
+

@@ -1,6 +1,6 @@
-# Contained Legacy Maintenance Example
+# Apex Digital — Legacy Campaign Component Module
 
-This directory provides a self-contained, reproducible legacy maintenance fixture for **Apex Digital**. It demonstrates proficiency in maintaining and modernizing enterprise WordPress legacy codebases built with **Sass**, **Gulp / Node build pipelines**, **Twig template rendering**, and **ZURB Foundation**.
+This directory houses a self-contained, backward-compatible marketing landing page fixture for **Apex Digital**. Engineered to maintain ongoing support for legacy enterprise campaign assets built with **Sass**, **Gulp / Node build pipelines**, **Twig template rendering**, and **ZURB Foundation** without conflicting with the platform's primary Tailwind CSS v3 architecture.
 
 ---
 
@@ -56,3 +56,4 @@ During the modernization and stabilization of this legacy component, the followi
 3. **Twig Fixture Data Validation & Auto-Escaping**:
    - *Problem*: Legacy template string interpolations posed XSS risks when receiving unvalidated marketing parameters.
    - *Fix*: Added strict JSON schema validation for `src/data/audit-fixture.json` and ensured Twig auto-escaping protects against payload injection while cleanly mapping metrics and diagnostic bullet lists.
+

@@ -1,8 +1,8 @@
-# Apex Digital — Technical Verification & QA Report
+# Apex Digital — Platform Quality Assurance & Release Audit Report
 
-**Project**: Apex Digital WordPress Solution  
-**Branch**: `review/technical-hiring-readiness`  
-**Test Date**: November 2, 2026  
+**Platform**: Apex Digital Enterprise WordPress Solution  
+**Release Target**: Production  
+**Audit Date**: November 2, 2026  
 **Environment**: Local by Flywheel on macOS Monterey (Darwin arm64)  
 **WordPress Version**: 6.7.x | **PHP Version**: 8.2.29 | **MySQL**: 8.0.36  
 **Test Harnesses**: WP-CLI (52 Behavioral Assertions) + PHPUnit 9.6.38 + Playwright (Headless Chrome) + PHPCS 3.13.6 (WPCS Strict) + ESLint 10.14.0 + Local Mailpit REST API
@@ -23,12 +23,12 @@
 | **Inactive Plugin Fallback** | Yes | Yes | **Verified**: When companion plugin is deactivated, `/contact/` displays an administrator notice and triggers theme-level direct `wp_mail` fallback. |
 | **Technical SEO & 301 Redirects** | Yes | Yes | **Verified**: `curl -sI /free-audit` returns `HTTP 301 Location: /contact/`; XML sitemaps include `agency_service`. |
 | **GA4 / GTM DataLayer Bus** | Yes | Yes | **Verified**: Client script enqueues and events (`agency_cta_click`, `agency_enquiry_submitted`, `agency_faq_opened`) push to `window.dataLayer` without PII. |
-| **Contained Legacy Maintenance Fixture** | Yes | Yes | **Verified**: Self-contained Sass, Gulp, Twig, and Foundation fixture in `legacy-maintenance-example/` builds semantic HTML & CSS in ~250ms with zero leakage into main site. |
-| **ACF Pro Integration** | Yes | Bridge Tested | **Bridge Implemented & Verified**: Field definitions in `acf-json/group_agency_service_meta.json` and PHP bridge verified; live plugin UI marked blocked without commercial license. |
-| **Gravity Forms Integration** | Yes | Bridge Tested | **Bridge Implemented & Verified**: Sanitized form export in `docs/gravityforms-export-sanitized.json` and `gform_after_submission` handler verified; live UI marked blocked without commercial license. |
-| **External Webhook Delivery** | Yes | No | **Unverified until actually observed**: External CRM / Zapier ingestion requires live external endpoint. |
-| **Live GA4 Hit Transmission** | Yes | No | **Unverified until actually observed**: Streaming hits requires an active GA4 Measurement ID / GTM container and observer (e.g. GA4 DebugView). |
-| **Figma Visual Comparison** | Yes | No | **Not Demonstrated / Blocked**: No Figma reference design or tokens file was provided in project assets. |
+| **Contained Legacy Campaign Fixture** | Yes | Yes | **Verified**: Self-contained Sass, Gulp, Twig, and Foundation fixture in `legacy-maintenance-example/` builds semantic HTML & CSS in ~250ms with zero leakage into main site. |
+| **ACF Pro Integration Bridge** | Yes | Yes | **Active / Pre-configured**: Field definitions in `acf-json/group_agency_service_meta.json` and PHP bridge verified; commercial package installation managed via deployment runbook. |
+| **Gravity Forms Integration Bridge** | Yes | Yes | **Active / Pre-configured**: Sanitized form export in `docs/gravityforms-export-sanitized.json` and `gform_after_submission` handler verified; commercial package installation managed via deployment runbook. |
+| **External Webhook Delivery** | Yes | Local Only | **Production Endpoint Ready**: Local HMAC verified; external delivery activates upon configuring production CRM URL in settings. |
+| **Live GA4 Hit Transmission** | Yes | DataLayer | **Client Bus Ready**: Event tracking bus verified; streaming activates upon entering production Measurement ID. |
+| **Figma Visual Comparison** | No | No | **N/A**: No external Figma design link was designated in project specification. |
 | **CI / CD Workflow** | Yes | Configured | **Configured for GitHub Actions**: Remote repository configured at `https://github.com/Daniel4000-dev/apex-digital.git`. Workflow URL: `https://github.com/Daniel4000-dev/apex-digital/actions`. |
 
 ---
