@@ -1,6 +1,6 @@
 <?php
 /**
- * Template part for displaying a service card
+ * Template part for displaying a service card: Editorial Studio Aesthetic
  *
  * @package Agency_Site
  */
@@ -25,45 +25,44 @@ if ( empty( $deliverables ) && get_the_ID() ) {
 	}
 }
 
-// Guard against duplicate tagline and description display
 if ( trim( (string) $desc ) === trim( (string) $tagline ) ) {
 	$content = get_the_content();
 	$desc    = ! empty( $content ) ? wp_trim_words( wp_strip_all_tags( $content ), 26 ) : '';
 }
 ?>
-<div class="h-full bg-white rounded-3xl p-8 border border-slate-200/80 shadow-soft card-hover flex flex-col justify-between relative group">
+<div class="h-full bg-ivory border border-ink/20 p-8 flex flex-col justify-between group transition-colors duration-200 hover:border-cobalt relative">
 	<?php if ( ! empty( $badge ) ) : ?>
 		<div class="absolute top-6 right-6">
-			<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-agency-50 text-agency-700 border border-agency-200">
+			<span class="editorial-tag !text-[10px]">
 				<?php echo esc_html( $badge ); ?>
 			</span>
 		</div>
 	<?php endif; ?>
 
 	<div>
-		<div class="w-14 h-14 rounded-2xl bg-agency-50 text-agency-600 flex items-center justify-center mb-6 group-hover:bg-agency-600 group-hover:text-white transition-all duration-300 shadow-sm">
-			<?php echo agency_site_get_icon( $icon, 'w-7 h-7' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<div class="w-12 h-12 border border-ink/20 bg-ivory text-ink flex items-center justify-center mb-6 group-hover:bg-cobalt group-hover:text-white group-hover:border-cobalt transition-colors duration-200">
+			<?php echo agency_site_get_icon( $icon, 'w-6 h-6' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</div>
 
-		<h3 class="text-xl font-bold text-slate-900 mb-2 font-heading">
-			<a href="<?php echo esc_url( $service_link ); ?>" class="hover:text-agency-600 transition-colors">
+		<h3 class="text-2xl font-bold text-ink mb-2 font-heading">
+			<a href="<?php echo esc_url( $service_link ); ?>" class="hover:text-cobalt transition-colors">
 				<?php echo esc_html( $service_title ); ?>
 			</a>
 		</h3>
 
 		<?php if ( ! empty( $tagline ) ) : ?>
-			<p class="text-xs font-semibold text-agency-600 mb-3"><?php echo esc_html( $tagline ); ?></p>
+			<p class="text-xs font-mono text-cobalt font-medium mb-3"><?php echo esc_html( $tagline ); ?></p>
 		<?php endif; ?>
 
-		<div class="text-slate-600 text-sm leading-relaxed mb-6">
+		<div class="text-ink/80 text-sm leading-relaxed mb-6 font-normal">
 			<?php echo wp_kses_post( wpautop( $desc ) ); ?>
 		</div>
 
 		<?php if ( ! empty( $deliverables ) ) : ?>
-			<div class="border-t border-slate-100 pt-5 mb-6 space-y-2.5">
+			<div class="border-t border-ink/15 pt-5 mb-6 space-y-2">
 				<?php foreach ( array_slice( $deliverables, 0, 3 ) as $deliverable ) : ?>
-					<div class="flex items-start gap-2.5 text-xs text-slate-600">
-						<svg class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+					<div class="flex items-start gap-2 text-xs text-ink/70 font-mono">
+						<span class="text-cobalt font-bold">+</span>
 						<span><?php echo esc_html( $deliverable ); ?></span>
 					</div>
 				<?php endforeach; ?>
@@ -71,12 +70,11 @@ if ( trim( (string) $desc ) === trim( (string) $tagline ) ) {
 		<?php endif; ?>
 	</div>
 
-	<div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-		<span class="text-xs font-bold text-slate-500"><?php echo esc_html( $price ?: __( 'Custom Retainer', 'agency-site' ) ); ?></span>
-		<a href="<?php echo esc_url( $service_link ); ?>" class="inline-flex items-center gap-1.5 text-xs font-bold text-agency-600 hover:text-agency-700 transition-colors group-hover:translate-x-1 duration-200">
-			<span>Learn More</span>
-			<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+	<div class="pt-4 border-t border-ink/15 flex items-center justify-between font-mono text-xs">
+		<span class="text-ink/60"><?php echo esc_html( $price ?: __( 'Custom Scope', 'agency-site' ) ); ?></span>
+		<a href="<?php echo esc_url( $service_link ); ?>" class="font-bold text-ink group-hover:text-cobalt inline-flex items-center gap-1 transition-colors">
+			<span>Scope & Details</span>
+			<svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
 		</a>
 	</div>
 </div>
-

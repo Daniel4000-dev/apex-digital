@@ -44,7 +44,7 @@ const http = require('http');
     console.log(`  ✓ Page Title: "${title}" (Contains "Apex Digital": ${title.includes('Apex Digital')})`);
 
     const h1Text = (await page.textContent('h1')).trim();
-    console.log(`  ✓ H1 Headline: "${h1Text}" (Matches required: ${h1Text === 'Turn more visits into enquiries.'})`);
+    console.log(`  ✓ H1 Headline: "${h1Text}" (Contains "hard to miss": ${h1Text.includes('hard to miss')})`);
 
     const subheadText = (await page.textContent('section p')).trim();
     console.log(`  ✓ Subheading: "${subheadText}"`);
@@ -54,6 +54,39 @@ const http = require('http');
 
     const ctaSecondary = await page.textContent('section a.btn-secondary');
     console.log(`  ✓ Secondary CTA text: "${ctaSecondary.trim()}" (Matches: ${ctaSecondary.includes('Explore our services')})`);
+
+    // Verify Interactive Poster Switcher
+    console.log('  -> Testing Poster Design Studies switcher & accessibility...');
+    const tab1 = await page.$('#study-tab-1');
+    const tab2 = await page.$('#study-tab-2');
+    const tab3 = await page.$('#study-tab-3');
+    console.log(`  ✓ Poster tabs present: ${tab1 !== null && tab2 !== null && tab3 !== null}`);
+
+    let tab1Selected = await page.getAttribute('#study-tab-1', 'aria-selected');
+    console.log(`  ✓ Initial Study 01 aria-selected: "${tab1Selected}"`);
+
+    // Click Tab 2 (Cobalt)
+    await page.click('#study-tab-2');
+    await page.waitForTimeout(150);
+    const tab2Selected = await page.getAttribute('#study-tab-2', 'aria-selected');
+    const panel2Opacity = await page.$eval('#study-panel-2', el => el.classList.contains('opacity-100'));
+    console.log(`  ✓ After click Tab 2 aria-selected: "${tab2Selected}", Panel 2 visible: ${panel2Opacity}`);
+
+    // Click Tab 3 (Lime)
+    await page.click('#study-tab-3');
+    await page.waitForTimeout(150);
+    const tab3Selected = await page.getAttribute('#study-tab-3', 'aria-selected');
+    const panel3Opacity = await page.$eval('#study-panel-3', el => el.classList.contains('opacity-100'));
+    console.log(`  ✓ After click Tab 3 aria-selected: "${tab3Selected}", Panel 3 visible: ${panel3Opacity}`);
+
+    // Test ArrowLeft Keyboard Navigation
+    await page.keyboard.press('ArrowLeft');
+    await page.waitForTimeout(150);
+    const tab2NavSelected = await page.getAttribute('#study-tab-2', 'aria-selected');
+    console.log(`  ✓ After ArrowLeft key, Tab 2 selected: "${tab2NavSelected}"`);
+
+    // Reset to Study 1
+    await page.click('#study-tab-1');
 
     // Check for removed exaggerated elements and visible branding
     const visibleText = await page.evaluate(() => document.body.innerText);

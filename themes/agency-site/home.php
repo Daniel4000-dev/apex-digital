@@ -1,6 +1,6 @@
 <?php
 /**
- * The Blog Listing Template
+ * The Blog Listing Template: Editorial Studio Aesthetic
  *
  * @package Agency_Site
  */
@@ -9,27 +9,27 @@ get_header();
 ?>
 
 <!-- Blog Hero -->
-<section class="py-16 md:py-20 bg-gradient-to-b from-white via-agency-50/40 to-slate-50 border-b border-slate-200/60">
+<section class="py-16 md:py-24 border-b border-ink/15 bg-ivory">
 	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-		<span class="badge-tag mb-4"><?php esc_html_e( 'Educational Guides', 'agency-site' ); ?></span>
-		<h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight font-heading mb-4">
-			<?php esc_html_e( 'Insights, Guides & Search Strategies', 'agency-site' ); ?>
+		<span class="font-mono text-xs uppercase tracking-widest text-ink/60 block mb-3">01 / EDITORIAL GUIDES</span>
+		<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-ink tracking-tight font-heading mb-6 leading-tight">
+			Insights, Guides & <span class="font-serif italic font-normal text-cobalt">Technical Strategies</span>
 		</h1>
-		<p class="text-lg text-slate-600 max-w-2xl mx-auto">
+		<p class="text-lg sm:text-xl text-ink/80 max-w-2xl mx-auto font-normal leading-relaxed">
 			<?php esc_html_e( 'Practical guides, technical SEO teardowns, and actionable advice to help your business get found and turn visitors into enquiries.', 'agency-site' ); ?>
 		</p>
 
-		<!-- Category Pills -->
+		<!-- Category Filter Tags -->
 		<?php
 		$categories = get_categories( array( 'hide_empty' => true ) );
 		if ( ! empty( $categories ) ) :
 			?>
 			<div class="mt-8 flex flex-wrap items-center justify-center gap-2">
-				<a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ?: home_url( '/blog/' ) ); ?>" class="px-4 py-1.5 rounded-full text-xs font-bold transition-colors bg-agency-600 text-white shadow-xs">
-					All Articles
+				<a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ?: home_url( '/blog/' ) ); ?>" class="editorial-tag !border-cobalt !bg-cobalt !text-white">
+					All Notes
 				</a>
 				<?php foreach ( $categories as $category_item ) : ?>
-					<a href="<?php echo esc_url( get_category_link( $category_item->term_id ) ); ?>" class="px-4 py-1.5 rounded-full text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:border-agency-300 hover:text-agency-600 transition-colors shadow-xs">
+					<a href="<?php echo esc_url( get_category_link( $category_item->term_id ) ); ?>" class="editorial-tag hover:border-cobalt hover:text-cobalt transition-colors">
 						<?php echo esc_html( $category_item->name ); ?> (<?php echo esc_html( $category_item->count ); ?>)
 					</a>
 				<?php endforeach; ?>
@@ -38,7 +38,7 @@ get_header();
 	</div>
 </section>
 
-<!-- Blog Content & Sidebar Grid -->
+<!-- Blog Content Grid -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 	<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
 		
@@ -52,93 +52,88 @@ get_header();
 					the_post();
 					++$post_count;
 
-					// Highlight first post on page 1 as featured article
-					if ( $post_count === 1 && ! is_paged() ) :
+					// Featured Highlight for first post on page 1
+					if ( 1 === $post_count && ! is_paged() ) :
 						?>
-				<!-- Featured Article Highlight -->
-				<article class="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-soft card-hover group">
+				<article class="bg-ivory border border-ink/20 p-8 sm:p-10 transition-colors duration-200 hover:border-cobalt group">
 						<?php if ( has_post_thumbnail() ) : ?>
-						<a href="<?php the_permalink(); ?>" class="block aspect-[21/9] overflow-hidden">
+						<a href="<?php the_permalink(); ?>" class="block aspect-[21/9] overflow-hidden border border-ink/15 mb-6">
 							<?php the_post_thumbnail( 'agency-hero', array( 'class' => 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-300' ) ); ?>
 						</a>
 					<?php else : ?>
-						<a href="<?php the_permalink(); ?>" class="block aspect-[21/9] bg-gradient-to-tr from-agency-800 to-dark-900 p-8 flex items-end">
-							<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-agency-500/30 text-white border border-white/20">Featured Deep Dive</span>
+						<a href="<?php the_permalink(); ?>" class="block aspect-[21/9] bg-ink/5 border border-ink/15 p-6 mb-6 flex flex-col justify-between group-hover:bg-cobalt/5 transition-colors">
+							<div class="flex items-center justify-between font-mono text-xs text-ink/60 uppercase">
+								<span>FEATURED DEEP DIVE</span>
+								<span class="w-2 h-2 bg-cobalt"></span>
+							</div>
+							<div class="font-mono text-xs text-ink/40 uppercase tracking-widest">
+								APEX DIGITAL · TECHNICAL EDITORIAL
+							</div>
 						</a>
 					<?php endif; ?>
 
-					<div class="p-8 sm:p-10">
-						<div class="flex items-center gap-3 text-xs text-slate-500 mb-4">
-							<?php
-							$cats = get_the_category();
-							if ( ! empty( $cats ) ) {
-								echo '<span class="font-bold text-agency-600 bg-agency-50 px-3 py-1 rounded-full">' . esc_html( $cats[0]->name ) . '</span>';
-							}
-							?>
-							<span class="text-slate-300">•</span>
-							<span><?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></span>
-							<span class="text-slate-300">•</span>
-							<span><?php echo esc_html( agency_site_reading_time() ); ?> min read</span>
-						</div>
+					<div class="flex items-center gap-3 font-mono text-xs text-ink/60 mb-4">
+						<?php
+						$cats = get_the_category();
+						if ( ! empty( $cats ) ) {
+							echo '<span class="text-cobalt font-semibold uppercase">' . esc_html( $cats[0]->name ) . '</span>';
+							echo '<span>/</span>';
+						}
+						?>
+						<span><?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></span>
+						<span>/</span>
+						<span><?php echo esc_html( agency_site_reading_time() ); ?> min read</span>
+					</div>
 
-						<h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading mb-4 leading-tight group-hover:text-agency-600 transition-colors">
-							<a href="<?php the_permalink(); ?>">
-								<?php the_title(); ?>
-							</a>
-						</h2>
+					<h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-heading mb-4 leading-tight group-hover:text-cobalt transition-colors">
+						<a href="<?php the_permalink(); ?>">
+							<?php the_title(); ?>
+						</a>
+					</h2>
 
-						<div class="text-slate-600 text-sm sm:text-base leading-relaxed mb-6">
-							<?php the_excerpt(); ?>
-						</div>
+					<div class="text-ink/80 text-base leading-relaxed mb-6 font-normal">
+						<?php the_excerpt(); ?>
+					</div>
 
-						<div class="pt-6 border-t border-slate-100 flex items-center justify-between">
-							<div class="flex items-center gap-3">
-								<?php echo get_avatar( get_the_author_meta( 'ID' ), 40, '', '', array( 'class' => 'rounded-full border border-slate-200' ) ); ?>
-								<div>
-									<span class="block text-xs font-bold text-slate-900"><?php the_author(); ?></span>
-									<span class="block text-[11px] text-slate-400">Growth Strategist</span>
-								</div>
-							</div>
-							<a href="<?php the_permalink(); ?>" class="btn-primary !py-2.5 !px-5 text-xs">
-								<span>Read Full Breakdown</span>
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-							</a>
-						</div>
+					<div class="pt-6 border-t border-ink/15 flex items-center justify-between font-mono text-xs">
+						<span class="text-ink/60"><?php the_author(); ?></span>
+						<a href="<?php the_permalink(); ?>" class="font-bold text-ink group-hover:text-cobalt inline-flex items-center gap-1 transition-colors">
+							<span>Read Full Breakdown</span>
+							<svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+						</a>
 					</div>
 				</article>
 
-				<div class="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-6">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
 						<?php
 						continue;
 					endif;
 
-					// If we are on a paged query, open grid on first post
 					if ( 1 === $post_count && is_paged() ) {
 						echo '<div class="grid grid-cols-1 sm:grid-cols-2 gap-8">';
 					}
-					?>
-					get_template_part('template-parts/post-card');
-					<?php
+
+					get_template_part( 'template-parts/post-card' );
+
 				endwhile;
 
-				// Close grid if opened
 				if ( $post_count > 1 || is_paged() ) {
 					echo '</div>';
 				}
 				?>
 
-			<!-- Pagination -->
-			<div class="pt-8">
-				<?php agency_site_pagination(); ?>
-			</div>
+				<!-- Pagination -->
+				<div class="pt-8">
+					<?php agency_site_pagination(); ?>
+				</div>
 
 				<?php
 			else :
 				?>
-				<div class="bg-white rounded-3xl p-12 text-center border border-slate-200">
-					<h3 class="text-xl font-bold text-slate-900 font-heading mb-2">No Articles Published Yet</h3>
-					<p class="text-slate-600 text-sm mb-6">Our editors are working on new growth teardowns. Check back soon or visit our services page.</p>
-					<a href="<?php echo esc_url( home_url( '/services/' ) ); ?>" class="btn-primary">Explore Services</a>
+				<div class="bg-ivory border border-ink/20 p-12 text-center">
+					<h3 class="text-xl font-bold text-ink font-heading mb-2"><?php esc_html_e( 'No Articles Published Yet', 'agency-site' ); ?></h3>
+					<p class="text-ink/70 text-sm mb-6"><?php esc_html_e( 'Our editorial team is preparing new technical notes. Explore our capabilities in the meantime.', 'agency-site' ); ?></p>
+					<a href="<?php echo esc_url( home_url( '/services/' ) ); ?>" class="btn-primary"><?php esc_html_e( 'Explore Services', 'agency-site' ); ?></a>
 				</div>
 				<?php
 			endif;
@@ -150,41 +145,38 @@ get_header();
 		<aside class="lg:col-span-4 space-y-8">
 			
 			<!-- Custom Search Widget -->
-			<div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-soft">
-				<h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Search Knowledgebase</h3>
+			<div class="border border-ink/20 p-6 bg-ivory">
+				<h3 class="font-mono text-xs uppercase tracking-widest text-ink/60 mb-4"><?php esc_html_e( 'Search Insights', 'agency-site' ); ?></h3>
 				<form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex gap-2">
 					<input 
 						type="search" 
 						name="s" 
 						value="<?php echo esc_attr( get_search_query() ); ?>" 
 						placeholder="Search growth topics..." 
-						class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-agency-500"
+						class="w-full px-3 py-2 bg-ivory border border-ink/20 text-ink text-sm focus:outline-none focus:border-cobalt"
 					>
-					<button type="submit" class="btn-primary !px-4 !py-2.5" aria-label="<?php esc_attr_e( 'Submit search', 'agency-site' ); ?>">
+					<button type="submit" class="btn-primary !px-4 !py-2 text-xs uppercase" aria-label="<?php esc_attr_e( 'Search', 'agency-site' ); ?>">
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
 					</button>
 				</form>
 			</div>
 
-			<!-- Strategic Newsletter / Lead Magnet Card -->
-			<div class="bg-gradient-to-br from-agency-900 to-dark-900 text-white p-8 rounded-3xl border border-slate-800 shadow-soft space-y-4">
-				<span class="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold bg-agency-500 text-white uppercase tracking-wider">Growth Dispatch</span>
-				<h3 class="text-xl font-bold font-heading text-white">Get Bi-Weekly Growth Teardowns</h3>
-				<p class="text-xs text-slate-300 leading-relaxed">
-					Join 14,000+ founders and digital marketers receiving our uncensored analysis on algorithmic shifts, ad frameworks, and CRO experiments.
-				</p>
-				<form onsubmit="event.preventDefault(); alert('Subscribed! Welcome to the Growth Dispatch.');" class="space-y-3 pt-2">
-					<input type="email" required placeholder="Enter work email..." class="w-full px-4 py-2.5 rounded-xl bg-dark-800 border border-slate-700 text-white placeholder-slate-400 text-xs focus:outline-none focus:ring-2 focus:ring-agency-400">
-					<button type="submit" class="btn-primary !bg-agency-500 hover:!bg-agency-400 w-full !py-2.5 text-xs font-bold">Subscribe Free</button>
-				</form>
-			</div>
-
-			<!-- Standard WordPress Sidebar Dynamic Widgets -->
+			<!-- Dynamic Sidebar Widgets -->
 			<?php if ( is_active_sidebar( 'sidebar-1' ) ) : ?>
-				<div class="sidebar-dynamic-widgets">
-					<?php dynamic_sidebar( 'sidebar-1' ); ?>
-				</div>
+				<?php dynamic_sidebar( 'sidebar-1' ); ?>
 			<?php endif; ?>
+
+			<!-- Studio Newsletter / Consultation Invitation -->
+			<div class="border border-ink/20 p-6 bg-ivory space-y-4">
+				<span class="font-mono text-xs uppercase tracking-widest text-cobalt font-bold block">DIRECT ACCESS</span>
+				<h3 class="text-lg font-bold text-ink font-heading"><?php esc_html_e( 'Have a specific project in mind?', 'agency-site' ); ?></h3>
+				<p class="text-xs sm:text-sm text-ink/80 leading-relaxed font-normal">
+					<?php esc_html_e( 'We provide upfront technical reviews of existing WordPress codebases and search positioning.', 'agency-site' ); ?>
+				</p>
+				<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>" class="btn-primary w-full text-center !py-3 text-xs uppercase tracking-wider font-semibold">
+					<?php esc_html_e( 'Discuss your project', 'agency-site' ); ?>
+				</a>
+			</div>
 
 		</aside>
 
@@ -193,4 +185,3 @@ get_header();
 
 <?php
 get_footer();
-

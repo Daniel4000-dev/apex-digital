@@ -9,37 +9,37 @@ get_header();
 ?>
 
 <!-- Hero Section -->
-<section class="py-16 md:py-24 bg-gradient-to-b from-white via-agency-50/40 to-slate-50 border-b border-slate-200/60">
-	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-3xl">
-		<span class="badge-tag mb-4"><?php esc_html_e( 'Our Capabilities', 'agency-site' ); ?></span>
-		<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight font-heading mb-6">
-			<?php esc_html_e( 'Services Designed to Turn Visits Into Enquiries', 'agency-site' ); ?>
+<section class="py-16 md:py-24 border-b border-ink/15 bg-ivory">
+	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+		<span class="font-mono text-xs uppercase tracking-widest text-ink/60 block mb-3">01 / STUDIO CAPABILITIES</span>
+		<h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-ink tracking-tight font-heading mb-6 leading-tight">
+			Services Designed to Turn Visits <span class="font-serif italic font-normal text-cobalt">Into Enquiries</span>
 		</h1>
-		<p class="text-lg sm:text-xl text-slate-600 mb-8 leading-relaxed">
+		<p class="text-lg sm:text-xl text-ink/80 mb-8 leading-relaxed max-w-2xl mx-auto font-normal">
 			<?php esc_html_e( 'We help growing businesses improve their websites, get found in search and turn advertising clicks into enquiries.', 'agency-site' ); ?>
 		</p>
-		<div class="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-semibold text-slate-700">
-			<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-xs">
-				<svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+		<div class="flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-ink/70">
+			<span class="editorial-tag">
+				<span class="w-1.5 h-1.5 bg-cobalt"></span>
 				<?php esc_html_e( 'Defined Scope & Milestones', 'agency-site' ); ?>
 			</span>
-			<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-xs">
-				<svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+			<span class="editorial-tag">
+				<span class="w-1.5 h-1.5 bg-coral"></span>
 				<?php esc_html_e( 'Transparent Execution', 'agency-site' ); ?>
 			</span>
-			<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-xs">
-				<svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-				<?php esc_html_e( 'Enquiry Attribution', 'agency-site' ); ?>
+			<span class="editorial-tag">
+				<span class="w-1.5 h-1.5 bg-ink"></span>
+				<?php esc_html_e( 'Direct Enquiry Attribution', 'agency-site' ); ?>
 			</span>
 		</div>
 	</div>
 </section>
 
 <!-- Detailed Services Listing Section -->
-<section class="py-20 lg:py-28 bg-slate-50">
+<section class="py-16 lg:py-24 border-b border-ink/15 bg-ivory">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 		
-		<div class="space-y-16">
+		<div class="space-y-12">
 			<?php
 			$services        = agency_site_get_default_services();
 			$custom_services = new WP_Query(
@@ -56,62 +56,76 @@ get_header();
 				while ( $custom_services->have_posts() ) :
 					$custom_services->the_post();
 					++$index;
+					$num_str      = sprintf( '%02d', $index );
 					$tagline      = get_post_meta( get_the_ID(), '_agency_service_tagline', true );
 					$price        = get_post_meta( get_the_ID(), '_agency_service_price', true );
 					$deliverables = get_post_meta( get_the_ID(), '_agency_service_deliverables', true );
 					$icon_type    = get_post_meta( get_the_ID(), '_agency_service_icon', true ) ?: 'chart';
 					$badge        = get_post_meta( get_the_ID(), '_agency_service_badge', true );
 					$items        = ! empty( $deliverables ) ? array_filter( array_map( 'trim', explode( "\n", $deliverables ) ) ) : array();
-					$is_even      = ( $index % 2 === 0 );
 					?>
-				<div class="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200/80 shadow-soft">
-					<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-						<div class="lg:col-span-7 space-y-6">
+				<div class="bg-ivory border border-ink/20 p-8 sm:p-12 transition-colors duration-200 hover:border-cobalt">
+					<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+						
+						<!-- Service Main Overview (7 cols) -->
+						<div class="lg:col-span-7 space-y-5">
 							<div class="flex items-center gap-3">
-								<div class="w-12 h-12 rounded-xl bg-agency-50 text-agency-600 flex items-center justify-center">
-                                    <?php echo agency_site_get_icon($icon_type, 'w-6 h-6'); // phpcs:ignore ?>
+								<span class="font-mono text-sm font-bold text-cobalt"><?php echo esc_html( $num_str ); ?> /</span>
+								<div class="w-10 h-10 border border-ink/20 bg-ivory text-ink flex items-center justify-center">
+									<?php echo agency_site_get_icon( $icon_type, 'w-5 h-5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								</div>
 								<?php if ( $badge ) : ?>
-									<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-agency-50 text-agency-700 border border-agency-200">
+									<span class="editorial-tag !text-[11px]">
 										<?php echo esc_html( $badge ); ?>
 									</span>
 								<?php endif; ?>
 							</div>
 
-							<h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">
-								<?php the_title(); ?>
+							<h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-heading">
+								<a href="<?php the_permalink(); ?>" class="hover:text-cobalt transition-colors">
+									<?php the_title(); ?>
+								</a>
 							</h2>
 
 							<?php if ( $tagline ) : ?>
-								<p class="text-sm font-semibold text-agency-600"><?php echo esc_html( $tagline ); ?></p>
+								<p class="text-xs sm:text-sm font-mono text-cobalt font-medium"><?php echo esc_html( $tagline ); ?></p>
 							<?php endif; ?>
 
-							<div class="text-slate-600 text-base leading-relaxed">
+							<div class="text-ink/80 text-base leading-relaxed font-normal">
 								<?php the_content(); ?>
 							</div>
 
 							<div class="pt-4 flex flex-wrap items-center gap-4">
-								<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>?service=<?php echo rawurlencode( get_the_title() ); ?>" class="btn-primary">
-									<span>Get Scope & Proposal</span>
-									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+								<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>?service=<?php echo rawurlencode( get_the_title() ); ?>" class="btn-primary !py-3 !px-6 text-xs uppercase tracking-wider font-semibold">
+									<span><?php esc_html_e( 'Get Scope & Proposal', 'agency-site' ); ?></span>
+									<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+								</a>
+								<a href="<?php the_permalink(); ?>" class="btn-secondary !py-3 !px-6 text-xs uppercase tracking-wider font-semibold">
+									<span><?php esc_html_e( 'View Details', 'agency-site' ); ?></span>
 								</a>
 								<?php if ( $price ) : ?>
-									<span class="text-sm font-bold text-slate-600 bg-slate-100 px-4 py-2.5 rounded-full border border-slate-200"><?php echo esc_html( $price ); ?></span>
+									<span class="text-xs font-mono text-ink/70 px-3 py-2 border border-ink/15"><?php echo esc_html( $price ); ?></span>
 								<?php endif; ?>
 							</div>
 						</div>
 
-						<div class="lg:col-span-5 bg-slate-50 rounded-2xl p-6 sm:p-8 border border-slate-200">
-							<h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Core Deliverables & Outputs</h3>
-							<ul class="space-y-3">
-								<?php foreach ( $items as $item ) : ?>
-									<li class="flex items-start gap-3 text-sm text-slate-700">
-										<svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-										<span><?php echo esc_html( $item ); ?></span>
-									</li>
-								<?php endforeach; ?>
-							</ul>
+						<!-- Core Deliverables Column (5 cols) -->
+						<div class="lg:col-span-5 bg-ink/5 border border-ink/15 p-6 sm:p-8">
+							<h3 class="text-xs font-mono uppercase tracking-widest text-ink/60 mb-4"><?php esc_html_e( 'Core Deliverables & Outputs', 'agency-site' ); ?></h3>
+							<?php if ( ! empty( $items ) ) : ?>
+								<ul class="space-y-3">
+									<?php foreach ( $items as $item ) : ?>
+										<li class="flex items-start gap-2.5 text-xs sm:text-sm text-ink/80 font-mono">
+											<span class="text-cobalt font-bold mt-0.5">+</span>
+											<span><?php echo esc_html( $item ); ?></span>
+										</li>
+									<?php endforeach; ?>
+								</ul>
+							<?php else : ?>
+								<p class="text-xs text-ink/60 font-mono"><?php esc_html_e( 'Custom scoping and deliverables defined per project brief.', 'agency-site' ); ?></p>
+							<?php endif; ?>
 						</div>
+
 					</div>
 				</div>
 					<?php
@@ -120,46 +134,43 @@ get_header();
 			else :
 				foreach ( $services as $srv ) :
 					++$index;
+					$num_str = sprintf( '%02d', $index );
 					?>
-				<div class="bg-white rounded-3xl p-8 sm:p-12 border border-slate-200/80 shadow-soft">
-					<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-						<div class="lg:col-span-7 space-y-6">
+				<div class="bg-ivory border border-ink/20 p-8 sm:p-12 transition-colors duration-200 hover:border-cobalt">
+					<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+						<div class="lg:col-span-7 space-y-5">
 							<div class="flex items-center gap-3">
-								<div class="w-12 h-12 rounded-xl bg-agency-50 text-agency-600 flex items-center justify-center">
-                                    <?php echo agency_site_get_icon($srv['icon'], 'w-6 h-6'); // phpcs:ignore ?>
+								<span class="font-mono text-sm font-bold text-cobalt"><?php echo esc_html( $num_str ); ?> /</span>
+								<div class="w-10 h-10 border border-ink/20 bg-ivory text-ink flex items-center justify-center">
+									<?php echo agency_site_get_icon( $srv['icon'], 'w-5 h-5' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 								</div>
 								<?php if ( ! empty( $srv['badge'] ) ) : ?>
-									<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-agency-50 text-agency-700 border border-agency-200">
-										<?php echo esc_html( $srv['badge'] ); ?>
-									</span>
+									<span class="editorial-tag !text-[11px]"><?php echo esc_html( $srv['badge'] ); ?></span>
 								<?php endif; ?>
 							</div>
 
-							<h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading">
+							<h2 class="text-2xl sm:text-3xl font-extrabold text-ink font-heading">
 								<?php echo esc_html( $srv['title'] ); ?>
 							</h2>
 
-							<p class="text-sm font-semibold text-agency-600"><?php echo esc_html( $srv['tagline'] ); ?></p>
-
-							<p class="text-slate-600 text-base leading-relaxed">
-								<?php echo esc_html( $srv['desc'] ); ?>
-							</p>
+							<p class="text-xs sm:text-sm font-mono text-cobalt font-medium"><?php echo esc_html( $srv['tagline'] ); ?></p>
+							<p class="text-ink/80 text-base leading-relaxed font-normal"><?php echo esc_html( $srv['desc'] ); ?></p>
 
 							<div class="pt-4 flex flex-wrap items-center gap-4">
-								<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>?service=<?php echo rawurlencode( $srv['title'] ); ?>" class="btn-primary">
-									<span>Get Scope & Proposal</span>
-									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+								<a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>?service=<?php echo rawurlencode( $srv['title'] ); ?>" class="btn-primary !py-3 !px-6 text-xs uppercase tracking-wider font-semibold">
+									<span><?php esc_html_e( 'Get Scope & Proposal', 'agency-site' ); ?></span>
+									<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
 								</a>
-								<span class="text-sm font-bold text-slate-600 bg-slate-100 px-4 py-2.5 rounded-full border border-slate-200"><?php echo esc_html( $srv['price'] ); ?></span>
+								<span class="text-xs font-mono text-ink/70 px-3 py-2 border border-ink/15"><?php echo esc_html( $srv['price'] ); ?></span>
 							</div>
 						</div>
 
-						<div class="lg:col-span-5 bg-slate-50 rounded-2xl p-6 sm:p-8 border border-slate-200">
-							<h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">Core Deliverables & Outputs</h3>
+						<div class="lg:col-span-5 bg-ink/5 border border-ink/15 p-6 sm:p-8">
+							<h3 class="text-xs font-mono uppercase tracking-widest text-ink/60 mb-4"><?php esc_html_e( 'Core Deliverables & Outputs', 'agency-site' ); ?></h3>
 							<ul class="space-y-3">
 								<?php foreach ( $srv['deliverables'] as $item ) : ?>
-									<li class="flex items-start gap-3 text-sm text-slate-700">
-										<svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+									<li class="flex items-start gap-2.5 text-xs sm:text-sm text-ink/80 font-mono">
+										<span class="text-cobalt font-bold mt-0.5">+</span>
 										<span><?php echo esc_html( $item ); ?></span>
 									</li>
 								<?php endforeach; ?>
@@ -176,69 +187,69 @@ get_header();
 	</div>
 </section>
 
-<!-- 4-Step Process Section -->
-<section class="py-20 lg:py-28 bg-white border-y border-slate-100">
+<!-- 4-Stage Project Delivery Framework -->
+<section class="py-16 lg:py-24 border-b border-ink/15 bg-ivory">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-		<div class="max-w-3xl mx-auto text-center mb-16">
-			<span class="badge-tag mb-3">How We Partner</span>
-			<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-heading mb-4">
-				Our 4-Stage Growth Architecture Framework
+		<div class="max-w-3xl mb-14">
+			<span class="font-mono text-xs uppercase tracking-widest text-ink/60 block mb-2">02 / ENGAGEMENT MODEL</span>
+			<h2 class="text-3xl sm:text-4xl font-extrabold text-ink tracking-tight font-heading mb-4">
+				<?php esc_html_e( 'Our 4-Stage Architecture Framework', 'agency-site' ); ?>
 			</h2>
-			<p class="text-slate-600 text-base sm:text-lg">
-				Predictability comes from process. Here is exactly what our first 90 days look like together.
+			<p class="text-ink/80 text-base sm:text-lg font-normal leading-relaxed">
+				<?php esc_html_e( 'Predictability comes from process. Here is how we deliver measurable value from the initial sprint onwards.', 'agency-site' ); ?>
 			</p>
 		</div>
 
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-			<div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-				<div class="w-10 h-10 rounded-xl bg-agency-600 text-white font-extrabold flex items-center justify-center mb-4">
-					01
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+			<div class="border border-ink/20 p-6 bg-ivory flex flex-col justify-between">
+				<div>
+					<div class="font-mono text-sm font-bold text-cobalt mb-4">01 / AUDIT</div>
+					<h3 class="text-lg font-bold text-ink mb-2 font-heading"><?php esc_html_e( 'Full Stack Audit', 'agency-site' ); ?></h3>
+					<p class="text-xs sm:text-sm text-ink/80 leading-relaxed font-normal">We inspect technical SEO health, Core Web Vitals, server response times, and checkout/enquiry drop-offs.</p>
 				</div>
-				<h3 class="text-lg font-bold text-slate-900 mb-2 font-heading">Full Funnel Audit</h3>
-				<p class="text-sm text-slate-600">We inspect your tracking, search visibility, paid ad CAC, and landing page drop-offs to uncover immediate revenue leaks.</p>
 			</div>
 
-			<div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-				<div class="w-10 h-10 rounded-xl bg-agency-600 text-white font-extrabold flex items-center justify-center mb-4">
-					02
+			<div class="border border-ink/20 p-6 bg-ivory flex flex-col justify-between">
+				<div>
+					<div class="font-mono text-sm font-bold text-coral mb-4">02 / STRATEGY</div>
+					<h3 class="text-lg font-bold text-ink mb-2 font-heading"><?php esc_html_e( 'Architecture & Modeling', 'agency-site' ); ?></h3>
+					<p class="text-xs sm:text-sm text-ink/80 leading-relaxed font-normal">We map out 90-day targets, design tested conversion wireframes, and build robust attribution pipelines.</p>
 				</div>
-				<h3 class="text-lg font-bold text-slate-900 mb-2 font-heading">Strategy & Modeling</h3>
-				<p class="text-sm text-slate-600">We map out 90-day targets, build multi-variant test roadmaps, and configure custom attribution analytics.</p>
 			</div>
 
-			<div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-				<div class="w-10 h-10 rounded-xl bg-agency-600 text-white font-extrabold flex items-center justify-center mb-4">
-					03
+			<div class="border border-ink/20 p-6 bg-ivory flex flex-col justify-between">
+				<div>
+					<div class="font-mono text-sm font-bold text-ink mb-4">03 / SPRINTS</div>
+					<h3 class="text-lg font-bold text-ink mb-2 font-heading"><?php esc_html_e( 'Focused Sprints', 'agency-site' ); ?></h3>
+					<p class="text-xs sm:text-sm text-ink/80 leading-relaxed font-normal">Production theme deployments, high-speed landing templates, and clean campaign bidding adjustments.</p>
 				</div>
-				<h3 class="text-lg font-bold text-slate-900 mb-2 font-heading">Agile Sprints</h3>
-				<p class="text-sm text-slate-600">Weekly creative deployment, bidding updates, technical SEO improvements, and landing page experiments launched rapidly.</p>
 			</div>
 
-			<div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-				<div class="w-10 h-10 rounded-xl bg-agency-600 text-white font-extrabold flex items-center justify-center mb-4">
-					04
+			<div class="border border-ink/20 p-6 bg-ivory flex flex-col justify-between">
+				<div>
+					<div class="font-mono text-sm font-bold text-cobalt mb-4">04 / EVOLUTION</div>
+					<h3 class="text-lg font-bold text-ink mb-2 font-heading"><?php esc_html_e( 'Continuous Care', 'agency-site' ); ?></h3>
+					<p class="text-xs sm:text-sm text-ink/80 leading-relaxed font-normal">Monthly performance reviews, security dependency patches, and ongoing conversion rate optimization.</p>
 				</div>
-				<h3 class="text-lg font-bold text-slate-900 mb-2 font-heading">Scale & Compounding</h3>
-				<p class="text-sm text-slate-600">We double down on winning channels, expand to complementary traffic sources, and optimize lifetime customer value.</p>
 			</div>
 		</div>
 	</div>
 </section>
 
 <!-- Frequently Asked Questions Accordion -->
-<section class="py-20 lg:py-28 bg-slate-50">
+<section class="py-16 lg:py-24 bg-ivory">
 	<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-		<div class="text-center mb-16">
-			<span class="badge-tag mb-3">Got Questions?</span>
-			<h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-heading mb-4">
-				Frequently Asked Service Questions
+		<div class="mb-14">
+			<span class="font-mono text-xs uppercase tracking-widest text-ink/60 block mb-2">03 / CLARITY</span>
+			<h2 class="text-3xl sm:text-4xl font-extrabold text-ink tracking-tight font-heading mb-4">
+				<?php esc_html_e( 'Frequently Asked Service Questions', 'agency-site' ); ?>
 			</h2>
-			<p class="text-slate-600 text-base">
-				Everything you need to know about working with our growth team.
+			<p class="text-ink/80 text-base font-normal">
+				<?php esc_html_e( 'Clear answers regarding scopes, timelines, technical architecture, and communication.', 'agency-site' ); ?>
 			</p>
 		</div>
 
-		<div class="space-y-4" id="faq-accordion">
+		<div class="border-t border-ink/15 divide-y divide-ink/15" id="faq-accordion">
 			<?php
 			$faqs = array(
 				array(
@@ -260,12 +271,12 @@ get_header();
 			);
 			foreach ( $faqs as $i => $faq ) :
 				?>
-				<div class="faq-item bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
-					<button type="button" class="faq-toggle w-full px-6 py-5 text-left flex items-center justify-between text-base font-bold text-slate-900 hover:text-agency-600 focus:outline-none" aria-expanded="false">
+				<div class="faq-item py-6">
+					<button type="button" class="faq-toggle w-full text-left flex items-center justify-between text-base sm:text-lg font-bold text-ink hover:text-cobalt focus:outline-none transition-colors" aria-expanded="false">
 						<span><?php echo esc_html( $faq['q'] ); ?></span>
-						<svg class="faq-icon w-5 h-5 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+						<span class="faq-icon ml-4 font-mono text-sm text-ink/40 shrink-0 transform transition-transform duration-200">+</span>
 					</button>
-					<div class="faq-content hidden px-6 pb-5 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+					<div class="faq-content hidden pt-4 text-sm sm:text-base text-ink/80 leading-relaxed font-normal">
 						<?php echo esc_html( $faq['a'] ); ?>
 					</div>
 				</div>
@@ -276,4 +287,3 @@ get_header();
 
 <?php
 get_footer();
-

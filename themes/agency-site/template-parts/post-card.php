@@ -1,6 +1,6 @@
 <?php
 /**
- * Template part for displaying a blog article card
+ * Template part for displaying a blog article card: Editorial Studio Aesthetic
  *
  * @package Agency_Site
  */
@@ -9,53 +9,59 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<article id="post-<?php the_ID(); ?>" <?php post_class( 'h-full bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-soft card-hover flex flex-col justify-between' ); ?>>
+<article id="post-<?php the_ID(); ?>" <?php post_class( 'h-full bg-ivory border border-ink/20 p-6 flex flex-col justify-between group transition-colors duration-200 hover:border-cobalt' ); ?>>
 	<div>
 		<?php if ( has_post_thumbnail() ) : ?>
-			<a href="<?php the_permalink(); ?>" class="block aspect-video overflow-hidden group">
+			<a href="<?php the_permalink(); ?>" class="block aspect-[16/10] overflow-hidden border border-ink/10 mb-6">
 				<?php the_post_thumbnail( 'agency-card', array( 'class' => 'w-full h-full object-cover group-hover:scale-105 transition-transform duration-300' ) ); ?>
 			</a>
 		<?php else : ?>
-			<a href="<?php the_permalink(); ?>" class="block aspect-video bg-gradient-to-tr from-slate-900 via-agency-950 to-slate-800 p-6 flex flex-col justify-between relative overflow-hidden group">
-				<div class="absolute -right-8 -top-8 w-32 h-32 bg-agency-500/10 rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-				<div class="flex items-center justify-between text-xs text-agency-300 font-semibold uppercase tracking-wider relative z-10">
-					<span>Editorial Guide</span>
-					<svg class="w-5 h-5 text-agency-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+			<!-- Distinctive Editorial Graphic Cover (No repeated headline) -->
+			<a href="<?php the_permalink(); ?>" class="block aspect-[16/10] bg-ink/5 border border-ink/15 p-5 mb-6 flex flex-col justify-between relative overflow-hidden group-hover:bg-cobalt/5 transition-colors">
+				<div class="flex items-center justify-between font-mono text-[11px] text-ink/60 uppercase tracking-wider">
+					<span>NOTE / <?php echo esc_html( get_the_date( 'Y' ) ); ?></span>
+					<span class="w-2 h-2 bg-cobalt"></span>
 				</div>
-				<div class="flex items-center gap-2 relative z-10">
-					<span class="w-2 h-2 rounded-full bg-agency-400"></span>
-					<span class="text-slate-300 text-xs font-medium tracking-wide">Apex Digital Strategy Note</span>
+				<!-- Editorial Grid Ornament -->
+				<svg class="w-full h-12 text-ink/10 my-auto" viewBox="0 0 200 40" fill="none" stroke="currentColor" stroke-width="1">
+					<line x1="0" y1="20" x2="200" y2="20"></line>
+					<circle cx="20" cy="20" r="4" fill="currentColor"></circle>
+					<circle cx="100" cy="20" r="4" fill="currentColor"></circle>
+					<circle cx="180" cy="20" r="4" fill="currentColor"></circle>
+				</svg>
+				<div class="font-mono text-[10px] text-ink/40 uppercase tracking-widest">
+					APEX DIGITAL · TECHNICAL INSIGHT
 				</div>
 			</a>
 		<?php endif; ?>
 
-		<div class="p-6">
-			<div class="flex items-center gap-2 text-xs text-slate-500 mb-3">
-				<?php
-				$cats = get_the_category();
-				if ( ! empty( $cats ) ) {
-					echo '<span class="font-semibold text-agency-600 bg-agency-50 px-2.5 py-0.5 rounded-full">' . esc_html( $cats[0]->name ) . '</span>';
-				}
-				?>
-				<span>•</span>
-				<span><?php echo esc_html( agency_site_reading_time() ); ?> min read</span>
-			</div>
+		<div class="flex items-center gap-2 text-xs font-mono text-ink/60 mb-3">
+			<?php
+			$cats = get_the_category();
+			if ( ! empty( $cats ) ) {
+				echo '<span class="text-cobalt font-semibold">' . esc_html( $cats[0]->name ) . '</span>';
+				echo '<span>/</span>';
+			}
+			?>
+			<span><?php echo esc_html( agency_site_reading_time() ); ?> min read</span>
+		</div>
 
-			<h3 class="text-lg font-bold text-slate-900 mb-2 font-heading leading-snug">
-				<a href="<?php the_permalink(); ?>" class="hover:text-agency-600 transition-colors">
-					<?php the_title(); ?>
-				</a>
-			</h3>
+		<h3 class="text-xl font-bold text-ink mb-3 font-heading leading-snug group-hover:text-cobalt transition-colors">
+			<a href="<?php the_permalink(); ?>">
+				<?php the_title(); ?>
+			</a>
+		</h3>
 
-			<div class="text-slate-600 text-xs sm:text-sm line-clamp-2 mb-4">
-				<?php the_excerpt(); ?>
-			</div>
+		<div class="text-ink/75 text-sm leading-relaxed line-clamp-3 mb-6 font-normal">
+			<?php the_excerpt(); ?>
 		</div>
 	</div>
 
-	<div class="px-6 pb-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+	<div class="pt-4 border-t border-ink/15 flex items-center justify-between text-xs font-mono text-ink/60">
 		<span><?php echo esc_html( get_the_date( 'M j, Y' ) ); ?></span>
-		<a href="<?php the_permalink(); ?>" class="font-bold text-agency-600 hover:text-agency-700">Read More →</a>
+		<a href="<?php the_permalink(); ?>" class="font-bold text-ink group-hover:text-cobalt inline-flex items-center gap-1 transition-colors">
+			<span>Read Note</span>
+			<svg class="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+		</a>
 	</div>
 </article>
-

@@ -14,7 +14,9 @@ export default [
         clearTimeout: "readonly",
         fetch: "readonly",
         FormData: "readonly",
-        navigator: "readonly"
+        navigator: "readonly",
+        IntersectionObserver: "readonly",
+        requestAnimationFrame: "readonly"
       }
     },
     rules: {

@@ -69,6 +69,10 @@ case "$COMMAND" in
     phpcs-strict)
         "$PHP_EXEC" vendor/bin/phpcs --standard=phpcs.xml
         ;;
+    phpcbf)
+        shift
+        "$PHP_EXEC" vendor/bin/phpcbf --standard=phpcs.xml "$@"
+        ;;
     phpunit)
         "$PHP_EXEC" "${PHP_OPTS[@]}" vendor/bin/phpunit
         ;;

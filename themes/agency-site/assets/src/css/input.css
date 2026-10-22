@@ -7,14 +7,15 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #F3F0E8;
   }
 
   body {
-    @apply text-slate-700 bg-white selection:bg-agency-500 selection:text-white font-sans;
+    @apply text-ink bg-ivory selection:bg-cobalt selection:text-white font-sans antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight text-slate-900 font-bold;
+    @apply font-heading tracking-tight text-ink font-bold;
   }
 }
 
@@ -115,25 +116,103 @@
     }
   }
 
-  /* Custom UI Components */
-  .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-agency-600 hover:bg-agency-700 text-white font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-agency-500/25 active:scale-95 focus:outline-none focus:ring-2 focus:ring-agency-500 focus:ring-offset-2;
+  /* Custom UI Components: Confident Editorial Studio Aesthetic */
+  .btn-primary,
+  .btn-editorial-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-none bg-cobalt hover:bg-[#1d3bc2] text-white font-semibold text-sm transition-all duration-200 shadow-sm active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-cobalt focus:ring-offset-2 focus:ring-offset-ivory cursor-pointer;
   }
 
-  .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow hover:border-slate-300 active:scale-95 focus:outline-none focus:ring-2 focus:ring-agency-500 focus:ring-offset-2;
+  .btn-secondary,
+  .btn-editorial-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-none bg-transparent hover:bg-ink text-ink hover:text-ivory border border-ink font-semibold text-sm transition-all duration-200 active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2 focus:ring-offset-ivory cursor-pointer;
   }
 
   .btn-accent {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-agency-600 to-accent-600 hover:from-agency-500 hover:to-accent-500 text-white font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-accent-500/25 active:scale-95 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-none bg-coral hover:bg-[#e85c2c] text-white font-semibold text-sm transition-all duration-200 active:translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-coral focus:ring-offset-2 focus:ring-offset-ivory cursor-pointer;
   }
 
-  .badge-tag {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-agency-50 text-agency-700 border border-agency-100;
+  .badge-tag,
+  .editorial-tag {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-medium tracking-wider uppercase bg-transparent text-ink border border-ink/20;
+  }
+
+  .thin-rule {
+    @apply border-t border-ink/15;
   }
 
   .card-hover {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+    @apply transition-all duration-200 hover:-translate-y-0.5;
+  }
+}
+
+/* Page Scroll Progress Indicator */
+#page-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background-color: #2649E7;
+  z-index: 9999;
+  transition: width 0.1s ease-out;
+  pointer-events: none;
+}
+
+/* Editorial Scroll Reveals */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Graceful degradation when JavaScript is unavailable */
+.no-js .reveal-on-scroll,
+html:not(.js-enabled) .reveal-on-scroll {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Poster Artwork Styles */
+.poster-viewport {
+  perspective: 1000px;
+}
+
+.poster-canvas {
+  transform-style: preserve-3d;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+/* Respect User Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .poster-canvas {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  #page-scroll-progress {
+    display: none !important;
   }
 }
 

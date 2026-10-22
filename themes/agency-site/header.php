@@ -16,16 +16,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<link rel="profile" href="https://gmpg.org/xfn/11">
 	<?php wp_head(); ?>
 </head>
-<body <?php body_class( 'min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-agency-500 selection:text-white' ); ?>>
+<body <?php body_class( 'min-h-screen flex flex-col bg-ivory text-ink antialiased selection:bg-cobalt selection:text-white' ); ?>>
 <?php wp_body_open(); ?>
+
+<!-- Page Scroll Progress Indicator -->
+<div id="page-scroll-progress" aria-hidden="true"></div>
 
 <!-- Accessible Skip Link -->
 <a class="screen-reader-text" href="#main-content">
 	<?php esc_html_e( 'Skip to main content', 'agency-site' ); ?>
 </a>
 
-<!-- Primary Sticky Header -->
-<header id="masthead" class="agency-header sticky top-0 z-50 transition-all duration-300 bg-white/95 backdrop-blur-md border-b border-slate-200/80">
+<!-- Primary Sticky Header: Editorial Studio Aesthetic -->
+<header id="masthead" class="agency-header sticky top-0 z-50 transition-all duration-200 bg-ivory/95 backdrop-blur-md border-b border-ink/15">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 		<div class="flex items-center justify-between h-16 sm:h-20">
 			
@@ -36,16 +39,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php the_custom_logo(); ?>
 					</div>
 				<?php else : ?>
-					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="group flex items-center gap-2 sm:gap-2.5 min-w-0" rel="home">
-						<span class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-agency-600 to-accent-600 flex items-center justify-center text-white font-bold text-base sm:text-xl shadow-md group-hover:scale-105 transition-transform duration-200 shrink-0">
+					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="group flex items-center gap-2.5 sm:gap-3 min-w-0" rel="home">
+						<span class="w-8 h-8 sm:w-9 sm:h-9 bg-cobalt text-white flex items-center justify-center font-bold text-sm sm:text-base tracking-wider shrink-0 transition-transform duration-200 group-hover:scale-95">
 							A
 						</span>
-						<div class="min-w-0">
-							<span class="font-heading font-extrabold text-base sm:text-xl text-slate-900 tracking-tight block group-hover:text-agency-600 transition-colors truncate">
+						<div class="min-w-0 flex items-baseline gap-2">
+							<span class="font-heading font-extrabold text-base sm:text-xl text-ink tracking-tight block group-hover:text-cobalt transition-colors truncate">
 								<?php bloginfo( 'name' ); ?>
 							</span>
-							<span class="text-[9px] sm:text-[10px] uppercase tracking-wider font-semibold text-slate-400 block -mt-1 truncate">
-								<?php echo esc_html( get_bloginfo( 'description' ) ?: 'Digital Marketing & Web Design' ); ?>
+							<span class="hidden md:inline-block text-[10px] uppercase font-mono tracking-widest text-ink/50 shrink-0">
+								<?php esc_html_e( 'Studio', 'agency-site' ); ?>
 							</span>
 						</div>
 					</a>
@@ -53,7 +56,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 
 			<!-- Desktop Navigation -->
-			<nav id="site-navigation" class="hidden lg:flex items-center gap-6" aria-label="<?php esc_attr_e( 'Primary Navigation', 'agency-site' ); ?>">
+			<nav id="site-navigation" class="hidden lg:flex items-center gap-8" aria-label="<?php esc_attr_e( 'Primary Navigation', 'agency-site' ); ?>">
 				<?php
 				if ( has_nav_menu( 'primary' ) ) {
 					wp_nav_menu(
@@ -61,7 +64,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							'theme_location' => 'primary',
 							'menu_id'        => 'primary-menu',
 							'container'      => false,
-							'menu_class'     => 'flex items-center gap-1 xl:gap-2 text-sm font-medium text-slate-700',
+							'menu_class'     => 'flex items-center gap-6 xl:gap-8 text-sm font-medium text-ink hover:text-cobalt',
 							'depth'          => 2,
 						)
 					);
@@ -72,27 +75,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</nav>
 
 			<!-- Header Action CTA & Mobile Hamburger -->
-			<div class="flex items-center gap-2 sm:gap-3 shrink-0">
-				<a href="<?php echo esc_url( get_theme_mod( 'agency_header_cta_link', home_url( '/contact/' ) ) ); ?>" class="hidden sm:inline-flex btn-primary !py-2.5 !px-5 text-sm">
+			<div class="flex items-center gap-3 shrink-0">
+				<a href="<?php echo esc_url( get_theme_mod( 'agency_header_cta_link', home_url( '/contact/' ) ) ); ?>" class="hidden sm:inline-flex btn-primary !py-2.5 !px-5 text-xs uppercase tracking-wider font-semibold">
 					<span><?php echo esc_html( get_theme_mod( 'agency_header_cta_text', __( 'Discuss your project', 'agency-site' ) ) ); ?></span>
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+					<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
 				</a>
 
 				<!-- Mobile Menu Button -->
 				<button 
 					id="mobile-menu-toggle" 
 					type="button" 
-					class="lg:hidden p-2.5 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-agency-500" 
+					class="lg:hidden p-2.5 text-ink hover:text-cobalt border border-ink/20 focus:outline-none focus:ring-2 focus:ring-cobalt" 
 					aria-controls="mobile-menu-drawer" 
 					aria-expanded="false" 
 					aria-label="<?php esc_attr_e( 'Toggle mobile navigation menu', 'agency-site' ); ?>"
 				>
 					<!-- Open Icon (Hamburger) -->
-					<svg id="hamburger-icon-open" class="w-6 h-6 block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg id="hamburger-icon-open" class="w-5 h-5 block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
 					</svg>
 					<!-- Close Icon (X) -->
-					<svg id="hamburger-icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg id="hamburger-icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
 				</button>
@@ -102,7 +105,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 
 	<!-- Mobile Navigation Drawer Overlay -->
-	<div id="mobile-menu-drawer" class="lg:hidden fixed inset-x-0 top-full bg-white border-b border-slate-200 shadow-2xl transition-all duration-300 ease-in-out opacity-0 pointer-events-none -translate-y-2" aria-hidden="true">
+	<div id="mobile-menu-drawer" class="lg:hidden fixed inset-x-0 top-full bg-ivory border-b border-ink/20 shadow-xl transition-all duration-300 ease-in-out opacity-0 pointer-events-none -translate-y-2" aria-hidden="true">
 		<div class="px-6 py-6 space-y-6 max-h-[85vh] overflow-y-auto">
 			<nav aria-label="<?php esc_attr_e( 'Mobile Navigation', 'agency-site' ); ?>">
 				<?php
@@ -112,7 +115,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							'theme_location' => 'primary',
 							'menu_id'        => 'mobile-menu-list',
 							'container'      => false,
-							'menu_class'     => 'flex flex-col space-y-2 text-base font-medium text-slate-800',
+							'menu_class'     => 'flex flex-col space-y-2 text-base font-medium text-ink',
 							'depth'          => 1,
 						)
 					);
@@ -135,21 +138,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 							'title' => __( 'Contact', 'agency-site' ),
 						),
 					);
-					echo '<ul class="flex flex-col space-y-2 text-base font-medium text-slate-800">';
+					echo '<ul class="flex flex-col space-y-2 text-base font-medium text-ink">';
 					foreach ( $items as $item ) {
-						echo '<li><a href="' . esc_url( $item['url'] ) . '" class="block px-4 py-2.5 rounded-lg text-slate-800 hover:text-agency-600 hover:bg-slate-50 transition-colors font-semibold">' . esc_html( $item['title'] ) . '</a></li>';
+						echo '<li><a href="' . esc_url( $item['url'] ) . '" class="block px-4 py-2.5 text-ink hover:text-cobalt border-b border-ink/10 font-semibold">' . esc_html( $item['title'] ) . '</a></li>';
 					}
 					echo '</ul>';
 				}
 				?>
 			</nav>
 
-			<div class="pt-4 border-t border-slate-100 flex flex-col gap-3">
+			<div class="pt-4 border-t border-ink/15 flex flex-col gap-3">
 				<a href="<?php echo esc_url( get_theme_mod( 'agency_header_cta_link', home_url( '/contact/' ) ) ); ?>" class="btn-primary w-full text-center !py-3">
 					<?php echo esc_html( get_theme_mod( 'agency_header_cta_text', __( 'Discuss your project', 'agency-site' ) ) ); ?>
 				</a>
-				<div class="text-center text-xs text-slate-500 pt-1">
-					<p>Project Inquiries: <a href="mailto:<?php echo esc_attr( get_theme_mod( 'agency_email', 'growth@apexagency.digital' ) ); ?>" class="text-agency-600 font-medium"><?php echo esc_html( get_theme_mod( 'agency_email', 'growth@apexagency.digital' ) ); ?></a></p>
+				<div class="text-center text-xs text-ink/70 pt-1">
+					<p><?php esc_html_e( 'Direct Inquiries:', 'agency-site' ); ?> <a href="mailto:<?php echo esc_attr( get_theme_mod( 'agency_email', 'growth@apexagency.digital' ) ); ?>" class="text-cobalt font-medium underline"><?php echo esc_html( get_theme_mod( 'agency_email', 'growth@apexagency.digital' ) ); ?></a></p>
 				</div>
 			</div>
 		</div>
