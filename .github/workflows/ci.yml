@@ -42,7 +42,7 @@ jobs:
       - name: Install Frontend Dependencies
         working-directory: themes/agency-site
         run: |
-          npm ci
+          npm ci --legacy-peer-deps
 
       - name: JavaScript Source Lint
         working-directory: themes/agency-site
@@ -62,7 +62,7 @@ jobs:
       - name: Install & Build Legacy Maintenance Fixture
         working-directory: legacy-maintenance-example
         run: |
-          npm ci
+          npm ci --legacy-peer-deps
           npm run build
           test -s dist/css/main.css || { echo "Missing legacy main.css"; exit 1; }
           test -s dist/audit-component.html || { echo "Missing legacy audit-component.html"; exit 1; }
