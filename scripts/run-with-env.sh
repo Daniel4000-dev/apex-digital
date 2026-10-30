@@ -82,6 +82,10 @@ case "$COMMAND" in
     emails)
         "$PHP_EXEC" "${PHP_OPTS[@]}" "$WP_CLI" --path="$WP_ROOT" eval-file tests/send-test-emails.php
         ;;
+    wp)
+        shift
+        "$PHP_EXEC" "${PHP_OPTS[@]}" "$WP_CLI" --path="$WP_ROOT" "$@"
+        ;;
     *)
         echo "Unknown command: $COMMAND"
         echo "Available: lint-php, phpunit, behavioural, emails"

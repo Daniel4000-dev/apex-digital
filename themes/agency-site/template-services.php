@@ -110,8 +110,14 @@ get_header();
 						</div>
 
 						<!-- Core Deliverables Column (5 cols) -->
-						<div class="lg:col-span-5 bg-ink/5 border border-ink/15 p-6 sm:p-8">
-							<h3 class="text-xs font-mono uppercase tracking-widest text-ink/60 mb-4"><?php esc_html_e( 'Core Deliverables & Outputs', 'agency-site' ); ?></h3>
+						<div class="lg:col-span-5 space-y-6">
+							<?php if ( has_post_thumbnail() ) : ?>
+								<div class="border border-ink/20 aspect-[16/9] overflow-hidden">
+									<?php the_post_thumbnail( 'agency-card', array( 'class' => 'w-full h-full object-cover' ) ); ?>
+								</div>
+							<?php endif; ?>
+							<div class="bg-ink/5 border border-ink/15 p-6 sm:p-8">
+								<h3 class="text-xs font-mono uppercase tracking-widest text-ink/60 mb-4"><?php esc_html_e( 'Core Deliverables & Outputs', 'agency-site' ); ?></h3>
 							<?php if ( ! empty( $items ) ) : ?>
 								<ul class="space-y-3">
 									<?php foreach ( $items as $item ) : ?>
