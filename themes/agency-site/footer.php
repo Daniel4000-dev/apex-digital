@@ -22,9 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- Column 1: Brand & Positioning (5 cols) -->
 			<div class="lg:col-span-5 space-y-4">
 				<div class="flex items-center gap-3">
-					<span class="w-8 h-8 bg-cobalt text-white flex items-center justify-center font-bold text-sm tracking-wider shrink-0">
-						A
-					</span>
+					<?php agency_site_brand_mark( 'footer', 'w-8 h-8 shrink-0' ); ?>
 					<span class="font-heading font-extrabold text-xl text-ivory tracking-tight">
 						<?php bloginfo( 'name' ); ?>
 					</span>

@@ -40,9 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 				<?php else : ?>
 					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="group flex items-center gap-2.5 sm:gap-3 min-w-0" rel="home">
-						<span class="w-8 h-8 sm:w-9 sm:h-9 bg-cobalt text-white flex items-center justify-center font-bold text-sm sm:text-base tracking-wider shrink-0 transition-transform duration-200 group-hover:scale-95">
-							A
-						</span>
+						<?php agency_site_brand_mark( 'header', 'w-8 h-8 sm:w-9 sm:h-9 shrink-0 transition-transform duration-200 group-hover:scale-95' ); ?>
 						<div class="min-w-0 flex items-baseline gap-2">
 							<span class="font-heading font-extrabold text-base sm:text-xl text-ink tracking-tight block group-hover:text-cobalt transition-colors truncate">
 								<?php bloginfo( 'name' ); ?>

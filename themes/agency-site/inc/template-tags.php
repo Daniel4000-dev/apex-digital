@@ -160,3 +160,26 @@ function agency_site_pagination() {
 		)
 	);
 }
+
+/**
+ * Render the bespoke Apex Digital brand logo mark.
+ *
+ * An architectural vector emblem featuring precision dual-plane summit facets
+ * and structural golden-ratio crossbars in brand ink/ivory and signature cobalt.
+ *
+ * @param string $variant   'header' (Ink + Cobalt) or 'footer' (Ivory + Cobalt).
+ * @param string $css_class Additional CSS classes for sizing and transitions.
+ * @return void
+ */
+function agency_site_brand_mark( $variant = 'header', $css_class = 'w-8 h-8 sm:w-9 sm:h-9' ) {
+	$is_footer = ( 'footer' === $variant );
+	$primary   = $is_footer ? '#F3F0E8' : '#202720';
+	$accent    = '#2649E7';
+
+	echo '<svg class="' . esc_attr( $css_class ) . '" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img">';
+	echo '<polygon points="17.2,3.5 4.5,31.5 11.8,31.5 17.2,18.5" fill="' . esc_attr( $primary ) . '"/>';
+	echo '<polygon points="18.8,3.5 31.5,31.5 24.2,31.5 18.8,18.5" fill="' . esc_attr( $accent ) . '"/>';
+	echo '<polygon points="9.5,21.2 17.2,21.2 17.2,24.2 8.2,24.2" fill="' . esc_attr( $primary ) . '"/>';
+	echo '<polygon points="18.8,21.2 26.5,21.2 27.8,24.2 18.8,24.2" fill="' . esc_attr( $accent ) . '"/>';
+	echo '</svg>';
+}
