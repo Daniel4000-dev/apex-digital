@@ -65,7 +65,7 @@ if ( ! defined( 'AGENCY_CORE_DIR' ) ) {
 	define( 'AGENCY_CORE_DIR', dirname( __DIR__, 2 ) . '/plugins/agency-site-core/' );
 }
 
-if ( ! class_exists( 'Agency_Core_Plugin' ) ) {
+if ( ! class_exists( 'Agency_Site_Core' ) && ! function_exists( 'agency_site_core' ) ) {
 	$plugin_entry = dirname( __DIR__, 2 ) . '/plugins/agency-site-core/agency-site-core.php';
 	if ( file_exists( $plugin_entry ) ) {
 		require_once $plugin_entry;

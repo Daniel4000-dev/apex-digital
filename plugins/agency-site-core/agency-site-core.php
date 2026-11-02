@@ -78,8 +78,10 @@ final class Agency_Site_Core {
 	}
 }
 
-function agency_site_core() {
-	return Agency_Site_Core::instance();
+if ( ! function_exists( 'agency_site_core' ) ) {
+	function agency_site_core() {
+		return Agency_Site_Core::instance();
+	}
 }
 
 // Boot plugin
