@@ -97,10 +97,6 @@ jobs:
         run: |
           composer install --no-interaction --prefer-dist
 
-      - name: Run PHPUnit Unit & Integration Suite
-        run: |
-          vendor/bin/phpunit
-
       - name: Install WordPress Core and Test Harness
         run: |
           mkdir -p /tmp/wordpress
@@ -122,6 +118,12 @@ jobs:
           wp theme activate agency-site --allow-root
           wp plugin activate agency-site-core --allow-root
           wp rewrite structure '/%postname%/' --allow-root
+
+      - name: Run PHPUnit Unit & Integration Suite
+        env:
+          WP_ROOT: /tmp/wordpress
+        run: |
+          vendor/bin/phpunit
 
       - name: Run Behavioural, Security & Ingress Suite (52 Assertions)
         run: |
