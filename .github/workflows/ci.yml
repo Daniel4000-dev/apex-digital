@@ -110,6 +110,7 @@ jobs:
         run: |
           cp -r themes/agency-site /tmp/wordpress/wp-content/themes/
           cp -r plugins/agency-site-core /tmp/wordpress/wp-content/plugins/
+          cp -r docs /tmp/wordpress/wp-content/
           mkdir -p /tmp/wordpress/wp-content/tests
           cp tests/run-all-tests.php /tmp/wordpress/wp-content/tests/
 

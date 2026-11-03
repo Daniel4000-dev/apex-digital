@@ -4,7 +4,7 @@
   "description": "Contained legacy maintenance fixture using Sass, Gulp, Twig, and Foundation",
   "main": "gulpfile.js",
   "scripts": {
-    "build": "node build.js",
+    "build": "node init && node build.js",
     "test": "node build.js"
   },
   "dependencies": {

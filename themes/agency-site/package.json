@@ -4,11 +4,11 @@
   "description": "Custom classic WordPress theme for Apex Digital marketing agency",
   "main": "index.php",
   "scripts": {
-    "build:css": "tailwindcss -i ./assets/src/css/input.css -o ./assets/dist/css/style.css --minify",
+    "build:css": "node init && tailwindcss -i ./assets/src/css/input.css -o ./assets/dist/css/style.css --minify",
     "watch:css": "tailwindcss -i ./assets/src/css/input.css -o ./assets/dist/css/style.css --watch",
-    "build:campaign": "gulp build",
+    "build:campaign": "node init && gulp build",
     "watch:campaign": "gulp watch",
-    "build": "npm run build:css && npm run build:campaign",
+    "build": "node init && npm run build:css && npm run build:campaign",
     "lint:js": "npx eslint assets/dist/js/main.js"
   },
   "keywords": [
