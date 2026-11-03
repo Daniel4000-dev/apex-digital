@@ -695,8 +695,21 @@ class Agency_Site_Test_Runner {
         $acf_json_file = get_template_directory() . '/acf-json/group_agency_service_meta.json';
         $this->assert('ACF JSON field definitions file exists in theme', file_exists($acf_json_file), 'group_agency_service_meta.json is missing.');
 
-        $gf_json_file = dirname(__DIR__) . '/docs/gravityforms-export-sanitized.json';
-        $this->assert('Gravity Forms sanitized form export exists in docs', file_exists($gf_json_file), 'gravityforms-export-sanitized.json is missing.');
+        $gf_json_candidates = array(
+            dirname(__DIR__) . '/docs/gravityforms-export-sanitized.json',
+            dirname(__DIR__) . '/docs/gravityforms-campaign-export-sanitized.json',
+            (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR . '/docs/gravityforms-export-sanitized.json' : ''),
+            (getenv('GITHUB_WORKSPACE') ? getenv('GITHUB_WORKSPACE') . '/docs/gravityforms-export-sanitized.json' : ''),
+            (getenv('GITHUB_WORKSPACE') ? getenv('GITHUB_WORKSPACE') . '/wp-content/docs/gravityforms-export-sanitized.json' : ''),
+        );
+        $gf_json_exists = false;
+        foreach ($gf_json_candidates as $candidate) {
+            if (!empty($candidate) && file_exists($candidate)) {
+                $gf_json_exists = true;
+                break;
+            }
+        }
+        $this->assert('Gravity Forms sanitized form export exists in docs', $gf_json_exists, 'gravityforms-export-sanitized.json is missing.');
     }
 
     /**

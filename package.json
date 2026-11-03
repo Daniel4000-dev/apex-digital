@@ -4,8 +4,8 @@
   "private": true,
   "description": "Root workspace orchestration scripts for Apex Digital theme, companion plugin, and tests",
   "scripts": {
-    "build": "npm --prefix themes/agency-site run build",
-    "build:legacy": "npm --prefix legacy-maintenance-example run build",
+    "build": "node init && npm --prefix themes/agency-site run build",
+    "build:legacy": "node init && npm --prefix legacy-maintenance-example run build",
     "watch": "npm --prefix themes/agency-site run watch:css",
     "lint:php": "bash scripts/run-with-env.sh lint-php",
     "lint:phpcs": "bash scripts/run-with-env.sh phpcs",

@@ -35,9 +35,9 @@ vendor/
 
 # IDE & Editor Configurations
 .idea/
-.vscode/
 *.sublime-project
 *.sublime-workspace
 *.swp
 *.swo
 
+config.bat
