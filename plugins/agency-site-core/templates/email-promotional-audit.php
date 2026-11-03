@@ -185,7 +185,7 @@ $agency_email      = ! empty( $agency_email ) ? sanitize_email( $agency_email ) 
 								&copy; <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php echo esc_html( $site_name ); ?>. All rights reserved.
 							</p>
 							<p style="color: #94a3b8; font-size: 11px; line-height: 1.5; margin: 0 0 12px 0;">
-								Apex Digital is a fictional agency portfolio project created for demonstration and technical assessment.
+								Apex Digital Studio · Bespoke WordPress Development, Technical SEO &amp; Performance Growth.
 							</p>
 							<p style="color: #94a3b8; font-size: 11px; line-height: 1.5; margin: 0;">
 								Direct contact: <a href="mailto:<?php echo esc_attr( $agency_email ); ?>" style="color: #0284c7; text-decoration: underline;"><?php echo esc_html( $agency_email ); ?></a>

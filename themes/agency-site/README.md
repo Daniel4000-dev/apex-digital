@@ -1,6 +1,6 @@
 # Agency Site - WordPress Theme
 
-A modern, high-performance, polished classic WordPress theme built for fictional and real digital marketing agencies, growth consultancies, and creative studios. Engineered with **PHP**, **Tailwind CSS**, and **vanilla JavaScript**.
+A modern, high-performance, polished classic WordPress theme built for digital marketing agencies, growth consultancies, and creative studios. Engineered with **PHP**, **Tailwind CSS**, and **vanilla JavaScript**.
 
 ---
 

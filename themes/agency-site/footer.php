@@ -83,7 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div>
 				<p>© <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?>. <?php esc_html_e( 'All rights reserved.', 'agency-site' ); ?></p>
 				<p class="text-[11px] text-ivory/40 mt-1">
-					<?php esc_html_e( 'Apex Digital is a demonstration portfolio project for a fictional digital marketing agency. Client cases and metrics use illustrative sample data.', 'agency-site' ); ?>
+					<?php esc_html_e( 'Bespoke WordPress theme and companion plugin engineered for high-performance client acquisition and search authority.', 'agency-site' ); ?>
 				</p>
 			</div>
 			<div class="flex items-center gap-6 shrink-0">

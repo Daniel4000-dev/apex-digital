@@ -2,7 +2,7 @@
 
 ## 1. System Overview
 
-The **Agency Site** project is a production-grade classic WordPress website for **Apex Digital Strategy**, a fictional premium digital marketing agency. The architecture enforces separation of concerns between presentation (Theme) and business logic/data persistence (Plugin).
+The **Agency Site** project is a production-grade classic WordPress website for **Apex Digital Strategy**, a premium digital marketing agency. The architecture enforces separation of concerns between presentation (Theme) and business logic/data persistence (Plugin).
 
 ```
                       ┌──────────────────────────────────────┐

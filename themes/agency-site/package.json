@@ -1,7 +1,7 @@
 {
   "name": "agency-site",
   "version": "1.0.0",
-  "description": "Custom classic WordPress theme for a fictional digital marketing agency",
+  "description": "Custom classic WordPress theme for Apex Digital marketing agency",
   "main": "index.php",
   "scripts": {
     "build:css": "tailwindcss -i ./assets/src/css/input.css -o ./assets/dist/css/style.css --minify",
