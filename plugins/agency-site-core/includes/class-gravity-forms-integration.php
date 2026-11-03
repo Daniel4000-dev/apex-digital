@@ -38,9 +38,14 @@ class Agency_Core_Gravity_Forms_Integration {
 		$email   = sanitize_email( $field_map['email'] );
 		$phone   = sanitize_text_field( $field_map['phone'] ?? '' );
 		$company = sanitize_text_field( $field_map['company'] ?? '' );
+		$website = esc_url_raw( $field_map['website'] ?? '' );
 		$service = sanitize_text_field( $field_map['service'] ?? 'General Consultation' );
 		$budget  = sanitize_text_field( $field_map['budget'] ?? 'Not Specified' );
 		$message = sanitize_textarea_field( $field_map['message'] ?? '' );
+
+		if ( ! empty( $website ) && empty( $company ) ) {
+			$company = $website;
+		}
 
 		// Check for duplicate processing (idempotency key via entry ID)
 		$existing_id = get_transient( 'agency_gf_processed_' . $entry['id'] );
@@ -48,6 +53,15 @@ class Agency_Core_Gravity_Forms_Integration {
 			return; // Already processed
 		}
 		set_transient( 'agency_gf_processed_' . $entry['id'], 1, HOUR_IN_SECONDS );
+
+		// Determine if this is the Campaign Landing Page form
+		$is_campaign = (
+			( isset( $form['id'] ) && (int) $form['id'] === (int) self::get_campaign_form_id() ) ||
+			( isset( $form['title'] ) && stripos( $form['title'], 'campaign' ) !== false ) ||
+			( isset( $form['title'] ) && stripos( $form['title'], 'sprint' ) !== false )
+		);
+
+		$source = $is_campaign ? 'gravity_forms_campaign' : 'gravity_forms';
 
 		// Insert into agency_enquiry CPT
 		$enquiry_id = wp_insert_post(
@@ -61,10 +75,11 @@ class Agency_Core_Gravity_Forms_Integration {
 					'_enquiry_email'       => $email,
 					'_enquiry_phone'       => $phone,
 					'_enquiry_company'     => $company,
+					'_enquiry_website'     => $website,
 					'_enquiry_service'     => $service,
 					'_enquiry_budget'      => $budget,
 					'_enquiry_ip'          => sanitize_text_field( $entry['ip'] ?? '' ),
-					'_enquiry_source'      => 'gravity_forms',
+					'_enquiry_source'      => $source,
 					'_enquiry_gf_entry_id' => (int) $entry['id'],
 					'_enquiry_gf_form_id'  => (int) $form['id'],
 				),
@@ -81,10 +96,11 @@ class Agency_Core_Gravity_Forms_Integration {
 			'email'        => $email,
 			'phone'        => $phone,
 			'company'      => $company,
+			'website'      => $website,
 			'service'      => $service,
 			'budget'       => $budget,
 			'message'      => $message,
-			'source'       => 'gravity_forms',
+			'source'       => $source,
 			'gf_form_id'   => (int) $form['id'],
 			'gf_entry_id'  => (int) $entry['id'],
 			'submitted_at' => current_time( 'mysql' ),
@@ -120,6 +136,8 @@ class Agency_Core_Gravity_Forms_Integration {
 				$data['phone'] = $val;
 			} elseif ( strpos( $label, 'company' ) !== false && ! isset( $data['company'] ) ) {
 				$data['company'] = $val;
+			} elseif ( ( strpos( $label, 'website' ) !== false || strpos( $label, 'url' ) !== false || $field->type === 'website' ) && ! isset( $data['website'] ) ) {
+				$data['website'] = $val;
 			} elseif ( strpos( $label, 'service' ) !== false && ! isset( $data['service'] ) ) {
 				$data['service'] = $val;
 			} elseif ( strpos( $label, 'budget' ) !== false && ! isset( $data['budget'] ) ) {
@@ -130,5 +148,29 @@ class Agency_Core_Gravity_Forms_Integration {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Resolve Configured Gravity Forms Campaign Form ID
+	 *
+	 * Checks post-level ACF/meta override, theme option, and filter.
+	 *
+	 * @param int $post_id Optional post ID.
+	 * @return int Form ID or 0 if not configured.
+	 */
+	public static function get_campaign_form_id( $post_id = 0 ) {
+		$form_id = 0;
+		if ( $post_id ) {
+			$meta_id = get_post_meta( $post_id, 'campaign_gf_form_id', true );
+			if ( ! empty( $meta_id ) ) {
+				$form_id = (int) $meta_id;
+			}
+		}
+
+		if ( ! $form_id ) {
+			$form_id = (int) get_option( 'agency_campaign_gravity_form_id', 0 );
+		}
+
+		return (int) apply_filters( 'agency_campaign_gravity_form_id', $form_id, $post_id );
 	}
 }

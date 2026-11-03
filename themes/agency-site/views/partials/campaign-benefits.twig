@@ -1,0 +1,44 @@
+{# Campaign Deliverables / Benefits Section - Foundation Grid #}
+<section id="campaign-deliverables" class="campaign-section campaign-benefits-section">
+  <div class="grid-container">
+    
+    <div class="grid-x grid-padding-x mb-8">
+      <div class="cell small-12">
+        <div class="section-eyebrow">
+          <span>{{ 'Structured Methodology'|e('html') }}</span>
+        </div>
+        <h2 class="section-heading">
+          {{ campaign.benefits_heading|e('html')|default('The 4-Week Sprint Deliverables') }}
+        </h2>
+      </div>
+    </div>
+
+    {# Responsive Grid: 1 col on mobile, 2 cols on tablet, 4 cols on desktop #}
+    <div class="grid-x grid-padding-x">
+      {% for benefit in campaign.benefits %}
+        <div class="cell small-12 medium-6 large-3 mb-6">
+          <article class="benefit-card">
+            <div>
+              <div class="benefit-step">
+                <span>Phase {{ loop.index }} // Sprint</span>
+              </div>
+              <h3 class="benefit-title">
+                {{ benefit.title|e('html') }}
+              </h3>
+              <p class="benefit-desc">
+                {{ benefit.description|e('html') }}
+              </p>
+            </div>
+            {% if benefit.metric %}
+              <div class="benefit-metric">
+                <span>KPI: {{ benefit.metric|e('html') }}</span>
+              </div>
+            {% endif %}
+          </article>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+

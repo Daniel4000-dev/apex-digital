@@ -58,16 +58,27 @@ else
     WP_CLI="wp"
 fi
 
-# 5. Execute Desired Action
+# 5. Resolve Composer Binary
+if command -v composer >/dev/null 2>&1; then
+    COMPOSER_BIN="$(command -v composer)"
+elif [[ -f "/Applications/Local.app/Contents/Resources/extraResources/bin/composer/composer.phar" ]]; then
+    COMPOSER_BIN="$PHP_EXEC /Applications/Local.app/Contents/Resources/extraResources/bin/composer/composer.phar"
+else
+    COMPOSER_BIN="composer"
+fi
+
+# 6. Execute Desired Action
 case "$COMMAND" in
     lint-php)
         find themes/agency-site plugins/agency-site-core tests -name node_modules -prune -o -name vendor -prune -o -name "*.php" -exec "$PHP_EXEC" -l {} \;
         ;;
     phpcs)
-        "$PHP_EXEC" vendor/bin/phpcs --standard=phpcs.xml --warning-severity=0
+        shift
+        "$PHP_EXEC" vendor/bin/phpcs --standard=phpcs.xml --warning-severity=0 "$@"
         ;;
     phpcs-strict)
-        "$PHP_EXEC" vendor/bin/phpcs --standard=phpcs.xml
+        shift
+        "$PHP_EXEC" vendor/bin/phpcs --standard=phpcs.xml "$@"
         ;;
     phpcbf)
         shift
@@ -85,6 +96,10 @@ case "$COMMAND" in
     wp)
         shift
         "$PHP_EXEC" "${PHP_OPTS[@]}" "$WP_CLI" --path="$WP_ROOT" "$@"
+        ;;
+    composer)
+        shift
+        $COMPOSER_BIN "$@"
         ;;
     *)
         echo "Unknown command: $COMMAND"

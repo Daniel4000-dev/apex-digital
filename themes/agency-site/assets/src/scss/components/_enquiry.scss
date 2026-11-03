@@ -1,0 +1,133 @@
+// ==============================================================================
+// Apex Digital - Campaign Enquiry & Gravity Forms Styling
+// ==============================================================================
+
+@import '../settings';
+@import '../mixins';
+
+.campaign-enquiry-section {
+  background-color: $color-ink;
+  color: $color-ivory;
+  border-top: 1px solid $color-ink;
+
+  .enquiry-heading {
+    color: $color-ivory;
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin-bottom: 1rem;
+
+    @include breakpoint(medium) {
+      font-size: 3rem;
+    }
+  }
+
+  .enquiry-lead {
+    color: rgba($color-ivory, 0.7);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+  }
+
+  .enquiry-box {
+    background-color: rgba($color-ivory, 0.05);
+    border: 1px solid rgba($color-ivory, 0.15);
+    padding: 2rem;
+
+    @include breakpoint(medium) {
+      padding: 3rem;
+    }
+  }
+
+  // Scoped Form Styling (Applies to both Gravity Forms and Fallback Form)
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      font-family: $font-mono;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba($color-ivory, 0.8);
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    select,
+    textarea {
+      width: 100%;
+      background-color: rgba($color-ivory, 0.08);
+      border: 1px solid rgba($color-ivory, 0.2);
+      color: $color-ivory;
+      padding: 0.875rem 1rem;
+      font-family: $font-sans;
+      font-size: 0.9375rem;
+      border-radius: 0;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $color-cobalt;
+        background-color: rgba($color-ivory, 0.12);
+      }
+
+      &::placeholder {
+        color: rgba($color-ivory, 0.4);
+      }
+    }
+
+    textarea {
+      min-height: 7rem;
+      resize: vertical;
+    }
+
+    select option {
+      background-color: $color-ink;
+      color: $color-ivory;
+    }
+  }
+
+  .conditional-field {
+    transition: all 0.3s ease;
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .btn-submit-enquiry {
+    @include studio-btn-primary;
+    background-color: $color-cobalt;
+    border-color: $color-cobalt;
+    width: 100%;
+    margin-top: 1rem;
+
+    &:hover {
+      background-color: $color-white;
+      border-color: $color-white;
+      color: $color-ink;
+    }
+  }
+
+  .form-status-notice {
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    border: 1px solid transparent;
+
+    &.success {
+      background-color: rgba(38, 73, 231, 0.15);
+      border-color: $color-cobalt;
+      color: $color-ivory;
+    }
+
+    &.error {
+      background-color: rgba(255, 120, 72, 0.15);
+      border-color: $color-coral;
+      color: $color-coral;
+    }
+  }
+}
+

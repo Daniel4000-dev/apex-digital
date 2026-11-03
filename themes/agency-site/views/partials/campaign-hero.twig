@@ -1,0 +1,59 @@
+{# Campaign Hero Section - Foundation XY Grid #}
+<header class="campaign-hero">
+  <div class="grid-container">
+    <div class="grid-x grid-padding-x align-middle">
+      
+      {# Left Column: Copy & Actions (small-12 medium-7 large-7) #}
+      <div class="cell small-12 medium-7 large-7">
+        {% if campaign.hero_badge %}
+          <div class="campaign-badge">
+            <span class="badge-dot">●</span> {{ campaign.hero_badge|e('html') }}
+          </div>
+        {% endif %}
+
+        <h1 class="campaign-title">
+          {{ campaign.hero_heading|e('html') }}
+        </h1>
+
+        <p class="campaign-subtitle">
+          {{ campaign.hero_subheading|e('html') }}
+        </p>
+
+        <div class="campaign-actions">
+          <a href="{{ campaign.cta_url|e('html_attr')|default('#campaign-enquiry') }}" class="btn-campaign-primary">
+            <span>{{ campaign.cta_text|e('html')|default('Apply for Q1 Sprint') }}</span>
+            <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+            </svg>
+          </a>
+          <a href="#campaign-deliverables" class="btn-campaign-secondary">
+            <span>{{ 'Explore Deliverables'|e('html') }}</span>
+          </a>
+        </div>
+      </div>
+
+      {# Right Column: Hero Visual Artwork (small-12 medium-5 large-5) #}
+      <div class="cell small-12 medium-5 large-5">
+        <div class="campaign-hero-visual">
+          {% if campaign.hero_image_url %}
+            <img src="{{ campaign.hero_image_url|e('html_attr') }}" alt="{{ campaign.hero_heading|e('html_attr') }}" loading="eager" width="600" height="450">
+          {% else %}
+            {# Fallback Architectural Studio Plate #}
+            <div class="w-full h-full bg-ink flex flex-col justify-between p-8 text-ivory">
+              <span class="font-mono text-xs tracking-widest uppercase text-ivory/60">Sprint Architecture // 2026</span>
+              <div>
+                <p class="text-2xl font-bold tracking-tight text-ivory mb-2">High-Velocity Conversion</p>
+                <p class="text-xs font-mono text-ivory/60">4-Week Intensive Engineering</p>
+              </div>
+            </div>
+          {% endif %}
+          <div class="visual-overlay-tag">
+            <span>{{ 'Cohort 01 // Active'|e('html') }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+

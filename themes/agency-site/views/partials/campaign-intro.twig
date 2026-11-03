@@ -1,0 +1,43 @@
+{# Campaign Offer / Introduction Section #}
+<section id="campaign-intro" class="campaign-section" style="background-color: #F3F0E8;">
+  <div class="grid-container">
+    <div class="grid-x grid-padding-x align-justify">
+      
+      <div class="cell small-12 medium-5 large-4">
+        <div class="section-eyebrow">
+          <span>{{ 'Executive Overview'|e('html') }}</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink mb-4">
+          {{ campaign.intro_heading|e('html')|default('Designed for immediate commercial impact.') }}
+        </h2>
+        <div class="font-mono text-xs uppercase tracking-widest text-ink/60 mb-6">
+          <span>{{ 'Duration: 4 Weeks · Limited Capacity'|e('html') }}</span>
+        </div>
+      </div>
+
+      <div class="cell small-12 medium-7 large-7">
+        <div class="text-base sm:text-lg leading-relaxed text-ink/80 space-y-4">
+          {{ campaign.intro_content|wp_kses_post }}
+        </div>
+
+        {# Key Sprint Parameters Strip #}
+        <div class="grid-x grid-padding-x mt-8 pt-8 border-t border-ink/15">
+          <div class="cell small-6 medium-4">
+            <span class="block font-mono text-[10px] uppercase tracking-widest text-ink/60 mb-1">Crawl & Index Speed</span>
+            <span class="block font-heading font-extrabold text-xl text-ink">+35% Goal</span>
+          </div>
+          <div class="cell small-6 medium-4">
+            <span class="block font-mono text-[10px] uppercase tracking-widest text-ink/60 mb-1">Enquiry Funnel</span>
+            <span class="block font-heading font-extrabold text-xl text-cobalt">Zero Leakage</span>
+          </div>
+          <div class="cell small-12 medium-4 mt-4 medium-mt-0">
+            <span class="block font-mono text-[10px] uppercase tracking-widest text-ink/60 mb-1">Senior Squad</span>
+            <span class="block font-heading font-extrabold text-xl text-ink">Direct Access</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+

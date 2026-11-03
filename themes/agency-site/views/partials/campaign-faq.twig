@@ -1,0 +1,55 @@
+{# Campaign FAQ Section - Foundation Grid & Accessible Accordion #}
+<section id="campaign-faqs" class="campaign-section campaign-faq-section">
+  <div class="grid-container">
+    
+    <div class="grid-x grid-padding-x align-justify">
+      
+      {# Section Title Column (small-12 medium-4) #}
+      <div class="cell small-12 medium-4 mb-6">
+        <div class="section-eyebrow">
+          <span>{{ 'Clarity & FAQs'|e('html') }}</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink mb-4">
+          {{ 'Frequently Asked Questions'|e('html') }}
+        </h2>
+        <p class="text-sm text-ink/70 leading-relaxed max-w-xs">
+          {{ 'Everything you need to know about sprint requirements, access, timeline and post-launch handoff.'|e('html') }}
+        </p>
+      </div>
+
+      {# FAQ Accordion Column (small-12 medium-7) #}
+      <div class="cell small-12 medium-7">
+        <div class="faq-accordion" role="region" aria-label="Campaign FAQs">
+          {% for faq in campaign.faqs %}
+            <div class="faq-item">
+              <button 
+                type="button" 
+                class="faq-trigger" 
+                aria-expanded="{{ loop.first ? 'true' : 'false' }}" 
+                aria-controls="faq-panel-{{ loop.index }}" 
+                id="faq-header-{{ loop.index }}"
+              >
+                <span>{{ faq.question|e('html') }}</span>
+                <svg class="faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+              </button>
+              <div 
+                id="faq-panel-{{ loop.index }}" 
+                class="faq-content" 
+                role="region" 
+                aria-labelledby="faq-header-{{ loop.index }}" 
+                {{ loop.first ? '' : 'hidden' }}
+              >
+                <p>{{ faq.answer|e('html') }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+

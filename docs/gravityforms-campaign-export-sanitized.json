@@ -1,0 +1,111 @@
+{
+  "version": "2.8.0",
+  "forms": [
+    {
+      "id": 2,
+      "title": "Apex Digital — Campaign Growth Sprint Application",
+      "description": "High-intent campaign landing page enquiry form with conditional website qualification and anti-spam validation.",
+      "labelPlacement": "top_label",
+      "descriptionPlacement": "below_inputs",
+      "button": {
+        "type": "text",
+        "text": "Submit Sprint Application →",
+        "imageUrl": ""
+      },
+      "fields": [
+        {
+          "id": 1,
+          "type": "name",
+          "label": "Full Name",
+          "adminLabel": "name",
+          "isRequired": true,
+          "size": "large"
+        },
+        {
+          "id": 2,
+          "type": "email",
+          "label": "Work Email",
+          "adminLabel": "email",
+          "isRequired": true,
+          "size": "large",
+          "placeholder": "alex@company.com"
+        },
+        {
+          "id": 3,
+          "type": "select",
+          "label": "Sprint Focus",
+          "adminLabel": "service",
+          "isRequired": true,
+          "choices": [
+            { "text": "Q1 Performance Growth Sprint (Full Scope)", "value": "Q1 Performance Growth Sprint" },
+            { "text": "Technical SEO & Architecture Teardown", "value": "Search Engine Optimization" },
+            { "text": "Paid Media & Conversion Rate Optimization", "value": "Paid Media & Performance Ads" }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "radio",
+          "label": "Do you have an existing website?",
+          "adminLabel": "has_existing_site",
+          "isRequired": true,
+          "choices": [
+            { "text": "Yes, we have an active website", "value": "yes", "isSelected": true },
+            { "text": "No, building a new platform", "value": "no", "isSelected": false }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "website",
+          "label": "Current Website URL",
+          "adminLabel": "website",
+          "isRequired": true,
+          "size": "large",
+          "placeholder": "https://company.com",
+          "conditionalLogic": {
+            "actionType": "show",
+            "logicType": "all",
+            "rules": [
+              {
+                "fieldId": 4,
+                "operator": "is",
+                "value": "yes"
+              }
+            ]
+          }
+        },
+        {
+          "id": 6,
+          "type": "textarea",
+          "label": "Primary Growth Bottleneck or Objective",
+          "adminLabel": "message",
+          "isRequired": true,
+          "size": "large",
+          "placeholder": "Explain your target audience, conversion friction, or desired timeline..."
+        }
+      ],
+      "enableHoneypot": true,
+      "enableAnimation": true,
+      "notifications": [
+        {
+          "id": "campaign_admin_notification",
+          "name": "Admin Notification",
+          "event": "form_submission",
+          "to": "{admin_email}",
+          "toType": "email",
+          "subject": "New Sprint Application — {name}",
+          "message": "{all_fields}"
+        }
+      ],
+      "confirmations": [
+        {
+          "id": "campaign_confirmation",
+          "name": "Standard Confirmation",
+          "isDefault": true,
+          "type": "message",
+          "message": "Thank you! Your sprint application has been received. Our leadership squad will review your application and respond within 24 hours."
+        }
+      ]
+    }
+  ]
+}
+

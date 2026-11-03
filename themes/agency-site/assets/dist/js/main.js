@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCopyLink();
     initBackToTop();
     initContactForm();
+    initCampaignForm();
 });
 
 /**
@@ -303,38 +304,120 @@ function initStickyHeader() {
  * FAQ Accordion Disclosures
  */
 function initFaqAccordion() {
-    const accordion = document.getElementById('faq-accordion');
-    if (!accordion) return;
+    const accordions = document.querySelectorAll('#faq-accordion, .faq-accordion');
+    if (!accordions.length) return;
 
-    const toggles = accordion.querySelectorAll('.faq-toggle');
+    accordions.forEach(accordion => {
+        const toggles = accordion.querySelectorAll('.faq-toggle, .faq-trigger');
 
-    toggles.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const isExpanded = btn.getAttribute('aria-expanded') === 'true';
-            const content = btn.nextElementSibling;
-            const icon = btn.querySelector('.faq-icon');
+        toggles.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+                const panelId = btn.getAttribute('aria-controls');
+                const content = panelId ? document.getElementById(panelId) : btn.nextElementSibling;
+                const icon = btn.querySelector('.faq-icon');
 
-            // Close all items for single disclosure focus
-            toggles.forEach(otherBtn => {
-                otherBtn.setAttribute('aria-expanded', 'false');
-                if (otherBtn.nextElementSibling) {
-                    otherBtn.nextElementSibling.classList.add('hidden');
-                }
-                const otherIcon = otherBtn.querySelector('.faq-icon');
-                if (otherIcon) {
-                    otherIcon.textContent = '+';
+                // Close all items in this accordion for single disclosure focus
+                toggles.forEach(otherBtn => {
+                    otherBtn.setAttribute('aria-expanded', 'false');
+                    const otherId = otherBtn.getAttribute('aria-controls');
+                    const otherContent = otherId ? document.getElementById(otherId) : otherBtn.nextElementSibling;
+                    if (otherContent) {
+                        otherContent.setAttribute('hidden', 'true');
+                        otherContent.classList.add('hidden');
+                    }
+                    const otherIcon = otherBtn.querySelector('.faq-icon');
+                    if (otherIcon && otherIcon.tagName !== 'svg') {
+                        otherIcon.textContent = '+';
+                    }
+                });
+
+                // Toggle selected item
+                if (!isExpanded && content) {
+                    btn.setAttribute('aria-expanded', 'true');
+                    content.removeAttribute('hidden');
+                    content.classList.remove('hidden');
+                    if (icon && icon.tagName !== 'svg') {
+                        icon.textContent = '−';
+                    }
                 }
             });
+        });
+    });
+}
 
-            // Toggle selected item
-            if (!isExpanded && content) {
-                btn.setAttribute('aria-expanded', 'true');
-                content.classList.remove('hidden');
-                if (icon) {
-                    icon.textContent = '−';
-                }
+/**
+ * Campaign Landing Page Enquiry Form & Conditional Field Handling
+ */
+function initCampaignForm() {
+    const form = document.getElementById('campaign-enquiry-form');
+    if (!form) return;
+
+    const siteSelect = document.getElementById('campaign-has-site');
+    const siteUrlGroup = document.getElementById('campaign-site-url-group');
+    const siteUrlInput = document.getElementById('campaign-url');
+
+    if (siteSelect && siteUrlGroup) {
+        siteSelect.addEventListener('change', () => {
+            if (siteSelect.value === 'yes') {
+                siteUrlGroup.removeAttribute('hidden');
+                siteUrlGroup.style.display = '';
+                if (siteUrlInput) siteUrlInput.setAttribute('required', 'required');
+            } else {
+                siteUrlGroup.setAttribute('hidden', 'true');
+                siteUrlGroup.style.display = 'none';
+                if (siteUrlInput) siteUrlInput.removeAttribute('required');
             }
         });
+    }
+
+    const submitBtn = document.getElementById('campaign-submit-btn');
+    const notice = document.getElementById('campaign-form-notice');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const formData = new FormData(form);
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Submitting Application...';
+        }
+
+        try {
+            const ajaxUrl = (typeof agencySiteData !== 'undefined' && agencySiteData.ajaxUrl) ? agencySiteData.ajaxUrl : '/wp-admin/admin-ajax.php';
+            const res = await fetch(ajaxUrl, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                notice.className = 'form-status-notice success';
+                notice.innerText = (data.data && data.data.message) ? data.data.message : 'Thank you! Your sprint application has been received. Our leadership squad will review your application and respond within 24 hours.';
+                notice.style.display = 'block';
+                form.reset();
+                if (siteUrlGroup) {
+                    siteUrlGroup.removeAttribute('hidden');
+                    siteUrlGroup.style.display = '';
+                }
+            } else {
+                notice.className = 'form-status-notice error';
+                notice.innerText = (data.data && data.data.message) ? data.data.message : 'Error submitting form. Please verify your details.';
+                notice.style.display = 'block';
+            }
+        } catch {
+            notice.className = 'form-status-notice error';
+            notice.innerText = 'Unable to send enquiry. Please check your connection or email directly.';
+            notice.style.display = 'block';
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Submit Sprint Application →';
+            }
+        }
     });
 }
 

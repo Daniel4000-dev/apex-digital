@@ -57,6 +57,7 @@ jobs:
       - name: Assert Built Production Assets
         run: |
           test -s themes/agency-site/assets/dist/css/style.css || { echo "Missing style.css"; exit 1; }
+          test -s themes/agency-site/assets/dist/css/campaign.css || { echo "Missing campaign.css"; exit 1; }
           test -s themes/agency-site/assets/dist/js/main.js || { echo "Missing main.js"; exit 1; }
 
       - name: Install & Build Legacy Maintenance Fixture

@@ -1,0 +1,21 @@
+// ==============================================================================
+// Apex Digital - Campaign Landing Page Main SCSS
+// Compiles Foundation XY Grid, Dart Sass Partials, and Editorial Studio Styling
+// ==============================================================================
+
+// 1. Foundation Utilities & Apex Settings
+@import 'util/util';
+@import 'settings';
+@import 'mixins';
+
+// 2. Scoped Campaign Container
+@import 'layout';
+
+// 3. Campaign Modular Components
+.campaign-foundation-scope {
+  @import 'components/hero';
+  @import 'components/benefits';
+  @import 'components/faq';
+  @import 'components/enquiry';
+}
+

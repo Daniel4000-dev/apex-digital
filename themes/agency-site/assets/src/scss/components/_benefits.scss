@@ -1,0 +1,78 @@
+// ==============================================================================
+// Apex Digital - Campaign Benefits / Deliverables Component
+// ==============================================================================
+
+@import '../settings';
+@import '../mixins';
+
+.campaign-benefits-section {
+  background-color: $color-ivory;
+
+  .section-eyebrow {
+    @include mono-badge($color-ink, $color-ivory);
+    margin-bottom: 1rem;
+  }
+
+  .section-heading {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: $color-ink;
+    margin-bottom: 3rem;
+
+    @include breakpoint(medium) {
+      font-size: 2.75rem;
+    }
+  }
+
+  .benefit-card {
+    background-color: $color-white;
+    border: 1px solid $color-border;
+    padding: 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      border-color: $color-cobalt;
+      transform: translateY(-2px);
+    }
+
+    .benefit-step {
+      font-family: $font-mono;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: $color-cobalt;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .benefit-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: $color-ink;
+      margin-bottom: 0.75rem;
+    }
+
+    .benefit-desc {
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      color: $color-ink-80;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .benefit-metric {
+      font-family: $font-mono;
+      font-size: 0.8125rem;
+      color: $color-ink-60;
+      padding-top: 1rem;
+      border-top: 1px solid $color-border-subtle;
+    }
+  }
+}
+

@@ -1,0 +1,73 @@
+// ==============================================================================
+// Apex Digital - Campaign FAQ Component
+// ==============================================================================
+
+@import '../settings';
+@import '../mixins';
+
+.campaign-faq-section {
+  background-color: $color-ivory;
+
+  .faq-accordion {
+    border-top: 1px solid $color-border;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid $color-border;
+
+    .faq-trigger {
+      width: 100%;
+      text-align: left;
+      padding: 1.5rem 0;
+      background: none;
+      border: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      color: $color-ink;
+      font-family: $font-sans;
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      transition: color 0.15s ease;
+
+      @include breakpoint(medium) {
+        font-size: 1.25rem;
+      }
+
+      &:hover {
+        color: $color-cobalt;
+      }
+
+      .faq-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
+        margin-left: 1rem;
+        transition: transform 0.2s ease;
+      }
+
+      &[aria-expanded="true"] {
+        color: $color-cobalt;
+
+        .faq-icon {
+          transform: rotate(45deg);
+        }
+      }
+    }
+
+    .faq-content {
+      padding-bottom: 1.5rem;
+      font-size: 0.9375rem;
+      line-height: 1.65;
+      color: $color-ink-80;
+      max-width: 48rem;
+
+      &[hidden] {
+        display: none;
+      }
+    }
+  }
+}
+

@@ -14,8 +14,9 @@
     "test:phpunit": "bash scripts/run-with-env.sh phpunit",
     "test:behavioural": "bash scripts/run-with-env.sh behavioural",
     "test:browser": "node tests/verify-apex-digital.js",
+    "test:campaign": "node tests/verify-campaign-page.js",
     "test:emails": "bash scripts/run-with-env.sh emails",
-    "test": "npm run test:phpunit && npm run test:behavioural && npm run test:browser"
+    "test": "npm run test:phpunit && npm run test:behavioural && npm run test:browser && npm run test:campaign"
   },
   "keywords": [
     "wordpress",

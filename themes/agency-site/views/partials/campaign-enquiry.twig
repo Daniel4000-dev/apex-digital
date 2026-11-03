@@ -1,0 +1,90 @@
+{# Campaign Enquiry Section - Gravity Forms & Accessible Fallback #}
+<section id="campaign-enquiry" class="campaign-section campaign-enquiry-section">
+  <div class="grid-container">
+    
+    <div class="grid-x grid-padding-x align-center">
+      <div class="cell small-12 medium-10 large-8">
+        
+        <div class="text-center mb-8">
+          <div class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-cobalt mb-3 bg-white/10 px-3 py-1">
+            <span>● {{ 'Direct Sprint Application'|e('html') }}</span>
+          </div>
+          <h2 class="enquiry-heading">
+            {{ 'Secure Your Sprint Window'|e('html') }}
+          </h2>
+          <p class="enquiry-lead max-w-xl mx-auto">
+            {{ 'Submit your project details below. Senior leadership reviews every application within 24 hours.'|e('html') }}
+          </p>
+        </div>
+
+        <div class="enquiry-box">
+          {% if campaign.gravity_form_html %}
+            {# Genuine Gravity Forms Embed #}
+            <div class="campaign-gf-wrapper">
+              {{ campaign.gravity_form_html|raw }}
+            </div>
+          {% else %}
+            {# Native Accessible Form with Conditional Logic #}
+            <form id="campaign-enquiry-form" class="space-y-4" method="post" novalidate>
+              <input type="hidden" name="action" value="agency_submit_enquiry">
+              <input type="hidden" name="security" value="{{ campaign.enquiry_nonce|e('html_attr') }}">
+              <input type="hidden" name="service" value="{{ campaign.title|e('html_attr')|default('Q1 Performance Growth Sprint') }}">
+              <input type="hidden" name="agency_hp_timestamp" value="{{ 'now'|date('U') }}">
+              {# Anti-spam honeypot #}
+              <div style="display:none;" aria-hidden="true">
+                <input type="text" name="agency_hp_website" tabindex="-1" autocomplete="off">
+              </div>
+
+              <div class="grid-x grid-padding-x">
+                <div class="cell small-12 medium-6 form-group">
+                  <label for="campaign-name">{{ 'Full Name *'|e('html') }}</label>
+                  <input type="text" id="campaign-name" name="name" required placeholder="Alex Turner">
+                </div>
+                <div class="cell small-12 medium-6 form-group">
+                  <label for="campaign-email">{{ 'Work Email *'|e('html') }}</label>
+                  <input type="email" id="campaign-email" name="email" required placeholder="alex@company.com">
+                </div>
+              </div>
+
+              {# Conditional Website Query #}
+              <div class="grid-x grid-padding-x">
+                <div class="cell small-12 medium-6 form-group">
+                  <label for="campaign-has-site">{{ 'Do you have an existing website?'|e('html') }}</label>
+                  <select id="campaign-has-site" name="has_existing_site">
+                    <option value="yes" selected>{{ 'Yes, we have an active website'|e('html') }}</option>
+                    <option value="no">{{ 'No, building a new platform'|e('html') }}</option>
+                  </select>
+                </div>
+                
+                {# Conditional Website URL Field (Active by default, toggled via JS) #}
+                <div id="campaign-site-url-group" class="cell small-12 medium-6 form-group conditional-field">
+                  <label for="campaign-url">{{ 'Current Website URL *'|e('html') }}</label>
+                  <input type="url" id="campaign-url" name="company" placeholder="https://company.com">
+                </div>
+              </div>
+
+              <div class="grid-x grid-padding-x">
+                <div class="cell small-12 form-group">
+                  <label for="campaign-message">{{ 'Primary Growth Bottleneck or Objective *'|e('html') }}</label>
+                  <textarea id="campaign-message" name="message" required placeholder="Explain your target audience, conversion friction, or desired timeline..."></textarea>
+                </div>
+              </div>
+
+              <div class="grid-x grid-padding-x">
+                <div class="cell small-12">
+                  <button type="submit" class="btn-submit-enquiry" id="campaign-submit-btn">
+                    <span>{{ 'Submit Sprint Application →'|e('html') }}</span>
+                  </button>
+                  <div id="campaign-form-notice" class="form-status-notice" style="display:none;" role="alert" aria-live="polite"></div>
+                </div>
+              </div>
+            </form>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+

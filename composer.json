@@ -24,5 +24,8 @@
     "lint": "phpcs -s",
     "lint:fix": "phpcbf",
     "test:syntax": "find themes/agency-site plugins/agency-site-core -name '*.php' -exec php -l {} +"
+  },
+  "require": {
+    "timber/timber": "^2.0"
   }
 }

@@ -1,0 +1,97 @@
+// ==============================================================================
+// Apex Digital - Reusable Sass Mixins
+// ==============================================================================
+
+@import 'settings';
+
+// Editorial thin dividing rule
+@mixin editorial-border($color: $color-border) {
+  border: 1px solid $color;
+}
+
+// Studio mono badge label
+@mixin mono-badge($bg: $color-ink, $text: $color-ivory) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: $font-mono;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 0.375rem 0.75rem;
+  background-color: $bg;
+  color: $text;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+// Studio primary rectangular button
+@mixin studio-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background-color: $color-ink;
+  color: $color-ivory;
+  font-family: $font-sans;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.875rem 1.75rem;
+  border: 1px solid $color-ink;
+  border-radius: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: $color-cobalt;
+    border-color: $color-cobalt;
+    color: $color-white;
+  }
+}
+
+// Studio secondary outline button
+@mixin studio-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background-color: transparent;
+  color: $color-ink;
+  font-family: $font-sans;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.875rem 1.75rem;
+  border: 1px solid $color-border;
+  border-radius: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    border-color: $color-ink;
+    color: $color-cobalt;
+  }
+}
+
+// Responsive text helpers
+@mixin responsive-heading-1 {
+  font-family: $font-sans;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-size: 2.5rem;
+
+  @include breakpoint(medium) {
+    font-size: 3.5rem;
+  }
+
+  @include breakpoint(large) {
+    font-size: 4.5rem;
+  }
+}
+

@@ -1,0 +1,86 @@
+// ==============================================================================
+// Apex Digital - Campaign Hero Component
+// ==============================================================================
+
+@import '../settings';
+@import '../mixins';
+
+.campaign-hero {
+  padding-top: 4rem;
+  padding-bottom: 5rem;
+  border-bottom: 1px solid $color-border;
+  background-color: $color-ivory;
+
+  @include breakpoint(medium) {
+    padding-top: 6rem;
+    padding-bottom: 7rem;
+  }
+
+  .campaign-badge {
+    @include mono-badge($color-cobalt, $color-white);
+    margin-bottom: 1.5rem;
+  }
+
+  .campaign-title {
+    @include responsive-heading-1;
+    color: $color-ink;
+    margin-bottom: 1.5rem;
+
+    .accent-italic {
+      font-family: $font-serif;
+      font-weight: 400;
+      font-style: italic;
+      color: $color-cobalt;
+    }
+  }
+
+  .campaign-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: $color-ink-80;
+    max-width: 36rem;
+    margin-bottom: 2.5rem;
+
+    @include breakpoint(medium) {
+      font-size: 1.25rem;
+    }
+  }
+
+  .campaign-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+
+    .btn-campaign-primary {
+      @include studio-btn-primary;
+    }
+
+    .btn-campaign-secondary {
+      @include studio-btn-secondary;
+    }
+  }
+
+  .campaign-hero-visual {
+    position: relative;
+    border: 1px solid $color-border;
+    background-color: $color-white;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .visual-overlay-tag {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      @include mono-badge($color-ink, $color-ivory);
+    }
+  }
+}
+

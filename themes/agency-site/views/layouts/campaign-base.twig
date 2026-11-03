@@ -1,0 +1,10 @@
+{{ function('get_header') }}
+
+<div class="campaign-foundation-scope">
+  {% block content %}
+    {# Child templates inject campaign sections here #}
+  {% endblock %}
+</div>
+
+{{ function('get_footer') }}
+

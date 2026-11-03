@@ -1,0 +1,129 @@
+// ==============================================================================
+// Apex Digital - Foundation XY Grid & Layout Scoping
+// ==============================================================================
+
+@use 'sass:math';
+@import 'settings';
+@import 'mixins';
+
+.campaign-foundation-scope {
+  background-color: $color-ivory;
+  color: $color-ink;
+  font-family: $font-sans;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+
+  // Foundation Container
+  .grid-container {
+    max-width: $grid-container-max;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: map-get($grid-padding-gutters, 'small');
+    padding-right: map-get($grid-padding-gutters, 'small');
+
+    @include breakpoint(medium) {
+      padding-left: map-get($grid-padding-gutters, 'medium');
+      padding-right: map-get($grid-padding-gutters, 'medium');
+    }
+
+    @include breakpoint(large) {
+      padding-left: map-get($grid-padding-gutters, 'large');
+      padding-right: map-get($grid-padding-gutters, 'large');
+    }
+  }
+
+  // Foundation XY Flex Grid
+  .grid-x {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
+  .grid-padding-x {
+    margin-left: -(math.div(map-get($grid-padding-gutters, 'small'), 2));
+    margin-right: -(math.div(map-get($grid-padding-gutters, 'small'), 2));
+
+    > .cell {
+      padding-left: math.div(map-get($grid-padding-gutters, 'small'), 2);
+      padding-right: math.div(map-get($grid-padding-gutters, 'small'), 2);
+    }
+
+    @include breakpoint(medium) {
+      margin-left: -(math.div(map-get($grid-padding-gutters, 'medium'), 2));
+      margin-right: -(math.div(map-get($grid-padding-gutters, 'medium'), 2));
+
+      > .cell {
+        padding-left: math.div(map-get($grid-padding-gutters, 'medium'), 2);
+        padding-right: math.div(map-get($grid-padding-gutters, 'medium'), 2);
+      }
+    }
+  }
+
+  .grid-margin-x {
+    margin-left: -(math.div(map-get($grid-margin-gutters, 'small'), 2));
+    margin-right: -(math.div(map-get($grid-margin-gutters, 'small'), 2));
+
+    > .cell {
+      width: calc(100% - #{map-get($grid-margin-gutters, 'small')});
+      margin-left: math.div(map-get($grid-margin-gutters, 'small'), 2);
+      margin-right: math.div(map-get($grid-margin-gutters, 'small'), 2);
+    }
+
+    @include breakpoint(medium) {
+      margin-left: -(math.div(map-get($grid-margin-gutters, 'medium'), 2));
+      margin-right: -(math.div(map-get($grid-margin-gutters, 'medium'), 2));
+
+      > .cell {
+        margin-left: math.div(map-get($grid-margin-gutters, 'medium'), 2);
+        margin-right: math.div(map-get($grid-margin-gutters, 'medium'), 2);
+      }
+    }
+  }
+
+  // Cell basics
+  .cell {
+    flex: 0 0 auto;
+    min-height: 0px;
+    min-width: 0px;
+    width: 100%;
+  }
+
+  // Foundation Column Breakpoint Classes
+  @each $size in (small, medium, large) {
+    @for $i from 1 through 12 {
+      $pct: percentage(math.div($i, 12));
+      
+      @if $size == small {
+        .small-#{$i} {
+          width: $pct;
+          flex-basis: $pct;
+        }
+      } @else {
+        @include breakpoint($size) {
+          .#{$size}-#{$i} {
+            width: $pct;
+            flex-basis: $pct;
+          }
+        }
+      }
+    }
+  }
+
+  // Section Spacing Utilities
+  .campaign-section {
+    padding-top: 4.5rem;
+    padding-bottom: 4.5rem;
+    border-bottom: 1px solid $color-border;
+
+    @include breakpoint(medium) {
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+    }
+
+    @include breakpoint(large) {
+      padding-top: 7.5rem;
+      padding-bottom: 7.5rem;
+    }
+  }
+}
+

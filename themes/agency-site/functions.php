@@ -18,6 +18,15 @@ require_once AGENCY_SITE_DIR . '/inc/customizer.php';
 require_once AGENCY_SITE_DIR . '/inc/cpt-services.php';
 require_once AGENCY_SITE_DIR . '/inc/template-tags.php';
 
+// Composer autoloader (Timber 2.x, Twig, etc.)
+$agency_composer_autoload = dirname( AGENCY_SITE_DIR, 2 ) . '/vendor/autoload.php';
+if ( file_exists( $agency_composer_autoload ) ) {
+	require_once $agency_composer_autoload;
+}
+if ( class_exists( '\Timber\Timber' ) ) {
+	\Timber\Timber::init();
+}
+
 /**
  * Theme Setup
  */
@@ -141,6 +150,18 @@ function agency_site_scripts() {
 		array( 'agency-fonts' ),
 		$css_ver
 	);
+
+	// Enqueue Scoped Foundation & Campaign Sass on Campaign Landing Page Template
+	if ( is_page_template( 'template-campaign.php' ) ) {
+		$campaign_css_path = AGENCY_SITE_DIR . '/assets/dist/css/campaign.css';
+		$campaign_css_ver  = file_exists( $campaign_css_path ) ? filemtime( $campaign_css_path ) : AGENCY_SITE_VERSION;
+		wp_enqueue_style(
+			'agency-campaign-foundation',
+			AGENCY_SITE_URI . '/assets/dist/css/campaign.css',
+			array( 'agency-fonts' ),
+			$campaign_css_ver
+		);
+	}
 
 	// Vanilla JavaScript
 	$js_path = AGENCY_SITE_DIR . '/assets/dist/js/main.js';

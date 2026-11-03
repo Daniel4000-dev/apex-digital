@@ -1,0 +1,161 @@
+{
+  "key": "group_campaign_page_meta",
+  "title": "Campaign Landing Page Settings",
+  "fields": [
+    {
+      "key": "field_campaign_hero_badge",
+      "label": "Hero Badge / Cohort Tag",
+      "name": "campaign_hero_badge",
+      "type": "text",
+      "instructions": "e.g. 'Limited Q1 Cohort · 5 Slots Available'",
+      "required": 0,
+      "default_value": "Limited Q1 Cohort · 5 Slots Available"
+    },
+    {
+      "key": "field_campaign_hero_heading",
+      "label": "Hero Heading",
+      "name": "campaign_hero_heading",
+      "type": "text",
+      "instructions": "Primary expressive headline for the campaign.",
+      "required": 0,
+      "default_value": "Q1 Performance Growth Sprint"
+    },
+    {
+      "key": "field_campaign_hero_subheading",
+      "label": "Hero Subheading / Supporting Copy",
+      "name": "campaign_hero_subheading",
+      "type": "textarea",
+      "instructions": "Clear explanation of the offer and target business outcome.",
+      "required": 0,
+      "default_value": "A 4-week intensive engineering sprint combining technical SEO teardowns, landing page CRO, and high-intent paid search alignment to maximize enquiry conversion."
+    },
+    {
+      "key": "field_campaign_hero_image",
+      "label": "Hero Image",
+      "name": "campaign_hero_image",
+      "type": "image",
+      "instructions": "Editorial visual plate or architectural photography.",
+      "required": 0,
+      "return_format": "url"
+    },
+    {
+      "key": "field_campaign_intro_heading",
+      "label": "Offer Introduction Heading",
+      "name": "campaign_intro_heading",
+      "type": "text",
+      "instructions": "One-line section title for the executive overview.",
+      "required": 0,
+      "default_value": "Designed for immediate commercial impact."
+    },
+    {
+      "key": "field_campaign_intro_content",
+      "label": "Offer / Service Introduction",
+      "name": "campaign_intro_content",
+      "type": "textarea",
+      "instructions": "In-depth summary of the campaign proposition and audience requirements.",
+      "required": 0,
+      "default_value": "Most agency engagements get bogged down in multi-month onboarding without shipping tangible performance improvements. The Q1 Performance Growth Sprint is a tightly scoped 4-week engagement with senior strategists focused entirely on unblocking your enquiry funnel."
+    },
+    {
+      "key": "field_campaign_benefits",
+      "label": "Sprint Deliverables / Benefits",
+      "name": "campaign_benefits",
+      "type": "repeater",
+      "instructions": "Add each phase or core deliverable for the sprint.",
+      "required": 0,
+      "min": 1,
+      "button_label": "Add Deliverable Phase",
+      "sub_fields": [
+        {
+          "key": "field_campaign_benefit_title",
+          "label": "Phase Title",
+          "name": "title",
+          "type": "text",
+          "required": 1
+        },
+        {
+          "key": "field_campaign_benefit_desc",
+          "label": "Phase Deliverables & Scope",
+          "name": "description",
+          "type": "textarea",
+          "required": 1
+        },
+        {
+          "key": "field_campaign_benefit_metric",
+          "label": "Target KPI / Outcome",
+          "name": "metric",
+          "type": "text",
+          "required": 0
+        }
+      ]
+    },
+    {
+      "key": "field_campaign_faqs",
+      "label": "Frequently Asked Questions",
+      "name": "campaign_faqs",
+      "type": "repeater",
+      "instructions": "Add questions and answers for prospective sprint clients.",
+      "required": 0,
+      "min": 1,
+      "button_label": "Add FAQ Row",
+      "sub_fields": [
+        {
+          "key": "field_campaign_faq_question",
+          "label": "Question",
+          "name": "question",
+          "type": "text",
+          "required": 1
+        },
+        {
+          "key": "field_campaign_faq_answer",
+          "label": "Answer",
+          "name": "answer",
+          "type": "textarea",
+          "required": 1
+        }
+      ]
+    },
+    {
+      "key": "field_campaign_cta_text",
+      "label": "CTA Button Text",
+      "name": "campaign_cta_text",
+      "type": "text",
+      "instructions": "Label for the primary conversion button.",
+      "required": 0,
+      "default_value": "Apply for Q1 Sprint"
+    },
+    {
+      "key": "field_campaign_cta_url",
+      "label": "CTA Destination",
+      "name": "campaign_cta_url",
+      "type": "text",
+      "instructions": "Anchor (e.g. #campaign-enquiry) or external URL.",
+      "required": 0,
+      "default_value": "#campaign-enquiry"
+    },
+    {
+      "key": "field_campaign_gf_form_id",
+      "label": "Gravity Forms Form ID",
+      "name": "campaign_gf_form_id",
+      "type": "number",
+      "instructions": "Optional Gravity Forms ID to embed in the enquiry section. Leave empty to use default.",
+      "required": 0
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "page_template",
+        "operator": "==",
+        "value": "template-campaign.php"
+      }
+    ]
+  ],
+  "menu_order": 0,
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "active": true
+}
+
