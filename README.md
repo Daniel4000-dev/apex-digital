@@ -30,7 +30,7 @@ wp-content/
 │   ├── analytics-guide.md         # GA4 / GTM event map and dataLayer schema
 │   ├── client-handoff.md          # Content editor guide & dashboard runbook
 │   └── design-evidence.md         # Breakpoint matrix, WCAG AA compliance, and typography
-├── composer.json                  # PHPCS, WPCS, and unit testing dependencies
+├── composer.json                  # PHPCS, WPCS, Timber/Twig v2, and unit testing dependencies
 ├── package.json                   # Root workspace orchestration scripts
 ├── phpcs.xml                      # Strict WordPress Coding Standards configuration
 ├── scripts/
@@ -40,16 +40,26 @@ wp-content/
 │   ├── run-all-tests.php          # 52-assertion behavioural, security & ingress suite
 │   ├── send-test-emails.php       # Transactional & promotional email test runner
 │   ├── verify-apex-digital.js     # Playwright responsive & end-to-end browser automation
+│   ├── verify-campaign-page.js    # Playwright browser runner for campaign page & grid checks
 │   └── phpunit/                   # PHPUnit unit & integration tests
 ├── themes/
 │   └── agency-site/               # Presentation Layer (Custom Classic Theme)
 │       ├── front-page.php         # Homepage with value propositions & conversion paths
 │       ├── template-services.php  # Service capabilities and deliverables matrix
+│       ├── template-campaign.php  # Reusable Campaign Landing Page (ACF Pro + Timber/Twig + Foundation)
 │       ├── page-contact.php       # Strategy consultation ingress with fallback routing
 │       ├── single-agency_service.php # Single service template
 │       ├── home.php / single.php  # Insights & thought leadership publication templates
-│       ├── acf-json/              # Synchronized ACF Pro field group definitions
-│       └── assets/                # Tailwind CSS v3 source & compiled distribution
+│       ├── acf-json/              # Synchronized ACF Pro field group definitions (Local JSON)
+│       ├── views/                 # Modular Timber/Twig v2 template inheritance hierarchy
+│       │   ├── layouts/           # campaign-base.twig (WordPress lifecycle hooks)
+│       │   ├── campaign.twig      # Master campaign template extension
+│       │   └── partials/          # hero, intro, benefits, faqs, enquiry Twig components
+│       ├── gulpfile.js            # Gulp 5 Sass build pipeline (Autoprefixer, minification, sourcemaps)
+│       └── assets/                # Asset pipelines
+│           ├── src/scss/          # Dart Sass architecture (_settings, _mixins, _layout, components/)
+│           ├── dist/css/          # Built CSS (Tailwind style.css & scoped Foundation campaign.css)
+│           └── src/js/ / dist/js/ # Vanilla JavaScript (drawer, accordion, AJAX enquiry, poster switcher)
 └── plugins/
     └── agency-site-core/          # Business & Data Layer (Companion Plugin)
         ├── includes/
@@ -102,7 +112,21 @@ wp-content/
   - SSRF & loopback protection: Rejects cloud metadata services (`169.254.169.254`) and enforces production loopback blocking.
 - **Resilient Fallback Routing**: If the companion plugin is ever deactivated, `/contact/` alerts administrators and gracefully routes public inquiries through the theme's built-in `wp_mail()` handler.
 
-### 3. Enterprise Integration Bridges (ACF Pro & Gravity Forms)
+### 3. Campaign Landing Page & Multi-Tech System (Sass, Gulp, Twig, Foundation, ACF Pro, Gravity Forms)
+- **Editor-Managed Campaign Template (`template-campaign.php`)**:
+  - Reusable template supporting promotional offers (e.g. *Q1 Performance Growth Sprint*).
+  - Uses **ACF Pro** Local JSON (`themes/agency-site/acf-json/group_campaign_page_meta.json`) featuring genuine Pro-only **Repeaters** for deliverables and FAQs, with non-destructive fallback to native metadata.
+  - Features **Gravity Forms** campaign enquiry integration (`docs/gravityforms-campaign-export-sanitized.json`) with conditional website URL visibility, spam protection, and deduplicated post-submission lead routing.
+- **Twig (Timber v2) Template Hierarchy**:
+  - Layout inheritance via `views/layouts/campaign-base.twig` preserving WordPress lifecycle hooks (`get_header()`, `get_footer()`, `wp_head()`, `wp_footer()`).
+  - Modular partials (`views/partials/`): `campaign-hero.twig`, `campaign-intro.twig`, `campaign-benefits.twig`, `campaign-faq.twig`, `campaign-enquiry.twig`.
+  - Contextual auto-escaping (`|e('html')`, `|e('html_attr')`) and a native PHP fallback view if Timber is uninstalled.
+- **Sass Architecture & Gulp Pipeline**:
+  - Modular Dart Sass partials under `assets/src/scss/` (`_settings.scss`, `_mixins.scss`, `_layout.scss`, and `components/_*.scss`).
+  - Scoped **Foundation 6 XY Grid** (`.campaign-foundation-scope`) with zero style bleed into Tailwind CSS.
+  - Gulp 5 build pipeline (`gulpfile.js`) compiling minified `campaign.css` with Autoprefixer, PostCSS, and sourcemaps in ~3.2 seconds.
+
+### 4. Enterprise Integration Bridges (ACF Pro & Gravity Forms)
 - **Advanced Custom Fields Pro**:
   - Pre-configured programmatic field definitions in `Agency_Core_ACF_Integration`.
   - Auto-synchronizing field group JSON in `themes/agency-site/acf-json/group_agency_service_meta.json`.
